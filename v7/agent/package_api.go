@@ -53,11 +53,6 @@ item in an array!
 type Ordinal uint
 
 /*
-Probability represents a probability in the range [0.0..1.0].
-*/
-type Probability float64
-
-/*
 Rank is a constrained type representing the possible rankings for two values.
 */
 type Rank uint8
@@ -311,7 +306,7 @@ type GeneratorLike interface {
 	RandomOrdinal(
 		maximum Ordinal,
 	) Ordinal
-	RandomProbability() Probability
+	RandomProbability() float64
 	RandomBytes(
 		size Cardinal,
 	) []byte

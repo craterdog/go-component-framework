@@ -158,7 +158,9 @@ type (
 // Agent
 
 type (
+	Cardinal    = age.Cardinal
 	Event       = age.Event
+	Ordinal     = age.Ordinal
 	Rank        = age.Rank
 	Slot        = age.Slot
 	State       = age.State
@@ -177,16 +179,18 @@ type (
 
 type (
 	CollatorClassLike[V any] = age.CollatorClassLike[V]
-	ConfiguratorClassLike    = age.ConfiguratorClassLike
 	ControllerClassLike      = age.ControllerClassLike
+	EncoderClassLike         = age.EncoderClassLike
+	GeneratorClassLike       = age.GeneratorClassLike
 	IteratorClassLike[V any] = age.IteratorClassLike[V]
 	SorterClassLike[V any]   = age.SorterClassLike[V]
 )
 
 type (
 	CollatorLike[V any] = age.CollatorLike[V]
-	ConfiguratorLike    = age.ConfiguratorLike
 	ControllerLike      = age.ControllerLike
+	EncoderLike         = age.EncoderLike
+	GeneratorLike       = age.GeneratorLike
 	IteratorLike[V any] = age.IteratorLike[V]
 	SorterLike[V any]   = age.SorterLike[V]
 )
@@ -872,22 +876,10 @@ func Collator[V any]() CollatorLike[V] {
 }
 
 func CollatorWithMaximumDepth[V any](
-	maximumDepth uti.Cardinal,
+	maximumDepth age.Cardinal,
 ) CollatorLike[V] {
 	return CollatorClass[V]().CollatorWithMaximumDepth(
 		maximumDepth,
-	)
-}
-
-func ConfiguratorClass() ConfiguratorClassLike {
-	return age.ConfiguratorClass()
-}
-
-func Configurator(
-	file string,
-) ConfiguratorLike {
-	return ConfiguratorClass().Configurator(
-		file,
 	)
 }
 
@@ -903,6 +895,22 @@ func Controller(
 		events,
 		transitions,
 	)
+}
+
+func EncoderClass() EncoderClassLike {
+	return age.EncoderClass()
+}
+
+func Encoder() EncoderLike {
+	return EncoderClass().Encoder()
+}
+
+func GeneratorClass() GeneratorClassLike {
+	return age.GeneratorClass()
+}
+
+func Generator() GeneratorLike {
+	return GeneratorClass().Generator()
 }
 
 func IteratorClass[V any]() IteratorClassLike[V] {

@@ -58,9 +58,9 @@ func (v *generator_) RandomOrdinal(
 	return Ordinal(random.Int64() + 1)
 }
 
-func (v *generator_) RandomProbability() Probability {
+func (v *generator_) RandomProbability() float64 {
 	var maximum = Ordinal(1 << 53) // 53 bits for the sign and mantissa.
-	return Probability(float64(v.RandomOrdinal(maximum)) / float64(maximum))
+	return float64(v.RandomOrdinal(maximum)) / float64(maximum)
 }
 
 func (v *generator_) RandomBytes(
