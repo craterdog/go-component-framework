@@ -36,7 +36,7 @@ func (c *iteratorClass_[V]) Iterator(
 	}
 	var instance = &iterator_[V]{
 		// Initialize the instance attributes.
-		size_:   uti.Cardinal(len(array)),
+		size_:   Cardinal(len(array)),
 		values_: array,
 	}
 	return instance
@@ -97,7 +97,7 @@ func (v *iterator_[V]) GetNext() V {
 
 // Attribute Methods
 
-func (v *iterator_[V]) GetSize() uti.Cardinal {
+func (v *iterator_[V]) GetSize() Cardinal {
 	return v.size_
 }
 
@@ -124,7 +124,7 @@ func (v *iterator_[V]) SetSlot(
 type iterator_[V any] struct {
 	// Declare the instance attributes.
 	slot_   Slot
-	size_   uti.Cardinal
+	size_   Cardinal
 	values_ []V
 }
 

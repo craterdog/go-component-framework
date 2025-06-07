@@ -29,16 +29,33 @@ on interfaces, not on each other.
 */
 package agent
 
-import (
-	uti "github.com/craterdog/go-missing-utilities/v7"
-)
+import ()
 
 // TYPE DECLARATIONS
+
+/*
+Cardinal represents a cardinal number in the range [0..MaxUint].  A cardinal
+number tells how many of something there are.
+*/
+type Cardinal uint
 
 /*
 Event is a constrained type representing an event type in a state machine.
 */
 type Event uint8
+
+/*
+Ordinal represents an ordinal number in the range [1..MaxUint].  An ordinal
+number refers to an item in a sequence, first, second, third, etc.  Only early
+computer programmers would make the mistake of calling something the "zeroth"
+item in an array!
+*/
+type Ordinal uint
+
+/*
+Probability represents a probability in the range [0.0..1.0].
+*/
+type Probability float64
 
 /*
 Rank is a constrained type representing the possible rankings for two values.
@@ -94,23 +111,8 @@ type CollatorClassLike[V any] interface {
 	// Constructor Methods
 	Collator() CollatorLike[V]
 	CollatorWithMaximumDepth(
-		maximumDepth uti.Cardinal,
+		maximumDepth Cardinal,
 	) CollatorLike[V]
-}
-
-/*
-ConfiguratorClassLike is a class interface that declares the complete set of
-class constructors, constants and functions that must be supported by each
-concrete configurator-like class.
-
-A configurator-like class manages the persistent configuration information for
-an application.
-*/
-type ConfiguratorClassLike interface {
-	// Constructor Methods
-	Configurator(
-		file string,
-	) ConfiguratorLike
 }
 
 /*
@@ -147,6 +149,35 @@ type ControllerClassLike interface {
 		events []Event,
 		transitions map[State]Transitions,
 	) ControllerLike
+}
+
+/*
+EncoderClassLike is a class interface that declares the complete set of class
+constructors, constants and functions that must be supported by each concrete
+encoder-like class.
+
+A encoder-like class implements encoding and decoding algorithms for the
+following:
+  - Base 16 [0-9][a-f]
+  - Base 32 [0-9][A-D][F-H][J-N][P-T][V-Z]  {excludes "EIOU"}
+  - Base 64 [0-9][A-Z][a-z][+/]
+*/
+type EncoderClassLike interface {
+	// Constructor Methods
+	Encoder() EncoderLike
+}
+
+/*
+GeneratorClassLike is a class interface that declares the complete set of class
+constructors, constants and functions that must be supported by each concrete
+generator-like class.
+
+A generator-like class generates various types of cryptographically secure
+random values.
+*/
+type GeneratorClassLike interface {
+	// Constructor Methods
+	Generator() GeneratorLike
 }
 
 /*
@@ -216,23 +247,7 @@ type CollatorLike[V any] interface {
 	) Rank
 
 	// Attribute Methods
-	GetMaximumDepth() uti.Cardinal
-}
-
-/*
-ConfiguratorLike is an instance interface that declares the complete set of
-principal, attribute and aspect methods that must be supported by each instance
-of a concrete configurator-like class.
-*/
-type ConfiguratorLike interface {
-	// Principal Methods
-	GetClass() ConfiguratorClassLike
-	ConfigurationExists() bool
-	LoadConfiguration() string
-	StoreConfiguration(
-		configuration string,
-	)
-	DeleteConfiguration()
+	GetMaximumDepth() Cardinal
 }
 
 /*
@@ -257,6 +272,52 @@ type ControllerLike interface {
 }
 
 /*
+EncoderLike is an instance interface that declares the complete set of
+principal, attribute and aspect methods that must be supported by each
+instance of a concrete encoder-like class.
+*/
+type EncoderLike interface {
+	// Principal Methods
+	GetClass() EncoderClassLike
+	Base16Encode(
+		bytes []byte,
+	) string
+	Base16Decode(
+		encoded string,
+	) []byte
+	Base32Encode(
+		bytes []byte,
+	) string
+	Base32Decode(
+		encoded string,
+	) []byte
+	Base64Encode(
+		bytes []byte,
+	) string
+	Base64Decode(
+		encoded string,
+	) []byte
+}
+
+/*
+GeneratorLike is an instance interface that declares the complete set of
+principal, attribute and aspect methods that must be supported by each
+instance of a concrete generator-like class.
+*/
+type GeneratorLike interface {
+	// Principal Methods
+	GetClass() GeneratorClassLike
+	RandomBoolean() bool
+	RandomOrdinal(
+		maximum Ordinal,
+	) Ordinal
+	RandomProbability() Probability
+	RandomBytes(
+		size Cardinal,
+	) []byte
+}
+
+/*
 IteratorLike[V any] is an instance interface that declares the complete set of
 principal, attribute and aspect methods that must be supported by each
 instance of a concrete iterator-like class.
@@ -273,7 +334,7 @@ type IteratorLike[V any] interface {
 	GetNext() V
 
 	// Attribute Methods
-	GetSize() uti.Cardinal
+	GetSize() Cardinal
 	GetSlot() Slot
 	SetSlot(
 		slot Slot,

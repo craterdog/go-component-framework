@@ -13,28 +13,23 @@
 package agent
 
 import (
-	uti "github.com/craterdog/go-missing-utilities/v7"
+	ran "crypto/rand"
+	big "math/big"
 )
 
 // CLASS INTERFACE
 
 // Access Function
 
-func ConfiguratorClass() ConfiguratorClassLike {
-	return configuratorClass()
+func GeneratorClass() GeneratorClassLike {
+	return generatorClass()
 }
 
 // Constructor Methods
 
-func (c *configuratorClass_) Configurator(
-	file string,
-) ConfiguratorLike {
-	if uti.IsUndefined(file) {
-		panic("The \"file\" attribute is required by this class.")
-	}
-	var instance = &configurator_{
+func (c *generatorClass_) Generator() GeneratorLike {
+	var instance = &generator_{
 		// Initialize the instance attributes.
-		file_: file,
 	}
 	return instance
 }
@@ -47,26 +42,33 @@ func (c *configuratorClass_) Configurator(
 
 // Principal Methods
 
-func (v *configurator_) GetClass() ConfiguratorClassLike {
-	return configuratorClass()
+func (v *generator_) GetClass() GeneratorClassLike {
+	return generatorClass()
 }
 
-func (v *configurator_) ConfigurationExists() bool {
-	return uti.PathExists(v.file_)
+func (v *generator_) RandomBoolean() bool {
+	var random, _ = ran.Int(ran.Reader, big.NewInt(int64(2)))
+	return int(random.Int64()) > 0
 }
 
-func (v *configurator_) LoadConfiguration() string {
-	return uti.ReadFile(v.file_)
+func (v *generator_) RandomOrdinal(
+	maximum Ordinal,
+) Ordinal {
+	var random, _ = ran.Int(ran.Reader, big.NewInt(int64(maximum)))
+	return Ordinal(random.Int64() + 1)
 }
 
-func (v *configurator_) StoreConfiguration(
-	configuration string,
-) {
-	uti.WriteFile(v.file_, configuration)
+func (v *generator_) RandomProbability() Probability {
+	var maximum = Ordinal(1 << 53) // 53 bits for the sign and mantissa.
+	return Probability(float64(v.RandomOrdinal(maximum)) / float64(maximum))
 }
 
-func (v *configurator_) DeleteConfiguration() {
-	uti.RemovePath(v.file_)
+func (v *generator_) RandomBytes(
+	size Cardinal,
+) []byte {
+	var bytes = make([]byte, size)
+	_, _ = ran.Read(bytes) // This call can never fail.
+	return bytes
 }
 
 // Attribute Methods
@@ -77,23 +79,22 @@ func (v *configurator_) DeleteConfiguration() {
 
 // Instance Structure
 
-type configurator_ struct {
+type generator_ struct {
 	// Declare the instance attributes.
-	file_ string
 }
 
 // Class Structure
 
-type configuratorClass_ struct {
+type generatorClass_ struct {
 	// Declare the class constants.
 }
 
 // Class Reference
 
-func configuratorClass() *configuratorClass_ {
-	return configuratorClassReference_
+func generatorClass() *generatorClass_ {
+	return generatorClassReference_
 }
 
-var configuratorClassReference_ = &configuratorClass_{
+var generatorClassReference_ = &generatorClass_{
 	// Initialize the class constants.
 }
