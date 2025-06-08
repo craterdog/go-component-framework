@@ -89,15 +89,15 @@ func (v *controller_) GetClass() ControllerClassLike {
 func (v *controller_) ProcessEvent(
 	event Event,
 ) State {
-	if event < 1 || event >= Event(len(v.events_)) {
+	if event < 1 || event > Event(len(v.events_)) {
 		var message = fmt.Sprintf(
 			"Received an invalid event: %v",
 			event,
 		)
 		panic(message)
 	}
-	var next = v.transitions_[v.state_][event]
-	if next < 1 || next >= State(len(v.transitions_)) {
+	var next = v.transitions_[v.state_][event-1]
+	if next < 1 || next > State(len(v.transitions_)) {
 		var message = fmt.Sprintf(
 			"Attempted to transition to an invalid state: %v",
 			next,

@@ -655,3 +655,209 @@ func TestSortingStrings(t *tes.T) {
 	sorter.SortValues(unsorted)
 	ass.Equal(t, sorted, unsorted)
 }
+
+var encoder = age.EncoderClass().Encoder()
+
+func TestBase16EmptyRoundTrip(t *tes.T) {
+	var bytes = make([]byte, 0)
+
+	// Encode as base 16.
+	var base16 = encoder.Base16Encode(bytes)
+
+	// Decode base 16 to bytes.
+	var decoded = encoder.Base16Decode(base16)
+	ass.Equal(t, bytes, decoded)
+
+	// Encode as base 16 again.
+	var encoded = encoder.Base16Encode(decoded)
+	ass.Equal(t, base16, encoded)
+
+	// Decode base 16 again.
+	var again = encoder.Base16Decode(encoded)
+	ass.Equal(t, again, decoded)
+}
+
+func TestBase16RoundTrip(t *tes.T) {
+	// Seed the bytes.
+	var bytes = make([]byte, 256)
+	for index := range bytes {
+		bytes[index] = byte(index)
+	}
+
+	for index := 0; index < len(bytes); index++ {
+		// Encode as base 16.
+		var base16 = encoder.Base16Encode(bytes[:index+1])
+
+		// Decode base 16 to bytes.
+		var decoded = encoder.Base16Decode(base16)
+		ass.Equal(t, bytes[:index+1], decoded)
+
+		// Encode as base 16 again.
+		var encoded = encoder.Base16Encode(decoded)
+		ass.Equal(t, base16, encoded)
+
+		// Decode base 16 again.
+		var again = encoder.Base16Decode(encoded)
+		ass.Equal(t, again, decoded)
+	}
+}
+
+func TestBase32EmptyRoundTrip(t *tes.T) {
+	var bytes = make([]byte, 0)
+
+	// Encode as base 32.
+	var base32 = encoder.Base32Encode(bytes)
+
+	// Decode base 32 to bytes.
+	var decoded = encoder.Base32Decode(base32)
+	ass.Equal(t, bytes, decoded)
+
+	// Encode as base 32 again.
+	var encoded = encoder.Base32Encode(decoded)
+	ass.Equal(t, base32, encoded)
+
+	// Decode base 32 again.
+	var again = encoder.Base32Decode(encoded)
+	ass.Equal(t, again, decoded)
+}
+
+func TestBase32RoundTrip(t *tes.T) {
+	// Seed the bytes.
+	var bytes = make([]byte, 256)
+	for index := range bytes {
+		bytes[index] = byte(index)
+	}
+
+	for index := 0; index < len(bytes); index++ {
+		// Encode as base 32.
+		var base32 = encoder.Base32Encode(bytes[:index+1])
+
+		// Decode base 32 to bytes.
+		var decoded = encoder.Base32Decode(base32)
+		ass.Equal(t, bytes[:index+1], decoded)
+
+		// Encode as base 32 again.
+		var encoded = encoder.Base32Encode(decoded)
+		ass.Equal(t, base32, encoded)
+
+		// Decode base 32 again.
+		var again = encoder.Base32Decode(encoded)
+		ass.Equal(t, again, decoded)
+	}
+}
+
+func TestBase64EmptyRoundTrip(t *tes.T) {
+	var bytes = make([]byte, 0)
+
+	// Encode as base 64.
+	var base64 = encoder.Base64Encode(bytes)
+
+	// Decode base 64 to bytes.
+	var decoded = encoder.Base64Decode(base64)
+	ass.Equal(t, bytes, decoded)
+
+	// Encode as base 64 again.
+	var encoded = encoder.Base64Encode(decoded)
+	ass.Equal(t, base64, encoded)
+
+	// Decode base 64 again.
+	var again = encoder.Base64Decode(encoded)
+	ass.Equal(t, again, decoded)
+}
+
+func TestBase64RoundTrip(t *tes.T) {
+	// Seed the bytes.
+	var bytes = make([]byte, 240)
+	for index := range bytes {
+		bytes[index] = byte(index)
+	}
+
+	for index := 0; index < len(bytes); index++ {
+		// Encode as base 64.
+		var base64 = encoder.Base64Encode(bytes[:index+1])
+
+		// Decode base 64 to bytes.
+		var decoded = encoder.Base64Decode(base64)
+		ass.Equal(t, bytes[:index+1], decoded)
+
+		// Encode as base 64 again.
+		var encoded = encoder.Base64Encode(decoded)
+		ass.Equal(t, base64, encoded)
+
+		// Decode base 64 again.
+		var again = encoder.Base64Decode(encoded)
+		ass.Equal(t, again, decoded)
+	}
+}
+
+var generator = age.GeneratorClass().Generator()
+
+func TestRandomBooleans(t *tes.T) {
+	var foundFalse uint
+	var foundTrue uint
+	for i := 0; i < 100; i++ {
+		if generator.RandomBoolean() {
+			foundTrue++
+		} else {
+			foundFalse++
+		}
+	}
+	ass.True(t, foundFalse > 35)
+	ass.True(t, foundTrue > 35)
+}
+
+func TestRandomOrdinals(t *tes.T) {
+	var foundZero bool
+	var foundFive bool
+	for i := 0; i < 100; i++ {
+		var random = generator.RandomOrdinal(5)
+		if random == 0 {
+			foundZero = true
+		}
+		if random == 5 {
+			foundFive = true
+		}
+	}
+	ass.False(t, foundZero)
+	ass.True(t, foundFive)
+}
+
+func TestRandomProbabilities(t *tes.T) {
+	var total float64
+	for i := 0; i < 10000; i++ {
+		total += generator.RandomProbability()
+	}
+	ass.True(t, total > 4800)
+	ass.True(t, total < 5200)
+}
+
+const (
+	invalid age.State = iota
+	state1
+	state2
+	state3
+)
+
+const (
+	none age.Event = iota
+	initialized
+	processed
+	finalized
+)
+
+func TestController(t *tes.T) {
+	var events = []age.Event{initialized, processed, finalized}
+	var transitions = map[age.State]age.Transitions{
+		state1: age.Transitions{state2, invalid, invalid},
+		state2: age.Transitions{invalid, state2, state3},
+		state3: age.Transitions{invalid, invalid, invalid},
+	}
+
+	var controller = age.ControllerClass().Controller(events, transitions)
+	ass.Equal(t, state1, controller.GetState())
+	ass.Equal(t, state2, controller.ProcessEvent(initialized))
+	ass.Equal(t, state2, controller.ProcessEvent(processed))
+	ass.Equal(t, state3, controller.ProcessEvent(finalized))
+	controller.SetState(state1)
+	ass.Equal(t, state1, controller.GetState())
+}
