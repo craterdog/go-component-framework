@@ -38,7 +38,7 @@ func (c *tagClass_) Tag(
 }
 
 func (c *tagClass_) TagWithSize(
-	size uti.Cardinal,
+	size age.Cardinal,
 ) TagLike {
 	if size < 4 {
 		var message = fmt.Sprintf(
@@ -47,7 +47,8 @@ func (c *tagClass_) TagWithSize(
 		)
 		panic(message)
 	}
-	var bytes = uti.RandomBytes(size)
+	var generator = age.GeneratorClass().Generator()
+	var bytes = generator.RandomBytes(size)
 	return tag_(bytes)
 }
 
@@ -71,7 +72,8 @@ func (c *tagClass_) TagFromString(
 		panic(message)
 	}
 	var base32 = matches[1] // Strip off the leading "#".
-	var bytes = uti.Base32Decode(base32)
+	var encoder = age.EncoderClass().Encoder()
+	var bytes = encoder.Base32Decode(base32)
 	return tag_(bytes)
 }
 
@@ -111,7 +113,8 @@ func (v tag_) GetHash() uint64 {
 }
 
 func (v tag_) AsString() string {
-	return "#" + uti.Base32Encode(v)
+	var encoder = age.EncoderClass().Encoder()
+	return "#" + encoder.Base32Encode(v)
 }
 
 // Attribute Methods
@@ -122,8 +125,8 @@ func (v tag_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v tag_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v))
+func (v tag_) GetSize() age.Cardinal {
+	return age.Cardinal(len(v))
 }
 
 func (v tag_) AsArray() []byte {

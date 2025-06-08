@@ -122,8 +122,8 @@ func (v narrative_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v narrative_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v))
+func (v narrative_) GetSize() age.Cardinal {
+	return age.Cardinal(len(v))
 }
 
 func (v narrative_) AsArray() []Line {

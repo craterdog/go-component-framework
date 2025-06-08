@@ -35,7 +35,6 @@ package collection
 
 import (
 	age "github.com/craterdog/go-component-framework/v7/agent"
-	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
 // TYPE DECLARATIONS
@@ -196,7 +195,7 @@ type QueueClassLike[V any] interface {
 	// Constructor Methods
 	Queue() QueueLike[V]
 	QueueWithCapacity(
-		capacity uti.Cardinal,
+		capacity age.Cardinal,
 	) QueueLike[V]
 	QueueFromArray(
 		values []V,
@@ -209,12 +208,12 @@ type QueueClassLike[V any] interface {
 	Fork(
 		group Synchronized,
 		input QueueLike[V],
-		size uti.Cardinal,
+		size age.Cardinal,
 	) Sequential[QueueLike[V]]
 	Split(
 		group Synchronized,
 		input QueueLike[V],
-		size uti.Cardinal,
+		size age.Cardinal,
 	) Sequential[QueueLike[V]]
 	Join(
 		group Synchronized,
@@ -290,7 +289,7 @@ type StackClassLike[V any] interface {
 	// Constructor Methods
 	Stack() StackLike[V]
 	StackWithCapacity(
-		capacity uti.Cardinal,
+		capacity age.Cardinal,
 	) StackLike[V]
 	StackFromArray(
 		values []V,
@@ -362,7 +361,7 @@ type QueueLike[V any] interface {
 	GetClass() QueueClassLike[V]
 
 	// Attribute Methods
-	GetCapacity() uti.Cardinal
+	GetCapacity() age.Cardinal
 
 	// Aspect Interfaces
 	Fifo[V]
@@ -398,7 +397,7 @@ type StackLike[V any] interface {
 	GetClass() StackClassLike[V]
 
 	// Attribute Methods
-	GetCapacity() uti.Cardinal
+	GetCapacity() age.Cardinal
 
 	// Aspect Interfaces
 	Lifo[V]
@@ -573,7 +572,7 @@ class.
 */
 type Sequential[V any] interface {
 	IsEmpty() bool
-	GetSize() uti.Cardinal
+	GetSize() age.Cardinal
 	AsArray() []V
 	GetIterator() age.IteratorLike[V]
 }

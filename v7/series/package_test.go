@@ -13,8 +13,8 @@
 package series_test
 
 import (
+	age "github.com/craterdog/go-component-framework/v7/agent"
 	ser "github.com/craterdog/go-component-framework/v7/series"
-	uti "github.com/craterdog/go-missing-utilities/v7"
 	ass "github.com/stretchr/testify/assert"
 	mat "math"
 	tes "testing"
@@ -261,7 +261,7 @@ func TestSymbol(t *tes.T) {
 var TagClass = ser.TagClass()
 
 func TestStringTags(t *tes.T) {
-	var size uti.Cardinal
+	var size age.Cardinal
 	for size = 8; size < 33; size++ {
 		var t1 = TagClass.TagWithSize(size)
 		ass.Equal(t, len(t1.AsString()), 1+int(mat.Ceil(float64(size)*8.0/5.0)))
@@ -281,17 +281,17 @@ func TestVersion(t *tes.T) {
 	ass.Equal(t, "v1.2.3", v1.AsString())
 	ass.False(t, v1.IsEmpty())
 	ass.Equal(t, 3, int(v1.GetSize()))
-	ass.Equal(t, uti.Ordinal(1), v1.GetValue(1))
-	ass.Equal(t, uti.Ordinal(3), v1.GetValue(-1))
+	ass.Equal(t, age.Ordinal(1), v1.GetValue(1))
+	ass.Equal(t, age.Ordinal(3), v1.GetValue(-1))
 	var v3 = VersionClass.VersionFromSequence(v1.GetValues(1, 2))
 	ass.Equal(t, "v1.2", v3.AsString())
 }
 
 func TestVersionsLibrary(t *tes.T) {
-	var v1 = VersionClass.Version([]uti.Ordinal{1})
-	var v2 = VersionClass.Version([]uti.Ordinal{2, 3})
+	var v1 = VersionClass.Version([]age.Ordinal{1})
+	var v2 = VersionClass.Version([]age.Ordinal{2, 3})
 	var v3 = VersionClass.Concatenate(v1, v2)
-	ass.Equal(t, []uti.Ordinal{1, 2, 3}, v3.GetIntrinsic())
+	ass.Equal(t, []age.Ordinal{1, 2, 3}, v3.GetIntrinsic())
 
 	ass.False(t, VersionClass.IsValidNextVersion(v1, v1))
 	ass.Equal(t, "v2", VersionClass.GetNextVersion(v1, 0).AsString())

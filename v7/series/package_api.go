@@ -31,8 +31,8 @@ on interfaces, not on each other.
 package series
 
 import (
+	age "github.com/craterdog/go-component-framework/v7/agent"
 	col "github.com/craterdog/go-component-framework/v7/collection"
-	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
 )
 
@@ -260,7 +260,7 @@ type TagClassLike interface {
 		bytes []byte,
 	) TagLike
 	TagWithSize(
-		size uti.Cardinal,
+		size age.Cardinal,
 	) TagLike
 	TagFromSequence(
 		sequence col.Sequential[byte],
@@ -284,10 +284,10 @@ version-like concrete class.
 type VersionClassLike interface {
 	// Constructor Methods
 	Version(
-		ordinals []uti.Ordinal,
+		ordinals []age.Ordinal,
 	) VersionLike
 	VersionFromSequence(
-		sequence col.Sequential[uti.Ordinal],
+		sequence col.Sequential[age.Ordinal],
 	) VersionLike
 	VersionFromString(
 		string_ string,
@@ -300,7 +300,7 @@ type VersionClassLike interface {
 	) bool
 	GetNextVersion(
 		current VersionLike,
-		level uti.Ordinal,
+		level age.Ordinal,
 	) VersionLike
 	Concatenate(
 		first VersionLike,
@@ -454,12 +454,12 @@ concrete version-like class.
 type VersionLike interface {
 	// Principal Methods
 	GetClass() VersionClassLike
-	GetIntrinsic() []uti.Ordinal
+	GetIntrinsic() []age.Ordinal
 	AsString() string
 
 	// Aspect Interfaces
-	col.Accessible[uti.Ordinal]
-	col.Sequential[uti.Ordinal]
+	col.Accessible[age.Ordinal]
+	col.Sequential[age.Ordinal]
 }
 
 // ASPECT DECLARATIONS

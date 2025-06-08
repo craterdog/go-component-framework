@@ -93,8 +93,8 @@ func (v symbol_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v symbol_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v.AsArray()))
+func (v symbol_) GetSize() age.Cardinal {
+	return age.Cardinal(len(v.AsArray()))
 }
 
 func (v symbol_) AsArray() []rune {

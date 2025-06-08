@@ -137,8 +137,8 @@ func (v pattern_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v pattern_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v.AsArray()))
+func (v pattern_) GetSize() age.Cardinal {
+	return age.Cardinal(len(v.AsArray()))
 }
 
 func (v pattern_) AsArray() []rune {

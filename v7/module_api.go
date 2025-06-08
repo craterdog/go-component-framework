@@ -33,7 +33,6 @@ import (
 	col "github.com/craterdog/go-component-framework/v7/collection"
 	ele "github.com/craterdog/go-component-framework/v7/element"
 	ser "github.com/craterdog/go-component-framework/v7/series"
-	uti "github.com/craterdog/go-missing-utilities/v7"
 	uri "net/url"
 )
 
@@ -646,7 +645,7 @@ func Tag(
 }
 
 func TagWithSize(
-	size uti.Cardinal,
+	size Cardinal,
 ) TagLike {
 	return TagClass().TagWithSize(
 		size,
@@ -674,7 +673,7 @@ func VersionClass() VersionClassLike {
 }
 
 func Version(
-	ordinals []uti.Ordinal,
+	ordinals []Ordinal,
 ) VersionLike {
 	return VersionClass().Version(
 		ordinals,
@@ -682,7 +681,7 @@ func Version(
 }
 
 func VersionFromSequence(
-	sequence col.Sequential[uti.Ordinal],
+	sequence col.Sequential[Ordinal],
 ) VersionLike {
 	return VersionClass().VersionFromSequence(
 		sequence,
@@ -778,7 +777,7 @@ func Queue[V any]() QueueLike[V] {
 }
 
 func QueueWithCapacity[V any](
-	capacity uti.Cardinal,
+	capacity Cardinal,
 ) QueueLike[V] {
 	return QueueClass[V]().QueueWithCapacity(
 		capacity,
@@ -842,7 +841,7 @@ func Stack[V any]() StackLike[V] {
 }
 
 func StackWithCapacity[V any](
-	capacity uti.Cardinal,
+	capacity Cardinal,
 ) StackLike[V] {
 	return StackClass[V]().StackWithCapacity(
 		capacity,

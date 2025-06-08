@@ -59,7 +59,8 @@ func (c *bytecodeClass_) BytecodeFromString(
 	var base16 = matches[1]                   // Strip off the "'" delimiters.
 	base16 = sts.ReplaceAll(base16, " ", "")  // Remove all spaces.
 	base16 = sts.ReplaceAll(base16, "\n", "") // Remove all newlines.
-	var bytes = uti.Base16Decode(base16)
+	var encoder = age.EncoderClass().Encoder()
+	var bytes = encoder.Base16Decode(base16)
 	var instructions = make(
 		[]Instruction,
 		len(bytes)/2,
@@ -130,8 +131,8 @@ func (v bytecode_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v bytecode_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v))
+func (v bytecode_) GetSize() age.Cardinal {
+	return age.Cardinal(len(v))
 }
 
 func (v bytecode_) AsArray() []Instruction {

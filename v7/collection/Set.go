@@ -256,7 +256,7 @@ func (v *set_[V]) IsEmpty() bool {
 	return v.values_.IsEmpty()
 }
 
-func (v *set_[V]) GetSize() uti.Cardinal {
+func (v *set_[V]) GetSize() age.Cardinal {
 	var size = v.values_.GetSize()
 	return size
 }

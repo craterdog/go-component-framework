@@ -112,8 +112,8 @@ func (v name_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v name_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v))
+func (v name_) GetSize() age.Cardinal {
+	return age.Cardinal(len(v))
 }
 
 func (v name_) AsArray() []Identifier {

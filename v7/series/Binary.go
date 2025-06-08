@@ -59,7 +59,8 @@ func (c *binaryClass_) BinaryFromString(
 	var base64 = matches[1]                   // Strip off the delimiters.
 	base64 = sts.ReplaceAll(base64, " ", "")  // Remove all spaces.
 	base64 = sts.ReplaceAll(base64, "\n", "") // Remove all newlines.
-	var bytes = uti.Base64Decode(base64)
+	var encoder = age.EncoderClass().Encoder()
+	var bytes = encoder.Base64Decode(base64)
 	return binary_(bytes)
 }
 
@@ -202,7 +203,8 @@ func (v binary_) GetIntrinsic() []byte {
 }
 
 func (v binary_) AsString() string {
-	var encoded = uti.Base64Encode(v)
+	var encoder = age.EncoderClass().Encoder()
+	var encoded = encoder.Base64Encode(v)
 	var length = len(encoded)
 	var string_ = "'>"
 	if length > 0 {
@@ -229,8 +231,8 @@ func (v binary_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v binary_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v))
+func (v binary_) GetSize() age.Cardinal {
+	return age.Cardinal(len(v))
 }
 
 func (v binary_) AsArray() []byte {

@@ -231,7 +231,7 @@ func (v *catalog_[K, V]) IsEmpty() bool {
 	return v.associations_.IsEmpty()
 }
 
-func (v *catalog_[K, V]) GetSize() uti.Cardinal {
+func (v *catalog_[K, V]) GetSize() age.Cardinal {
 	var size = v.associations_.GetSize()
 	return size
 }

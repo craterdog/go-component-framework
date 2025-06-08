@@ -33,15 +33,15 @@ func VersionClass() VersionClassLike {
 // Constructor Methods
 
 func (c *versionClass_) Version(
-	ordinals []uti.Ordinal,
+	ordinals []age.Ordinal,
 ) VersionLike {
 	return version_(ordinals)
 }
 
 func (c *versionClass_) VersionFromSequence(
-	sequence col.Sequential[uti.Ordinal],
+	sequence col.Sequential[age.Ordinal],
 ) VersionLike {
-	var class = col.ListClass[uti.Ordinal]()
+	var class = col.ListClass[age.Ordinal]()
 	var list = class.ListFromSequence(sequence)
 	return version_(list.AsArray())
 }
@@ -59,10 +59,10 @@ func (c *versionClass_) VersionFromString(
 	}
 	var match = matches[1] // Strip off the leading "v".
 	var levels = sts.Split(match, ".")
-	var ordinals = make([]uti.Ordinal, len(levels))
+	var ordinals = make([]age.Ordinal, len(levels))
 	for index, level := range levels {
 		var ordinal, _ = stc.ParseUint(level, 10, 64)
-		ordinals[index] = uti.Ordinal(ordinal)
+		ordinals[index] = age.Ordinal(ordinal)
 	}
 	return version_(ordinals)
 }
@@ -85,7 +85,7 @@ func (c *versionClass_) IsValidNextVersion(
 	}
 
 	// Iterate through the versions comparing level values.
-	var class = age.IteratorClass[uti.Ordinal]()
+	var class = age.IteratorClass[age.Ordinal]()
 	var currentIterator = class.Iterator(current.AsArray())
 	var nextIterator = class.Iterator(next.AsArray())
 	for currentIterator.HasNext() && nextIterator.HasNext() {
@@ -104,11 +104,11 @@ func (c *versionClass_) IsValidNextVersion(
 
 func (c *versionClass_) GetNextVersion(
 	current VersionLike,
-	level uti.Ordinal,
+	level age.Ordinal,
 ) VersionLike {
 	// Adjust the size of the ordinals as needed.
 	var ordinals = current.AsArray()
-	var size = uti.Ordinal(len(ordinals))
+	var size = age.Ordinal(len(ordinals))
 	switch {
 	case level == 0:
 		level = size // Normalize the level to the current size.
@@ -137,7 +137,7 @@ func (c *versionClass_) Concatenate(
 	var firstOrdinals = first.AsArray()
 	var secondOrdinals = second.AsArray()
 	var allOrdinals = make(
-		[]uti.Ordinal,
+		[]age.Ordinal,
 		len(firstOrdinals)+len(secondOrdinals),
 	)
 	copy(allOrdinals, firstOrdinals)
@@ -153,8 +153,8 @@ func (v version_) GetClass() VersionClassLike {
 	return versionClass()
 }
 
-func (v version_) GetIntrinsic() []uti.Ordinal {
-	return []uti.Ordinal(v)
+func (v version_) GetIntrinsic() []age.Ordinal {
+	return []age.Ordinal(v)
 }
 
 func (v version_) AsString() string {
@@ -168,33 +168,33 @@ func (v version_) AsString() string {
 
 // Attribute Methods
 
-// col.Sequential[uti.Ordinal] Methods
+// col.Sequential[age.Ordinal] Methods
 
 func (v version_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v version_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v))
+func (v version_) GetSize() age.Cardinal {
+	return age.Cardinal(len(v))
 }
 
-func (v version_) AsArray() []uti.Ordinal {
+func (v version_) AsArray() []age.Ordinal {
 	return uti.CopyArray(v)
 }
 
-func (v version_) GetIterator() age.IteratorLike[uti.Ordinal] {
+func (v version_) GetIterator() age.IteratorLike[age.Ordinal] {
 	var array = uti.CopyArray(v)
-	var class = age.IteratorClass[uti.Ordinal]()
+	var class = age.IteratorClass[age.Ordinal]()
 	var iterator = class.Iterator(array)
 	return iterator
 }
 
-// col.Accessible[uti.Ordinal] Methods
+// col.Accessible[age.Ordinal] Methods
 
 func (v version_) GetValue(
 	index col.Index,
-) uti.Ordinal {
-	var class = col.ListClass[uti.Ordinal]()
+) age.Ordinal {
+	var class = col.ListClass[age.Ordinal]()
 	var list = class.ListFromArray(v)
 	return list.GetValue(index)
 }
@@ -202,8 +202,8 @@ func (v version_) GetValue(
 func (v version_) GetValues(
 	first col.Index,
 	last col.Index,
-) col.Sequential[uti.Ordinal] {
-	var class = col.ListClass[uti.Ordinal]()
+) col.Sequential[age.Ordinal] {
+	var class = col.ListClass[age.Ordinal]()
 	var list = class.ListFromArray(v)
 	return list.GetValues(first, last)
 }
@@ -229,7 +229,7 @@ const (
 
 // Instance Structure
 
-type version_ []uti.Ordinal
+type version_ []age.Ordinal
 
 // Class Structure
 
