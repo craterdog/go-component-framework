@@ -47,19 +47,25 @@ func (v *generator_) GetClass() GeneratorClassLike {
 }
 
 func (v *generator_) RandomBoolean() bool {
+	// A random boolean is in the range [0..1].
 	var random, _ = ran.Int(ran.Reader, big.NewInt(int64(2)))
-	return int(random.Int64()) > 0
+	return random.Int64() > 0
 }
 
 func (v *generator_) RandomOrdinal(
 	maximum Ordinal,
 ) Ordinal {
+	// A random integer is in the range [0..maximum).
 	var random, _ = ran.Int(ran.Reader, big.NewInt(int64(maximum)))
-	return Ordinal(random.Int64() + 1)
+	// Convert [0..maximum) to [1..maximum].
+	return Ordinal(random.Uint64() + 1)
 }
 
 func (v *generator_) RandomProbability() float64 {
-	var maximum = Ordinal(1 << 53) // 53 bits for the sign and mantissa.
+	// Use 53 bits for the sign and mantissa only.
+	var maximum = Ordinal(1 << 53)
+	// A random probability is in the range (0.0..1.0] since something with
+	// zero probability will never occur so we use [1..maximum]/maximum.
 	return float64(v.RandomOrdinal(maximum)) / float64(maximum)
 }
 
@@ -67,7 +73,7 @@ func (v *generator_) RandomBytes(
 	size Cardinal,
 ) []byte {
 	var bytes = make([]byte, size)
-	_, _ = ran.Read(bytes) // This call can never fail.
+	_, _ = ran.Read(bytes) // This call should never fail.
 	return bytes
 }
 
