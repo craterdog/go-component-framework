@@ -235,10 +235,10 @@ The following class functions are supported:
 And() returns a new set containing the values that are both of the specified
 sets.
 
-Or() returns a new set containing the values that are in either of the specified
+Ior() returns a new set containing the values that are in either of the specified
 sets.
 
-Sans() returns a new set containing the values that are in the first specified
+San() returns a new set containing the values that are in the first specified
 set but not in the second specified set.
 
 Xor() returns a new set containing the values that are in the first specified
@@ -262,11 +262,11 @@ type SetClassLike[V any] interface {
 		first SetLike[V],
 		second SetLike[V],
 	) SetLike[V]
-	Or(
+	Ior(
 		first SetLike[V],
 		second SetLike[V],
 	) SetLike[V]
-	Sans(
+	San(
 		first SetLike[V],
 		second SetLike[V],
 	) SetLike[V]

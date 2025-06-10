@@ -94,7 +94,7 @@ func (c *setClass_[V]) And(
 	return result
 }
 
-func (c *setClass_[V]) Or(
+func (c *setClass_[V]) Ior(
 	first SetLike[V],
 	second SetLike[V],
 ) SetLike[V] {
@@ -105,7 +105,7 @@ func (c *setClass_[V]) Or(
 	return result
 }
 
-func (c *setClass_[V]) Sans(
+func (c *setClass_[V]) San(
 	first SetLike[V],
 	second SetLike[V],
 ) SetLike[V] {
@@ -120,7 +120,7 @@ func (c *setClass_[V]) Xor(
 	first SetLike[V],
 	second SetLike[V],
 ) SetLike[V] {
-	return c.Or(c.Sans(first, second), c.Sans(second, first))
+	return c.Ior(c.San(first, second), c.San(second, first))
 }
 
 // INSTANCE INTERFACE

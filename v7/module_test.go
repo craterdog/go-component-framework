@@ -51,8 +51,8 @@ func TestModuleFunctions(t *tes.T) {
 	com.SetFromArray[string](set.AsArray())
 	com.SetFromSequence[string](set)
 	com.SetClass[string]().And(set, set)
-	com.SetClass[string]().Or(set, set)
-	com.SetClass[string]().Sans(set, set)
+	com.SetClass[string]().Ior(set, set)
+	com.SetClass[string]().San(set, set)
 	com.SetClass[string]().Xor(set, set)
 	com.Stack[string]()
 	com.StackWithCapacity[string](8)
@@ -193,11 +193,11 @@ func TestSetExampleCode(t *tes.T) {
 
 	// Find the logical union of the two sets.
 	var Set = set1.GetClass()
-	fmt.Println("The union of the two sets is:", Set.Or(set1, set2))
+	fmt.Println("The union of the two sets is:", Set.Ior(set1, set2))
 	fmt.Println()
 
 	// Find the logical difference between the two sets.
-	fmt.Println("The first set minus the second set is:", Set.Sans(set1, set2))
+	fmt.Println("The first set minus the second set is:", Set.San(set1, set2))
 	fmt.Println()
 
 	// Find the logical intersection of the two sets.

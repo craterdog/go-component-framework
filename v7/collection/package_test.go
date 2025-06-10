@@ -656,7 +656,7 @@ func TestSetsWithAnd(t *tes.T) {
 	ass.True(t, collator.CompareValues(set3, set4))
 }
 
-func TestSetsWithSans(t *tes.T) {
+func TestSetsWithSan(t *tes.T) {
 	var collator = age.CollatorClass[col.SetLike[int]]().Collator()
 	var listClass = col.ListClass[int]()
 	var array1 = listClass.ListFromArray([]int{3, 1, 2})
@@ -667,13 +667,13 @@ func TestSetsWithSans(t *tes.T) {
 	set1.AddValues(array1)
 	var set2 = setClass.Set()
 	set2.AddValues(array2)
-	var set3 = setClass.Sans(set1, set2)
+	var set3 = setClass.San(set1, set2)
 	var set4 = setClass.Set()
 	set4.AddValues(array3)
 	ass.True(t, collator.CompareValues(set3, set4))
 }
 
-func TestSetsWithOr(t *tes.T) {
+func TestSetsWithIor(t *tes.T) {
 	var collator = age.CollatorClass[col.SetLike[int]]().Collator()
 	var listClass = col.ListClass[int]()
 	var array1 = listClass.ListFromArray([]int{3, 1, 5})
@@ -684,7 +684,7 @@ func TestSetsWithOr(t *tes.T) {
 	set1.AddValues(array1)
 	var set2 = setClass.Set()
 	set2.AddValues(array2)
-	var set3 = setClass.Or(set1, set2)
+	var set3 = setClass.Ior(set1, set2)
 	ass.True(t, set3.ContainsAll(set1))
 	ass.True(t, set3.ContainsAll(set2))
 	var set4 = setClass.Set()
@@ -715,8 +715,8 @@ func TestSetsWithEmptySets(t *tes.T) {
 	var set1 = setClass.Set()
 	var set2 = setClass.Set()
 	var set3 = setClass.And(set1, set2)
-	var set4 = setClass.Sans(set1, set2)
-	var set5 = setClass.Or(set1, set2)
+	var set4 = setClass.San(set1, set2)
+	var set5 = setClass.Ior(set1, set2)
 	var set6 = setClass.Xor(set1, set2)
 	ass.True(t, collator.CompareValues(set3, set4))
 	ass.True(t, collator.CompareValues(set4, set5))
