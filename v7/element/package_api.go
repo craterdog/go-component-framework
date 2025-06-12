@@ -437,9 +437,7 @@ type AngleLike interface {
 	AsUnits(
 		units Units,
 	) float64
-
-	// Attribute Methods
-	GetParts() (
+	AsParts() (
 		x float64,
 		y float64,
 	)

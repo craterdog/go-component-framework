@@ -280,9 +280,7 @@ func (v angle_) AsUnits(
 	return result_
 }
 
-// Attribute Methods
-
-func (v angle_) GetParts() (
+func (v angle_) AsParts() (
 	x float64,
 	y float64,
 ) {
