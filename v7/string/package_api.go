@@ -439,8 +439,6 @@ type TagLike interface {
 	GetClass() TagClassLike
 	AsIntrinsic() []byte
 	AsString() string
-
-	// Attribute Methods
 	GetHash() uint64
 
 	// Aspect Interfaces

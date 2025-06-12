@@ -63,8 +63,6 @@ func (v citation_) AsString() string {
 	return string(v)
 }
 
-// Attribute Methods
-
 func (v citation_) GetName() string {
 	var index = sts.LastIndex(string(v), "@")
 	return string(v[:index])
@@ -74,6 +72,8 @@ func (v citation_) GetVersion() string {
 	var index = sts.LastIndex(string(v), "@")
 	return string(v[index+1:])
 }
+
+// Attribute Methods
 
 // PROTECTED INTERFACE
 

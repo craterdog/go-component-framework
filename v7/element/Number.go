@@ -391,8 +391,6 @@ func (v number_) AsString() string {
 	return string_
 }
 
-// Attribute Methods
-
 func (v number_) GetReal() float64 {
 	return real(v)
 }
@@ -408,6 +406,8 @@ func (v number_) GetMagnitude() float64 {
 func (v number_) GetPhase() float64 {
 	return cmp.Phase(complex128(v))
 }
+
+// Attribute Methods
 
 // Continuous Methods
 

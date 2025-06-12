@@ -74,8 +74,6 @@ func (v resource_) AsUri() *uri.URL {
 	return url
 }
 
-// Attribute Methods
-
 func (v resource_) GetScheme() string {
 	var url = v.AsUri()
 	return url.Scheme
@@ -107,6 +105,8 @@ func (v resource_) GetFragment() string {
 	var url = v.AsUri()
 	return url.Fragment
 }
+
+// Attribute Methods
 
 // PROTECTED INTERFACE
 

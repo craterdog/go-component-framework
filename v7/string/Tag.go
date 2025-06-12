@@ -113,11 +113,11 @@ func (v tag_) AsString() string {
 	return "#" + encoder.Base32Encode(v)
 }
 
-// Attribute Methods
-
 func (v tag_) GetHash() uint64 {
 	return bin.BigEndian.Uint64(v)
 }
+
+// Attribute Methods
 
 // col.Sequential[byte] Methods
 

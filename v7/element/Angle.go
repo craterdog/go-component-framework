@@ -290,6 +290,8 @@ func (v angle_) AsParts() (
 	return
 }
 
+// Attribute Methods
+
 // Continuous Methods
 
 func (v angle_) AsFloat() float64 {

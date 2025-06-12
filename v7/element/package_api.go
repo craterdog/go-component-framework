@@ -471,8 +471,6 @@ type CitationLike interface {
 	GetClass() CitationClassLike
 	AsIntrinsic() string
 	AsString() string
-
-	// Attribute Methods
 	GetName() string
 	GetVersion() string
 }
@@ -537,8 +535,6 @@ type NumberLike interface {
 	GetClass() NumberClassLike
 	AsIntrinsic() complex128
 	AsString() string
-
-	// Attribute Methods
 	GetReal() float64
 	GetImaginary() float64
 	GetMagnitude() float64
@@ -593,8 +589,6 @@ type ResourceLike interface {
 	AsIntrinsic() string
 	AsString() string
 	AsUri() *uri.URL
-
-	// Attribute Methods
 	GetScheme() string
 	GetAuthority() string
 	GetPath() string
