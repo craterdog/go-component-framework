@@ -70,7 +70,7 @@ func (v percentage_) GetClass() PercentageClassLike {
 	return percentageClass()
 }
 
-func (v percentage_) GetIntrinsic() float64 {
+func (v percentage_) AsIntrinsic() float64 {
 	return float64(v)
 }
 

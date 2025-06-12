@@ -111,7 +111,7 @@ func (v duration_) GetClass() DurationClassLike {
 	return durationClass()
 }
 
-func (v duration_) GetIntrinsic() int {
+func (v duration_) AsIntrinsic() int {
 	return int(v)
 }
 

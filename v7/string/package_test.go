@@ -10,17 +10,17 @@
 ................................................................................
 */
 
-package series_test
+package string_test
 
 import (
 	age "github.com/craterdog/go-component-framework/v7/agent"
-	ser "github.com/craterdog/go-component-framework/v7/series"
+	str "github.com/craterdog/go-component-framework/v7/string"
 	ass "github.com/stretchr/testify/assert"
 	mat "math"
 	tes "testing"
 )
 
-var BinaryClass = ser.BinaryClass()
+var BinaryClass = str.BinaryClass()
 
 func TestEmptyBinary(t *tes.T) {
 	var binary = `'> <'`
@@ -77,7 +77,7 @@ func TestBinaryLibrary(t *tes.T) {
 	ass.Equal(t, sans2, BinaryClass.San(v2, v1))
 }
 
-var BytecodeClass = ser.BytecodeClass()
+var BytecodeClass = str.BytecodeClass()
 
 func TestBytecode(t *tes.T) {
 	var bytecode = `'abcd'`
@@ -95,15 +95,15 @@ func TestBytecode(t *tes.T) {
 	ass.Equal(t, v.AsArray(), BytecodeClass.Bytecode(v.AsArray()).AsArray())
 }
 
-var NameClass = ser.NameClass()
+var NameClass = str.NameClass()
 
 func TestName(t *tes.T) {
 	var v1 = NameClass.NameFromString("/bali/types/abstractions/String")
 	ass.Equal(t, "/bali/types/abstractions/String", v1.AsString())
 	ass.False(t, v1.IsEmpty())
 	ass.Equal(t, 4, int(v1.GetSize()))
-	ass.Equal(t, ser.Identifier("bali"), v1.GetValue(1))
-	ass.Equal(t, ser.Identifier("String"), v1.GetValue(-1))
+	ass.Equal(t, str.Identifier("bali"), v1.GetValue(1))
+	ass.Equal(t, str.Identifier("String"), v1.GetValue(-1))
 	var v2 = NameClass.Name(v1.AsArray())
 	ass.Equal(t, v1.AsString(), v2.AsString())
 	var v3 = NameClass.NameFromSequence(v1.GetValues(1, 2))
@@ -116,7 +116,7 @@ func TestNamesLibrary(t *tes.T) {
 	ass.Equal(t, "/bali/types/abstractions/String", NameClass.Concatenate(v1, v2).AsString())
 }
 
-var NarrativeClass = ser.NarrativeClass()
+var NarrativeClass = str.NarrativeClass()
 
 const n0 = `"><"`
 
@@ -165,7 +165,7 @@ func TestNarrativesLibrary(t *tes.T) {
 	ass.Equal(t, n3, v3.AsString())
 }
 
-var PatternClass = ser.PatternClass()
+var PatternClass = str.PatternClass()
 
 func TestNonePattern(t *tes.T) {
 	var v = PatternClass.PatternFromString(`none`)
@@ -222,11 +222,11 @@ func TestSomePattern(t *tes.T) {
 	ass.Equal(t, []string{text, text[1:]}, v.GetMatches(text))
 }
 
-var QuoteClass = ser.QuoteClass()
+var QuoteClass = str.QuoteClass()
 
 func TestEmptyQuote(t *tes.T) {
 	var v = QuoteClass.Quote("")
-	ass.Equal(t, "", v.GetIntrinsic())
+	ass.Equal(t, "", v.AsIntrinsic())
 	ass.True(t, v.IsEmpty())
 	ass.Equal(t, 0, int(v.GetSize()))
 }
@@ -247,7 +247,7 @@ func TestQuotesLibrary(t *tes.T) {
 	ass.Equal(t, `"abcd本1234"`, QuoteClass.Concatenate(v1, v2).AsString())
 }
 
-var SymbolClass = ser.SymbolClass()
+var SymbolClass = str.SymbolClass()
 
 func TestSymbol(t *tes.T) {
 	var foobar = "$foobar"
@@ -258,7 +258,7 @@ func TestSymbol(t *tes.T) {
 	ass.Equal(t, []rune("foobar"), v.AsArray())
 }
 
-var TagClass = ser.TagClass()
+var TagClass = str.TagClass()
 
 func TestStringTags(t *tes.T) {
 	var size age.Cardinal
@@ -274,7 +274,7 @@ func TestStringTags(t *tes.T) {
 	}
 }
 
-var VersionClass = ser.VersionClass()
+var VersionClass = str.VersionClass()
 
 func TestVersion(t *tes.T) {
 	var v1 = VersionClass.VersionFromString("v1.2.3")
@@ -291,7 +291,7 @@ func TestVersionsLibrary(t *tes.T) {
 	var v1 = VersionClass.Version([]age.Ordinal{1})
 	var v2 = VersionClass.Version([]age.Ordinal{2, 3})
 	var v3 = VersionClass.Concatenate(v1, v2)
-	ass.Equal(t, []age.Ordinal{1, 2, 3}, v3.GetIntrinsic())
+	ass.Equal(t, []age.Ordinal{1, 2, 3}, v3.AsIntrinsic())
 
 	ass.False(t, VersionClass.IsValidNextVersion(v1, v1))
 	ass.Equal(t, "v2", VersionClass.GetNextVersion(v1, 0).AsString())

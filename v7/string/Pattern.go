@@ -10,7 +10,7 @@
 ................................................................................
 */
 
-package series
+package string
 
 import (
 	fmt "fmt"
@@ -24,84 +24,128 @@ import (
 
 // Access Function
 
-func QuoteClass() QuoteClassLike {
-	return quoteClass()
+func PatternClass() PatternClassLike {
+	return patternClass()
 }
 
 // Constructor Methods
 
-func (c *quoteClass_) Quote(
+func (c *patternClass_) Pattern(
 	string_ string,
-) QuoteLike {
-	return quote_(string_)
+) PatternLike {
+	reg.MustCompile(string_)
+	return pattern_(string_)
 }
 
-func (c *quoteClass_) QuoteFromSequence(
+func (c *patternClass_) PatternFromSequence(
 	sequence col.Sequential[rune],
-) QuoteLike {
+) PatternLike {
 	var class = col.ListClass[rune]()
 	var list = class.ListFromSequence(sequence)
-	return quote_(list.AsArray())
+	return pattern_(list.AsArray())
 }
 
-func (c *quoteClass_) QuoteFromString(
+func (c *patternClass_) PatternFromString(
 	string_ string,
-) QuoteLike {
+) PatternLike {
 	var matches = c.matcher_.FindStringSubmatch(string_)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
-			"An illegal string was passed to the quote constructor method: %s",
+			"An illegal string was passed to the pattern constructor method: %s",
 			string_,
 		)
 		panic(message)
 	}
-	return quote_(matches[1]) // Strip off the double quotes.
+	switch matches[0] {
+	case "none":
+		return c.none_
+	case "any":
+		return c.any_
+	default:
+		reg.MustCompile(matches[1]) // Make sure it is a valid regular expression.
+		return pattern_(matches[1]) // Strip off the double quotes and '?'.
+	}
 }
 
 // Constant Methods
 
+func (c *patternClass_) None() PatternLike {
+	return c.none_
+}
+
+func (c *patternClass_) Any() PatternLike {
+	return c.any_
+}
+
 // Function Methods
 
-func (c *quoteClass_) Concatenate(
-	first QuoteLike,
-	second QuoteLike,
-) QuoteLike {
-	return c.Quote(first.GetIntrinsic() + second.GetIntrinsic())
+func (c *patternClass_) Concatenate(
+	first PatternLike,
+	second PatternLike,
+) PatternLike {
+	return c.Pattern(first.AsIntrinsic() + second.AsIntrinsic())
 }
 
 // INSTANCE INTERFACE
 
 // Principal Methods
 
-func (v quote_) GetClass() QuoteClassLike {
-	return quoteClass()
+func (v pattern_) GetClass() PatternClassLike {
+	return patternClass()
 }
 
-func (v quote_) GetIntrinsic() string {
+func (v pattern_) AsIntrinsic() string {
 	return string(v)
 }
 
-func (v quote_) AsString() string {
-	return `"` + v.GetIntrinsic() + `"`
+func (v pattern_) AsString() string {
+	var string_ string
+	switch v {
+	case `^none$`:
+		string_ = `none`
+	case `.*`:
+		string_ = `any`
+	default:
+		string_ = `"` + v.AsIntrinsic() + `"?`
+	}
+	return string_
+}
+
+func (v pattern_) AsRegexp() *reg.Regexp {
+	return reg.MustCompile(v.AsIntrinsic())
+}
+
+func (v pattern_) MatchesText(
+	text string,
+) bool {
+	var matcher = reg.MustCompile(v.AsIntrinsic())
+	return matcher.MatchString(text)
+}
+
+func (v pattern_) GetMatches(
+	text string,
+) []string {
+	var matcher = reg.MustCompile(v.AsIntrinsic())
+	return matcher.FindStringSubmatch(text)
 }
 
 // Attribute Methods
 
 // col.Sequential[rune] Methods
 
-func (v quote_) IsEmpty() bool {
+func (v pattern_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v quote_) GetSize() age.Cardinal {
+func (v pattern_) GetSize() age.Cardinal {
 	return age.Cardinal(len(v.AsArray()))
 }
 
-func (v quote_) AsArray() []rune {
+func (v pattern_) AsArray() []rune {
 	return []rune(v)
 }
 
-func (v quote_) GetIterator() age.IteratorLike[rune] {
+func (v pattern_) GetIterator() age.IteratorLike[rune] {
 	var class = age.IteratorClass[rune]()
 	var iterator = class.Iterator(v.AsArray())
 	return iterator
@@ -109,7 +153,7 @@ func (v quote_) GetIterator() age.IteratorLike[rune] {
 
 // col.Accessible[rune] Methods
 
-func (v quote_) GetValue(
+func (v pattern_) GetValue(
 	index col.Index,
 ) rune {
 	var class = col.ListClass[rune]()
@@ -117,7 +161,7 @@ func (v quote_) GetValue(
 	return list.GetValue(index)
 }
 
-func (v quote_) GetValues(
+func (v pattern_) GetValues(
 	first col.Index,
 	last col.Index,
 ) col.Sequential[rune] {
@@ -128,7 +172,7 @@ func (v quote_) GetValues(
 
 // PROTECTED INTERFACE
 
-func (v quote_) String() string {
+func (v pattern_) String() string {
 	return v.AsString()
 }
 
@@ -136,36 +180,37 @@ func (v quote_) String() string {
 
 // NOTE:
 // These private constants are used to define the private regular expression
-// matcher that is used to match legal string quotes for this intrinsic type.
+// matcher that is used to match legal string patterns for this intrinsic type.
 // Unfortunately there is no way to make them private to this class since they
 // must be TRUE Go constants to be used in this way.  We append an underscore to
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	character_ = escape_ + "|\\\\\"|[^\"" + control_ + "]"
-	control_   = "\\p{Cc}"
-	escape_    = "\\\\(?:" + unicode_ + "|[abfnrtv\\\\])"
-	unicode_   = "u(?:" + base16_ + "){4}|U(?:" + base16_ + "){8}"
+	regex_ = "\"((?:" + character_ + ")+)\"\\\\?"
 )
 
 // Instance Structure
 
-type quote_ string
+type pattern_ string
 
 // Class Structure
 
-type quoteClass_ struct {
+type patternClass_ struct {
 	// Declare the class constants.
 	matcher_ *reg.Regexp
+	none_    PatternLike
+	any_     PatternLike
 }
 
 // Class Reference
 
-func quoteClass() *quoteClass_ {
-	return quoteClassReference_
+func patternClass() *patternClass_ {
+	return patternClassReference_
 }
 
-var quoteClassReference_ = &quoteClass_{
+var patternClassReference_ = &patternClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^\"((?:" + character_ + ")*)\""),
+	matcher_: reg.MustCompile("^" + regex_ + "|any|none"),
+	none_:    pattern_(`^none$`),
+	any_:     pattern_(`.*`),
 }

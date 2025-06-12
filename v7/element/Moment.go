@@ -102,7 +102,7 @@ func (v moment_) GetClass() MomentClassLike {
 	return momentClass()
 }
 
-func (v moment_) GetIntrinsic() int {
+func (v moment_) AsIntrinsic() int {
 	return int(v)
 }
 

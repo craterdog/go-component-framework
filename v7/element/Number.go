@@ -178,7 +178,7 @@ func (c *numberClass_) Inverse(
 	number NumberLike,
 ) NumberLike {
 	if number.HasMagnitude() {
-		number = c.normalize(-number.GetIntrinsic())
+		number = c.normalize(-number.AsIntrinsic())
 	}
 	return number
 }
@@ -193,7 +193,7 @@ func (c *numberClass_) Sum(
 	case first.IsInfinite() || second.IsInfinite():
 		return c.infinity_
 	default:
-		return c.normalize(first.GetIntrinsic() + second.GetIntrinsic())
+		return c.normalize(first.AsIntrinsic() + second.AsIntrinsic())
 	}
 }
 
@@ -209,7 +209,7 @@ func (c *numberClass_) Difference(
 	case first.IsInfinite() || second.IsInfinite():
 		return c.infinity_
 	default:
-		return c.normalize(first.GetIntrinsic() - second.GetIntrinsic())
+		return c.normalize(first.AsIntrinsic() - second.AsIntrinsic())
 	}
 }
 
@@ -224,13 +224,13 @@ func (c *numberClass_) Scaled(
 func (c *numberClass_) Reciprocal(
 	number NumberLike,
 ) NumberLike {
-	return c.normalize(1.0 / number.GetIntrinsic())
+	return c.normalize(1.0 / number.AsIntrinsic())
 }
 
 func (c *numberClass_) Conjugate(
 	number NumberLike,
 ) NumberLike {
-	return c.normalize(cmp.Conj(number.GetIntrinsic()))
+	return c.normalize(cmp.Conj(number.AsIntrinsic()))
 }
 
 func (c *numberClass_) Product(
@@ -249,7 +249,7 @@ func (c *numberClass_) Product(
 		// Anything other than zero times infinity is infinite.
 		number = c.infinity_
 	default:
-		number = c.normalize(first.GetIntrinsic() * second.GetIntrinsic())
+		number = c.normalize(first.AsIntrinsic() * second.AsIntrinsic())
 	}
 	return number
 }
@@ -282,7 +282,7 @@ func (c *numberClass_) Quotient(
 		// Anything other than zero divided by zero is infinite.
 		number = c.zero_
 	default:
-		number = c.normalize(first.GetIntrinsic() / second.GetIntrinsic())
+		number = c.normalize(first.AsIntrinsic() / second.AsIntrinsic())
 	}
 	return number
 }
@@ -291,10 +291,10 @@ func (c *numberClass_) Remainder(
 	first NumberLike,
 	second NumberLike,
 ) NumberLike {
-	var m1 = cmp.Abs(first.GetIntrinsic())
-	var p1 = cmp.Phase(first.GetIntrinsic())
-	var m2 = cmp.Abs(second.GetIntrinsic())
-	var p2 = cmp.Phase(second.GetIntrinsic())
+	var m1 = cmp.Abs(first.AsIntrinsic())
+	var p1 = cmp.Phase(first.AsIntrinsic())
+	var m2 = cmp.Abs(second.AsIntrinsic())
+	var p2 = cmp.Phase(second.AsIntrinsic())
 	var magnitude = c.lockMagnitude(mat.Remainder(m1, m2))
 	var phase = c.lockPhase(p2 - p1)
 	var number = c.NumberFromPolar(magnitude, phase)
@@ -335,7 +335,7 @@ func (c *numberClass_) Power(
 			panic(fmt.Sprintf("An impossible magnitude was encountered: %v", magnitude))
 		}
 	default:
-		number = c.normalize(cmp.Pow(base.GetIntrinsic(), exponent.GetIntrinsic()))
+		number = c.normalize(cmp.Pow(base.AsIntrinsic(), exponent.AsIntrinsic()))
 	}
 	return number
 }
@@ -345,8 +345,8 @@ func (c *numberClass_) Logarithm(
 	number NumberLike,
 ) NumberLike {
 	// logB(z) => ln(z) / ln(b)
-	var lnB = cmp.Log(base.GetIntrinsic())
-	var lnZ = cmp.Log(number.GetIntrinsic())
+	var lnB = cmp.Log(base.AsIntrinsic())
+	var lnZ = cmp.Log(number.AsIntrinsic())
 	var logB = lnZ / lnB
 	return c.normalize(logB)
 }
@@ -359,13 +359,39 @@ func (v number_) GetClass() NumberClassLike {
 	return numberClass()
 }
 
-func (v number_) GetIntrinsic() complex128 {
+func (v number_) AsIntrinsic() complex128 {
 	return complex128(v)
 }
 
-// Attribute Methods
+func (v number_) AsString() string {
+	var string_ string
+	switch {
+	case v.IsZero():
+		string_ = "0"
+	case v.IsInfinite():
+		string_ = "∞"
+	case v.IsUndefined():
+		string_ = "undefined"
+	default:
+		var realPart = v.GetReal()
+		var imagPart = v.GetImaginary()
+		switch {
+		case imagPart == 0:
+			string_ = numberClass().stringFromFloat(realPart)
+		case realPart == 0:
+			string_ = numberClass().stringFromFloat(imagPart) + "i"
+		default:
+			string_ += numberClass().stringFromFloat(realPart)
+			if imagPart > 0 {
+				string_ += "+"
+			}
+			string_ += numberClass().stringFromFloat(imagPart) + "i"
+		}
+	}
+	return string_
+}
 
-// Complex Methods
+// Attribute Methods
 
 func (v number_) GetReal() float64 {
 	return real(v)
@@ -403,36 +429,6 @@ func (v number_) IsUndefined() bool {
 
 func (v number_) HasMagnitude() bool {
 	return !v.IsZero() && !v.IsInfinite() && !v.IsUndefined()
-}
-
-// Lexical Methods
-
-func (v number_) AsString() string {
-	var string_ string
-	switch {
-	case v.IsZero():
-		string_ = "0"
-	case v.IsInfinite():
-		string_ = "∞"
-	case v.IsUndefined():
-		string_ = "undefined"
-	default:
-		var realPart = v.GetReal()
-		var imagPart = v.GetImaginary()
-		switch {
-		case imagPart == 0:
-			string_ = numberClass().stringFromFloat(realPart)
-		case realPart == 0:
-			string_ = numberClass().stringFromFloat(imagPart) + "i"
-		default:
-			string_ += numberClass().stringFromFloat(realPart)
-			if imagPart > 0 {
-				string_ += "+"
-			}
-			string_ += numberClass().stringFromFloat(imagPart) + "i"
-		}
-	}
-	return string_
 }
 
 // Polarized Methods

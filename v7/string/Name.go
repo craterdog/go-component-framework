@@ -10,7 +10,7 @@
 ................................................................................
 */
 
-package series
+package string
 
 import (
 	fmt "fmt"
@@ -92,7 +92,7 @@ func (v name_) GetClass() NameClassLike {
 	return nameClass()
 }
 
-func (v name_) GetIntrinsic() []Identifier {
+func (v name_) AsIntrinsic() []Identifier {
 	return []Identifier(v)
 }
 

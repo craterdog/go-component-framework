@@ -10,7 +10,7 @@
 ................................................................................
 */
 
-package series
+package string
 
 import (
 	fmt "fmt"
@@ -153,7 +153,7 @@ func (v version_) GetClass() VersionClassLike {
 	return versionClass()
 }
 
-func (v version_) GetIntrinsic() []age.Ordinal {
+func (v version_) AsIntrinsic() []age.Ordinal {
 	return []age.Ordinal(v)
 }
 

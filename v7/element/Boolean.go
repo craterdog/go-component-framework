@@ -118,7 +118,7 @@ func (v boolean_) GetClass() BooleanClassLike {
 	return booleanClass()
 }
 
-func (v boolean_) GetIntrinsic() bool {
+func (v boolean_) AsIntrinsic() bool {
 	return bool(v)
 }
 

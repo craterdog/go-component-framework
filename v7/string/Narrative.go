@@ -10,7 +10,7 @@
 ................................................................................
 */
 
-package series
+package string
 
 import (
 	fmt "fmt"
@@ -98,7 +98,7 @@ func (v narrative_) GetClass() NarrativeClassLike {
 	return narrativeClass()
 }
 
-func (v narrative_) GetIntrinsic() []Line {
+func (v narrative_) AsIntrinsic() []Line {
 	return []Line(v)
 }
 

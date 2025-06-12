@@ -24,7 +24,7 @@ var AngleClass = ele.AngleClass()
 
 func TestZeroAngles(t *tes.T) {
 	var v = AngleClass.Angle(0)
-	ass.Equal(t, 0.0, v.GetIntrinsic())
+	ass.Equal(t, 0.0, v.AsIntrinsic())
 	ass.Equal(t, 0.0, v.AsFloat())
 
 	v = AngleClass.AngleFromString("~0")
@@ -107,8 +107,8 @@ func TestAnglesLibrary(t *tes.T) {
 var BooleanClass = ele.BooleanClass()
 
 func TestFalseBooleans(t *tes.T) {
-	ass.False(t, BooleanClass.Minimum().GetIntrinsic())
-	ass.False(t, BooleanClass.False().GetIntrinsic())
+	ass.False(t, BooleanClass.Minimum().AsIntrinsic())
+	ass.False(t, BooleanClass.False().AsIntrinsic())
 	var v = BooleanClass.Boolean(false)
 	ass.False(t, v.AsBoolean())
 	v = BooleanClass.BooleanFromString("false")
@@ -116,8 +116,8 @@ func TestFalseBooleans(t *tes.T) {
 }
 
 func TestTrueBooleans(t *tes.T) {
-	ass.True(t, BooleanClass.Maximum().GetIntrinsic())
-	ass.True(t, BooleanClass.True().GetIntrinsic())
+	ass.True(t, BooleanClass.Maximum().AsIntrinsic())
+	ass.True(t, BooleanClass.True().AsIntrinsic())
 	var v = BooleanClass.Boolean(true)
 	ass.True(t, v.AsBoolean())
 	v = BooleanClass.BooleanFromString("true")
@@ -173,7 +173,7 @@ var CitationClass = ele.CitationClass()
 
 func TestCitation(t *tes.T) {
 	var v1 = CitationClass.Citation("/bali/types/abstractions/String@v1.2.3")
-	ass.Equal(t, "/bali/types/abstractions/String@v1.2.3", v1.GetIntrinsic())
+	ass.Equal(t, "/bali/types/abstractions/String@v1.2.3", v1.AsIntrinsic())
 	ass.Equal(t, "/bali/types/abstractions/String@v1.2.3", v1.AsString())
 	ass.Equal(t, "/bali/types/abstractions/String", v1.GetName())
 	ass.Equal(t, "v1.2.3", v1.GetVersion())
@@ -185,7 +185,7 @@ func TestZeroDurations(t *tes.T) {
 	var v = DurationClass.Duration(0)
 	ass.Equal(t, 0, v.AsInteger())
 	ass.False(t, v.IsNegative())
-	ass.Equal(t, 0, v.GetIntrinsic())
+	ass.Equal(t, 0, v.AsIntrinsic())
 	ass.Equal(t, 0.0, v.AsMilliseconds())
 	ass.Equal(t, 0.0, v.AsSeconds())
 	ass.Equal(t, 0.0, v.AsMinutes())
@@ -216,7 +216,7 @@ func TestPositiveDurations(t *tes.T) {
 	ass.Equal(t, "~PT1M", v.AsString())
 	ass.Equal(t, 60000, v.AsInteger())
 	ass.False(t, v.IsNegative())
-	ass.Equal(t, 60000, v.GetIntrinsic())
+	ass.Equal(t, 60000, v.AsIntrinsic())
 	ass.Equal(t, 60000.0, v.AsMilliseconds())
 	ass.Equal(t, 60.0, v.AsSeconds())
 	ass.Equal(t, 1.0, v.AsMinutes())
@@ -292,7 +292,7 @@ var MomentClass = ele.MomentClass()
 
 func TestIntegerMoments(t *tes.T) {
 	var v = MomentClass.Moment(1238589296789)
-	ass.Equal(t, 1238589296789, v.GetIntrinsic())
+	ass.Equal(t, 1238589296789, v.AsIntrinsic())
 	ass.Equal(t, 1238589296789, v.AsInteger())
 	ass.Equal(t, 1238589296789.0, v.AsMilliseconds())
 	ass.Equal(t, 1238589296.789, v.AsSeconds())
@@ -331,7 +331,7 @@ var NumberClass = ele.NumberClass()
 
 func TestZero(t *tes.T) {
 	var v = NumberClass.Number(0 + 0i)
-	ass.Equal(t, 0+0i, v.GetIntrinsic())
+	ass.Equal(t, 0+0i, v.AsIntrinsic())
 	ass.True(t, v.IsZero())
 	ass.False(t, v.IsInfinite())
 	ass.False(t, v.IsUndefined())
@@ -343,7 +343,7 @@ func TestZero(t *tes.T) {
 
 func TestInfinity(t *tes.T) {
 	var v = NumberClass.Number(cmp.Inf())
-	ass.Equal(t, cmp.Inf(), v.GetIntrinsic())
+	ass.Equal(t, cmp.Inf(), v.AsIntrinsic())
 	ass.False(t, v.IsZero())
 	ass.True(t, v.IsInfinite())
 	ass.False(t, v.IsUndefined())
@@ -355,7 +355,7 @@ func TestInfinity(t *tes.T) {
 
 func TestUndefined(t *tes.T) {
 	var v = NumberClass.Number(cmp.NaN())
-	ass.True(t, cmp.IsNaN(v.GetIntrinsic()))
+	ass.True(t, cmp.IsNaN(v.AsIntrinsic()))
 	ass.False(t, v.IsZero())
 	ass.False(t, v.IsInfinite())
 	ass.True(t, v.IsUndefined())
@@ -367,7 +367,7 @@ func TestUndefined(t *tes.T) {
 
 func TestPositivePureReals(t *tes.T) {
 	var v = NumberClass.Number(0.25)
-	ass.Equal(t, 0.25+0i, v.GetIntrinsic())
+	ass.Equal(t, 0.25+0i, v.AsIntrinsic())
 	ass.False(t, v.IsNegative())
 	ass.Equal(t, 0.25, v.AsFloat())
 	ass.Equal(t, 0.25, v.GetReal())
@@ -376,7 +376,7 @@ func TestPositivePureReals(t *tes.T) {
 
 func TestPositivePureImaginaries(t *tes.T) {
 	var v = NumberClass.Number(0.25i)
-	ass.Equal(t, 0+0.25i, v.GetIntrinsic())
+	ass.Equal(t, 0+0.25i, v.AsIntrinsic())
 	ass.False(t, v.IsNegative())
 	ass.Equal(t, 0.0, v.AsFloat())
 	ass.Equal(t, 0.0, v.GetReal())
@@ -385,7 +385,7 @@ func TestPositivePureImaginaries(t *tes.T) {
 
 func TestNegativePureReals(t *tes.T) {
 	var v = NumberClass.Number(-0.75)
-	ass.Equal(t, -0.75+0i, v.GetIntrinsic())
+	ass.Equal(t, -0.75+0i, v.AsIntrinsic())
 	ass.True(t, v.IsNegative())
 	ass.Equal(t, -0.75, v.AsFloat())
 	ass.Equal(t, -0.75, v.GetReal())
@@ -394,7 +394,7 @@ func TestNegativePureReals(t *tes.T) {
 
 func TestNegativePureImaginaries(t *tes.T) {
 	var v = NumberClass.Number(-0.75i)
-	ass.Equal(t, 0-0.75i, v.GetIntrinsic())
+	ass.Equal(t, 0-0.75i, v.AsIntrinsic())
 	ass.False(t, v.IsNegative())
 	ass.Equal(t, 0.0, v.AsFloat())
 	ass.Equal(t, 0.0, v.GetReal())
@@ -403,7 +403,7 @@ func TestNegativePureImaginaries(t *tes.T) {
 
 func TestNumberFromPolar(t *tes.T) {
 	var v = NumberClass.NumberFromPolar(1.0, mat.Pi)
-	ass.Equal(t, -1.0+0i, v.GetIntrinsic())
+	ass.Equal(t, -1.0+0i, v.AsIntrinsic())
 	ass.True(t, v.IsNegative())
 	ass.Equal(t, -1.0, v.AsFloat())
 	ass.Equal(t, -1.0, v.GetReal())
@@ -414,7 +414,7 @@ func TestNumberFromPolar(t *tes.T) {
 
 func TestNumberFromString(t *tes.T) {
 	var v = NumberClass.NumberFromString("1e^~πi")
-	ass.Equal(t, -1.0+0i, v.GetIntrinsic())
+	ass.Equal(t, -1.0+0i, v.AsIntrinsic())
 	ass.True(t, v.IsNegative())
 	ass.Equal(t, "-1", v.AsString())
 	ass.Equal(t, -1.0, v.AsFloat())
@@ -717,21 +717,21 @@ func TestZeroPercentages(t *tes.T) {
 
 func TestPositivePercentages(t *tes.T) {
 	var v = PercentageClass.Percentage(25)
-	ass.Equal(t, 0.25, v.GetIntrinsic())
+	ass.Equal(t, 0.25, v.AsIntrinsic())
 	ass.Equal(t, 25, v.AsInteger())
 	ass.Equal(t, 25.0, v.AsFloat())
 }
 
 func TestNegativePercentages(t *tes.T) {
 	var v = PercentageClass.Percentage(-75)
-	ass.Equal(t, -0.75, v.GetIntrinsic())
+	ass.Equal(t, -0.75, v.AsIntrinsic())
 	ass.Equal(t, -75, v.AsInteger())
 	ass.Equal(t, -75.0, v.AsFloat())
 }
 
 func TestStringPercentages(t *tes.T) {
 	var v = PercentageClass.PercentageFromString("-100.0%")
-	ass.Equal(t, -1.0, v.GetIntrinsic())
+	ass.Equal(t, -1.0, v.AsIntrinsic())
 	ass.Equal(t, -100, v.AsInteger())
 	ass.Equal(t, -100.0, v.AsFloat())
 	ass.Equal(t, "-100%", v.AsString())
@@ -763,17 +763,17 @@ func TestRandomProbabilities(t *tes.T) {
 
 func TestStringProbabilities(t *tes.T) {
 	var v = ProbabilityClass.ProbabilityFromString("p0")
-	ass.Equal(t, 0.0, v.GetIntrinsic())
+	ass.Equal(t, 0.0, v.AsIntrinsic())
 	ass.Equal(t, 0.0, v.AsFloat())
 	ass.Equal(t, "p0", v.AsString())
 
 	v = ProbabilityClass.ProbabilityFromString("p0.5")
-	ass.Equal(t, 0.5, v.GetIntrinsic())
+	ass.Equal(t, 0.5, v.AsIntrinsic())
 	ass.Equal(t, 0.5, v.AsFloat())
 	ass.Equal(t, "p0.5", v.AsString())
 
 	v = ProbabilityClass.ProbabilityFromString("p1")
-	ass.Equal(t, 1.0, v.GetIntrinsic())
+	ass.Equal(t, 1.0, v.AsIntrinsic())
 	ass.Equal(t, 1.0, v.AsFloat())
 	ass.Equal(t, "p1", v.AsString())
 }

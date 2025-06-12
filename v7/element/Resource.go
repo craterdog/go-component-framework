@@ -61,8 +61,12 @@ func (v resource_) GetClass() ResourceClassLike {
 	return resourceClass()
 }
 
-func (v resource_) GetIntrinsic() string {
+func (v resource_) AsIntrinsic() string {
 	return string(v)
+}
+
+func (v resource_) AsString() string {
+	return "<" + string(v) + ">"
 }
 
 func (v resource_) AsUri() *uri.URL {
@@ -71,14 +75,6 @@ func (v resource_) AsUri() *uri.URL {
 }
 
 // Attribute Methods
-
-// Lexical Methods
-
-func (v resource_) AsString() string {
-	return "<" + string(v) + ">"
-}
-
-// Segmented Methods
 
 func (v resource_) GetScheme() string {
 	var url = v.AsUri()

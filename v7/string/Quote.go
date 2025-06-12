@@ -10,7 +10,7 @@
 ................................................................................
 */
 
-package series
+package string
 
 import (
 	fmt "fmt"
@@ -24,84 +24,84 @@ import (
 
 // Access Function
 
-func SymbolClass() SymbolClassLike {
-	return symbolClass()
+func QuoteClass() QuoteClassLike {
+	return quoteClass()
 }
 
 // Constructor Methods
 
-func (c *symbolClass_) Symbol(
+func (c *quoteClass_) Quote(
 	string_ string,
-) SymbolLike {
-	return symbol_(string_)
+) QuoteLike {
+	return quote_(string_)
 }
 
-func (c *symbolClass_) SymbolFromSequence(
+func (c *quoteClass_) QuoteFromSequence(
 	sequence col.Sequential[rune],
-) SymbolLike {
+) QuoteLike {
 	var class = col.ListClass[rune]()
 	var list = class.ListFromSequence(sequence)
-	return symbol_(list.AsArray())
+	return quote_(list.AsArray())
 }
 
-func (c *symbolClass_) SymbolFromString(
+func (c *quoteClass_) QuoteFromString(
 	string_ string,
-) SymbolLike {
+) QuoteLike {
 	var matches = c.matcher_.FindStringSubmatch(string_)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
-			"An illegal string was passed to the symbol constructor method: %s",
+			"An illegal string was passed to the quote constructor method: %s",
 			string_,
 		)
 		panic(message)
 	}
-	return symbol_(matches[1]) // Strip off the leading "$".
+	return quote_(matches[1]) // Strip off the double quotes.
 }
 
 // Constant Methods
 
 // Function Methods
 
-func (c *symbolClass_) Concatenate(
-	first SymbolLike,
-	second SymbolLike,
-) SymbolLike {
-	return c.Symbol(first.GetIntrinsic() + second.GetIntrinsic())
+func (c *quoteClass_) Concatenate(
+	first QuoteLike,
+	second QuoteLike,
+) QuoteLike {
+	return c.Quote(first.AsIntrinsic() + second.AsIntrinsic())
 }
 
 // INSTANCE INTERFACE
 
 // Principal Methods
 
-func (v symbol_) GetClass() SymbolClassLike {
-	return symbolClass()
+func (v quote_) GetClass() QuoteClassLike {
+	return quoteClass()
 }
 
-func (v symbol_) GetIntrinsic() string {
+func (v quote_) AsIntrinsic() string {
 	return string(v)
 }
 
-func (v symbol_) AsString() string {
-	return "$" + v.GetIntrinsic()
+func (v quote_) AsString() string {
+	return `"` + v.AsIntrinsic() + `"`
 }
 
 // Attribute Methods
 
 // col.Sequential[rune] Methods
 
-func (v symbol_) IsEmpty() bool {
+func (v quote_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v symbol_) GetSize() age.Cardinal {
+func (v quote_) GetSize() age.Cardinal {
 	return age.Cardinal(len(v.AsArray()))
 }
 
-func (v symbol_) AsArray() []rune {
+func (v quote_) AsArray() []rune {
 	return []rune(v)
 }
 
-func (v symbol_) GetIterator() age.IteratorLike[rune] {
+func (v quote_) GetIterator() age.IteratorLike[rune] {
 	var class = age.IteratorClass[rune]()
 	var iterator = class.Iterator(v.AsArray())
 	return iterator
@@ -109,7 +109,7 @@ func (v symbol_) GetIterator() age.IteratorLike[rune] {
 
 // col.Accessible[rune] Methods
 
-func (v symbol_) GetValue(
+func (v quote_) GetValue(
 	index col.Index,
 ) rune {
 	var class = col.ListClass[rune]()
@@ -117,7 +117,7 @@ func (v symbol_) GetValue(
 	return list.GetValue(index)
 }
 
-func (v symbol_) GetValues(
+func (v quote_) GetValues(
 	first col.Index,
 	last col.Index,
 ) col.Sequential[rune] {
@@ -128,30 +128,44 @@ func (v symbol_) GetValues(
 
 // PROTECTED INTERFACE
 
-func (v symbol_) String() string {
+func (v quote_) String() string {
 	return v.AsString()
 }
 
 // Private Methods
 
+// NOTE:
+// These private constants are used to define the private regular expression
+// matcher that is used to match legal string quotes for this intrinsic type.
+// Unfortunately there is no way to make them private to this class since they
+// must be TRUE Go constants to be used in this way.  We append an underscore to
+// each name to lessen the chance of a name collision with other private Go
+// class constants in this package.
+const (
+	character_ = escape_ + "|\\\\\"|[^\"" + control_ + "]"
+	control_   = "\\p{Cc}"
+	escape_    = "\\\\(?:" + unicode_ + "|[abfnrtv\\\\])"
+	unicode_   = "u(?:" + base16_ + "){4}|U(?:" + base16_ + "){8}"
+)
+
 // Instance Structure
 
-type symbol_ string
+type quote_ string
 
 // Class Structure
 
-type symbolClass_ struct {
+type quoteClass_ struct {
 	// Declare the class constants.
 	matcher_ *reg.Regexp
 }
 
 // Class Reference
 
-func symbolClass() *symbolClass_ {
-	return symbolClassReference_
+func quoteClass() *quoteClass_ {
+	return quoteClassReference_
 }
 
-var symbolClassReference_ = &symbolClass_{
+var quoteClassReference_ = &quoteClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^\\$(" + identifier_ + ")"),
+	matcher_: reg.MustCompile("^\"((?:" + character_ + ")*)\""),
 }

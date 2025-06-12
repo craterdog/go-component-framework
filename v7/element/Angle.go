@@ -253,21 +253,22 @@ func (v angle_) GetClass() AngleClassLike {
 	return angleClass()
 }
 
-func (v angle_) GetIntrinsic() float64 {
+func (v angle_) AsIntrinsic() float64 {
 	return float64(v)
 }
 
-// Attribute Methods
+func (v angle_) AsString() string {
+	var result_ = angleClass().stringFromAngle(v)
+	return result_
+}
 
-// Angular Methods
-
-func (v angle_) InUnits(
+func (v angle_) AsUnits(
 	units Units,
 ) float64 {
 	var result_ float64
-	var radians = v.GetIntrinsic()
-	var pi = angleClass().pi_.GetIntrinsic()
-	var tau = angleClass().tau_.GetIntrinsic()
+	var radians = v.AsIntrinsic()
+	var pi = angleClass().pi_.AsIntrinsic()
+	var tau = angleClass().tau_.AsIntrinsic()
 	switch units {
 	case Degrees:
 		result_ = 360.0 * radians / tau
@@ -279,11 +280,13 @@ func (v angle_) InUnits(
 	return result_
 }
 
+// Attribute Methods
+
 func (v angle_) GetParts() (
 	x float64,
 	y float64,
 ) {
-	var complex_ = v.GetIntrinsic()
+	var complex_ = v.AsIntrinsic()
 	x = mat.Cos(complex_)
 	y = mat.Sin(complex_)
 	return
@@ -311,13 +314,6 @@ func (v angle_) HasMagnitude() bool {
 	return !v.IsZero()
 }
 
-// Lexical Methods
-
-func (v angle_) AsString() string {
-	var result_ = angleClass().stringFromAngle(v)
-	return result_
-}
-
 // PROTECTED INTERFACE
 
 func (v angle_) String() string {
@@ -333,7 +329,7 @@ func (c *angleClass_) angleFromFloat(float float64) angle_ {
 }
 
 func (c *angleClass_) lockPhase(value float64) float64 {
-	var pi = angleClass().Pi().GetIntrinsic()
+	var pi = angleClass().Pi().AsIntrinsic()
 	var value32 = float32(value)
 	switch {
 	case mat.Abs(value) <= 1.2246467991473515e-16:
@@ -349,7 +345,7 @@ func (c *angleClass_) lockPhase(value float64) float64 {
 }
 
 func (c *angleClass_) normalizeValue(value float64) float64 {
-	var tau = angleClass().Tau().GetIntrinsic()
+	var tau = angleClass().Tau().AsIntrinsic()
 	if value < -tau || value >= tau {
 		// Normalize the value to the range [-τ..τ).
 		value = mat.Remainder(value, tau)

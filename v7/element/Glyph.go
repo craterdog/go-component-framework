@@ -71,13 +71,13 @@ func (c *glyphClass_) Maximum() GlyphLike {
 // Function Methods
 
 func (c *glyphClass_) ToLowercase(glyph GlyphLike) GlyphLike {
-	var rune_ = glyph.GetIntrinsic()
+	var rune_ = glyph.AsIntrinsic()
 	rune_ = uni.ToLower(rune_)
 	return glyph_(rune_)
 }
 
 func (c *glyphClass_) ToUppercase(glyph GlyphLike) GlyphLike {
-	var rune_ = glyph.GetIntrinsic()
+	var rune_ = glyph.AsIntrinsic()
 	rune_ = uni.ToUpper(rune_)
 	return glyph_(rune_)
 }
@@ -90,7 +90,7 @@ func (v glyph_) GetClass() GlyphClassLike {
 	return glyphClass()
 }
 
-func (v glyph_) GetIntrinsic() rune {
+func (v glyph_) AsIntrinsic() rune {
 	return rune(v)
 }
 

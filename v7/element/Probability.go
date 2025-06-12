@@ -140,7 +140,7 @@ func (v probability_) GetClass() ProbabilityClassLike {
 	return probabilityClass()
 }
 
-func (v probability_) GetIntrinsic() float64 {
+func (v probability_) AsIntrinsic() float64 {
 	return float64(v)
 }
 

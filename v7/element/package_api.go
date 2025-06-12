@@ -432,15 +432,17 @@ concrete angle-like class.
 type AngleLike interface {
 	// Principal Methods
 	GetClass() AngleClassLike
-	GetIntrinsic() float64
+	AsIntrinsic() float64
+	AsString() string
+	AsUnits(
+		units Units,
+	) float64
+
+	// Attribute Methods
 	GetParts() (
 		x float64,
 		y float64,
 	)
-	AsString() string
-	InUnits(
-		units Units,
-	) float64
 
 	// Aspect Interfaces
 	Continuous
@@ -454,7 +456,7 @@ instance of a boolean-like elemental class.
 type BooleanLike interface {
 	// Principal Methods
 	GetClass() BooleanClassLike
-	GetIntrinsic() bool
+	AsIntrinsic() bool
 	AsString() string
 
 	// Aspect Interfaces
@@ -469,10 +471,12 @@ instance of a citation-like elemental class.
 type CitationLike interface {
 	// Principal Methods
 	GetClass() CitationClassLike
-	GetIntrinsic() string
+	AsIntrinsic() string
+	AsString() string
+
+	// Attribute Methods
 	GetName() string
 	GetVersion() string
-	AsString() string
 }
 
 /*
@@ -483,7 +487,7 @@ instance of a duration-like elemental class.
 type DurationLike interface {
 	// Principal Methods
 	GetClass() DurationClassLike
-	GetIntrinsic() int
+	AsIntrinsic() int
 	AsString() string
 
 	// Aspect Interfaces
@@ -501,7 +505,7 @@ instance of a glyph-like elemental class.
 type GlyphLike interface {
 	// Principal Methods
 	GetClass() GlyphClassLike
-	GetIntrinsic() rune
+	AsIntrinsic() rune
 	AsString() string
 
 	// Aspect Interfaces
@@ -516,7 +520,7 @@ instance of a moment-like elemental class.
 type MomentLike interface {
 	// Principal Methods
 	GetClass() MomentClassLike
-	GetIntrinsic() int
+	AsIntrinsic() int
 	AsString() string
 
 	// Aspect Interfaces
@@ -533,12 +537,14 @@ instance of a number-like elemental class.
 type NumberLike interface {
 	// Principal Methods
 	GetClass() NumberClassLike
-	GetIntrinsic() complex128
+	AsIntrinsic() complex128
+	AsString() string
+
+	// Attribute Methods
 	GetReal() float64
 	GetImaginary() float64
 	GetMagnitude() float64
 	GetPhase() float64
-	AsString() string
 
 	// Aspect Interfaces
 	Continuous
@@ -553,7 +559,7 @@ instance of a percentage-like elemental class.
 type PercentageLike interface {
 	// Principal Methods
 	GetClass() PercentageClassLike
-	GetIntrinsic() float64
+	AsIntrinsic() float64
 	AsString() string
 
 	// Aspect Interfaces
@@ -570,7 +576,7 @@ instance of a probability-like elemental class.
 type ProbabilityLike interface {
 	// Principal Methods
 	GetClass() ProbabilityClassLike
-	GetIntrinsic() float64
+	AsIntrinsic() float64
 	AsString() string
 
 	// Aspect Interfaces
@@ -586,14 +592,16 @@ instance of a resource-like elemental class.
 type ResourceLike interface {
 	// Principal Methods
 	GetClass() ResourceClassLike
-	GetIntrinsic() string
+	AsIntrinsic() string
+	AsString() string
+	AsUri() *uri.URL
+
+	// Attribute Methods
 	GetScheme() string
 	GetAuthority() string
 	GetPath() string
 	GetQuery() string
 	GetFragment() string
-	AsString() string
-	AsUri() *uri.URL
 }
 
 // ASPECT DECLARATIONS

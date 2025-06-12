@@ -11,7 +11,7 @@
 */
 
 /*
-Package "series" provides a framework of aspects and class definitions for a
+Package "string" provides a framework of aspects and class definitions for a
 rich set of primitive data types that can be iterated over.  All primitive types
 are immutable and—for better performance—are implemented as extensions to
 existing Go primitive types.
@@ -28,7 +28,7 @@ be developed and used seamlessly since the interface declarations only depend on
 other interfaces and intrinsic types—and the class implementations only depend
 on interfaces, not on each other.
 */
-package series
+package string
 
 import (
 	age "github.com/craterdog/go-component-framework/v7/agent"
@@ -318,7 +318,7 @@ concrete binary-like class.
 type BinaryLike interface {
 	// Principal Methods
 	GetClass() BinaryClassLike
-	GetIntrinsic() []byte
+	AsIntrinsic() []byte
 	AsString() string
 
 	// Aspect Interfaces
@@ -334,7 +334,7 @@ concrete bytecode-like class.
 type BytecodeLike interface {
 	// Principal Methods
 	GetClass() BytecodeClassLike
-	GetIntrinsic() []Instruction
+	AsIntrinsic() []Instruction
 	AsString() string
 
 	// Aspect Interfaces
@@ -350,7 +350,7 @@ concrete name-like class.
 type NameLike interface {
 	// Principal Methods
 	GetClass() NameClassLike
-	GetIntrinsic() []Identifier
+	AsIntrinsic() []Identifier
 	AsString() string
 
 	// Aspect Interfaces
@@ -366,7 +366,7 @@ concrete narrative-like class.
 type NarrativeLike interface {
 	// Principal Methods
 	GetClass() NarrativeClassLike
-	GetIntrinsic() []Line
+	AsIntrinsic() []Line
 	AsString() string
 
 	// Aspect Interfaces
@@ -382,7 +382,7 @@ instance of a pattern-like elemental class.
 type PatternLike interface {
 	// Principal Methods
 	GetClass() PatternClassLike
-	GetIntrinsic() string
+	AsIntrinsic() string
 	AsString() string
 	AsRegexp() *reg.Regexp
 	MatchesText(
@@ -405,7 +405,7 @@ concrete quote-like class.
 type QuoteLike interface {
 	// Principal Methods
 	GetClass() QuoteClassLike
-	GetIntrinsic() string
+	AsIntrinsic() string
 	AsString() string
 
 	// Aspect Interfaces
@@ -421,7 +421,7 @@ concrete symbol-like class.
 type SymbolLike interface {
 	// Principal Methods
 	GetClass() SymbolClassLike
-	GetIntrinsic() string
+	AsIntrinsic() string
 	AsString() string
 
 	// Aspect Interfaces
@@ -437,9 +437,11 @@ concrete tag-like class.
 type TagLike interface {
 	// Principal Methods
 	GetClass() TagClassLike
-	GetIntrinsic() []byte
-	GetHash() uint64
+	AsIntrinsic() []byte
 	AsString() string
+
+	// Attribute Methods
+	GetHash() uint64
 
 	// Aspect Interfaces
 	col.Accessible[byte]
@@ -454,7 +456,7 @@ concrete version-like class.
 type VersionLike interface {
 	// Principal Methods
 	GetClass() VersionClassLike
-	GetIntrinsic() []age.Ordinal
+	AsIntrinsic() []age.Ordinal
 	AsString() string
 
 	// Aspect Interfaces

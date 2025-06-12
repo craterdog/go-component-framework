@@ -32,7 +32,7 @@ import (
 	age "github.com/craterdog/go-component-framework/v7/agent"
 	col "github.com/craterdog/go-component-framework/v7/collection"
 	ele "github.com/craterdog/go-component-framework/v7/element"
-	ser "github.com/craterdog/go-component-framework/v7/series"
+	str "github.com/craterdog/go-component-framework/v7/string"
 	uri "net/url"
 )
 
@@ -84,36 +84,36 @@ type (
 	Temporal   = ele.Temporal
 )
 
-// Series
+// String
 
 type (
-	Identifier  = ser.Identifier
-	Instruction = ser.Instruction
-	Line        = ser.Line
+	Identifier  = str.Identifier
+	Instruction = str.Instruction
+	Line        = str.Line
 )
 
 type (
-	BinaryClassLike    = ser.BinaryClassLike
-	BytecodeClassLike  = ser.BytecodeClassLike
-	NameClassLike      = ser.NameClassLike
-	NarrativeClassLike = ser.NarrativeClassLike
-	PatternClassLike   = ser.PatternClassLike
-	QuoteClassLike     = ser.QuoteClassLike
-	SymbolClassLike    = ser.SymbolClassLike
-	TagClassLike       = ser.TagClassLike
-	VersionClassLike   = ser.VersionClassLike
+	BinaryClassLike    = str.BinaryClassLike
+	BytecodeClassLike  = str.BytecodeClassLike
+	NameClassLike      = str.NameClassLike
+	NarrativeClassLike = str.NarrativeClassLike
+	PatternClassLike   = str.PatternClassLike
+	QuoteClassLike     = str.QuoteClassLike
+	SymbolClassLike    = str.SymbolClassLike
+	TagClassLike       = str.TagClassLike
+	VersionClassLike   = str.VersionClassLike
 )
 
 type (
-	BinaryLike    = ser.BinaryLike
-	BytecodeLike  = ser.BytecodeLike
-	NameLike      = ser.NameLike
-	NarrativeLike = ser.NarrativeLike
-	PatternLike   = ser.PatternLike
-	QuoteLike     = ser.QuoteLike
-	SymbolLike    = ser.SymbolLike
-	TagLike       = ser.TagLike
-	VersionLike   = ser.VersionLike
+	BinaryLike    = str.BinaryLike
+	BytecodeLike  = str.BytecodeLike
+	NameLike      = str.NameLike
+	NarrativeLike = str.NarrativeLike
+	PatternLike   = str.PatternLike
+	QuoteLike     = str.QuoteLike
+	SymbolLike    = str.SymbolLike
+	TagLike       = str.TagLike
+	VersionLike   = str.VersionLike
 )
 
 // Collection
@@ -434,10 +434,10 @@ func ResourceFromUri(
 	)
 }
 
-// Series
+// String
 
 func BinaryClass() BinaryClassLike {
-	return ser.BinaryClass()
+	return str.BinaryClass()
 }
 
 func Binary(
@@ -465,11 +465,11 @@ func BinaryFromString(
 }
 
 func BytecodeClass() BytecodeClassLike {
-	return ser.BytecodeClass()
+	return str.BytecodeClass()
 }
 
 func Bytecode(
-	instructions []ser.Instruction,
+	instructions []str.Instruction,
 ) BytecodeLike {
 	return BytecodeClass().Bytecode(
 		instructions,
@@ -477,7 +477,7 @@ func Bytecode(
 }
 
 func BytecodeFromSequence(
-	sequence col.Sequential[ser.Instruction],
+	sequence col.Sequential[str.Instruction],
 ) BytecodeLike {
 	return BytecodeClass().BytecodeFromSequence(
 		sequence,
@@ -493,11 +493,11 @@ func BytecodeFromString(
 }
 
 func NameClass() NameClassLike {
-	return ser.NameClass()
+	return str.NameClass()
 }
 
 func Name(
-	identifiers []ser.Identifier,
+	identifiers []str.Identifier,
 ) NameLike {
 	return NameClass().Name(
 		identifiers,
@@ -505,7 +505,7 @@ func Name(
 }
 
 func NameFromSequence(
-	sequence col.Sequential[ser.Identifier],
+	sequence col.Sequential[str.Identifier],
 ) NameLike {
 	return NameClass().NameFromSequence(
 		sequence,
@@ -521,11 +521,11 @@ func NameFromString(
 }
 
 func NarrativeClass() NarrativeClassLike {
-	return ser.NarrativeClass()
+	return str.NarrativeClass()
 }
 
 func Narrative(
-	lines []ser.Line,
+	lines []str.Line,
 ) NarrativeLike {
 	return NarrativeClass().Narrative(
 		lines,
@@ -533,7 +533,7 @@ func Narrative(
 }
 
 func NarrativeFromSequence(
-	sequence col.Sequential[ser.Line],
+	sequence col.Sequential[str.Line],
 ) NarrativeLike {
 	return NarrativeClass().NarrativeFromSequence(
 		sequence,
@@ -549,7 +549,7 @@ func NarrativeFromString(
 }
 
 func PatternClass() PatternClassLike {
-	return ser.PatternClass()
+	return str.PatternClass()
 }
 
 func Pattern(
@@ -577,7 +577,7 @@ func PatternFromString(
 }
 
 func QuoteClass() QuoteClassLike {
-	return ser.QuoteClass()
+	return str.QuoteClass()
 }
 
 func Quote(
@@ -605,7 +605,7 @@ func QuoteFromString(
 }
 
 func SymbolClass() SymbolClassLike {
-	return ser.SymbolClass()
+	return str.SymbolClass()
 }
 
 func Symbol(
@@ -633,7 +633,7 @@ func SymbolFromString(
 }
 
 func TagClass() TagClassLike {
-	return ser.TagClass()
+	return str.TagClass()
 }
 
 func Tag(
@@ -669,7 +669,7 @@ func TagFromString(
 }
 
 func VersionClass() VersionClassLike {
-	return ser.VersionClass()
+	return str.VersionClass()
 }
 
 func Version(

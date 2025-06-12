@@ -55,26 +55,20 @@ func (v citation_) GetClass() CitationClassLike {
 	return citationClass()
 }
 
-func (v citation_) GetIntrinsic() string {
+func (v citation_) AsIntrinsic() string {
 	return string(v)
 }
-
-// Attribute Methods
-
-// Lexical Methods
 
 func (v citation_) AsString() string {
 	return string(v)
 }
 
-// Named Methods
+// Attribute Methods
 
 func (v citation_) GetName() string {
 	var index = sts.LastIndex(string(v), "@")
 	return string(v[:index])
 }
-
-// Versioned Methods
 
 func (v citation_) GetVersion() string {
 	var index = sts.LastIndex(string(v), "@")

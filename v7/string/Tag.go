@@ -10,7 +10,7 @@
 ................................................................................
 */
 
-package series
+package string
 
 import (
 	bin "encoding/binary"
@@ -104,12 +104,8 @@ func (v tag_) GetClass() TagClassLike {
 	return tagClass()
 }
 
-func (v tag_) GetIntrinsic() []byte {
+func (v tag_) AsIntrinsic() []byte {
 	return []byte(v)
-}
-
-func (v tag_) GetHash() uint64 {
-	return bin.BigEndian.Uint64(v)
 }
 
 func (v tag_) AsString() string {
@@ -118,6 +114,10 @@ func (v tag_) AsString() string {
 }
 
 // Attribute Methods
+
+func (v tag_) GetHash() uint64 {
+	return bin.BigEndian.Uint64(v)
+}
 
 // col.Sequential[byte] Methods
 

@@ -10,7 +10,7 @@
 ................................................................................
 */
 
-package series
+package string
 
 import (
 	fmt "fmt"
@@ -103,7 +103,7 @@ func (v bytecode_) GetClass() BytecodeClassLike {
 	return bytecodeClass()
 }
 
-func (v bytecode_) GetIntrinsic() []Instruction {
+func (v bytecode_) AsIntrinsic() []Instruction {
 	return []Instruction(v)
 }
 

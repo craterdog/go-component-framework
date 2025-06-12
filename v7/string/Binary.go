@@ -10,7 +10,7 @@
 ................................................................................
 */
 
-package series
+package string
 
 import (
 	fmt "fmt"
@@ -198,7 +198,7 @@ func (v binary_) GetClass() BinaryClassLike {
 	return binaryClass()
 }
 
-func (v binary_) GetIntrinsic() []byte {
+func (v binary_) AsIntrinsic() []byte {
 	return []byte(v)
 }
 
