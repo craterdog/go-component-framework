@@ -54,6 +54,12 @@ type Fuz struct {
 	Bar string
 }
 
+func TestRank(t *tes.T) {
+	ass.Equal(t, "LesserRank", age.LesserRank.String())
+	ass.Equal(t, "EqualRank", age.EqualRank.String())
+	ass.Equal(t, "GreaterRank", age.GreaterRank.String())
+}
+
 func TestCompareMaximum(t *tes.T) {
 	var collator = age.CollatorClass[any]().CollatorWithMaximumDepth(1)
 	var list = col.ListClass[any]().ListFromArray([]any{"foo", []int{1, 2, 3}})

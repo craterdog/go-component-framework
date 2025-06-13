@@ -316,6 +316,19 @@ func (v angle_) HasMagnitude() bool {
 
 // PROTECTED INTERFACE
 
+func (v Units) String() string {
+	var string_ string
+	switch v {
+	case Degrees:
+		string_ = "Degrees"
+	case Radians:
+		string_ = "Radians"
+	case Gradians:
+		string_ = "Gradians"
+	}
+	return string_
+}
+
 func (v angle_) String() string {
 	return v.AsString()
 }

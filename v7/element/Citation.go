@@ -92,7 +92,7 @@ func (v citation_) String() string {
 // class constants in this package.
 const (
 	digit_      = "\\p{Nd}"
-	identifier_ = "(?:" + letter_ + ")(?:" + letter_ + "|" + digit_ + ")*"
+	identifier_ = "(?:" + letter_ + ")(?:" + letter_ + "|" + digit_ + "|-)*"
 	letter_     = lower_ + "|" + upper_
 	lower_      = "\\p{Ll}"
 	name_       = "(?:/" + identifier_ + ")+"

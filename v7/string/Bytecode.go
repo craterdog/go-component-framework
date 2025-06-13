@@ -113,10 +113,10 @@ func (v bytecode_) AsString() string {
 	if size > 0 {
 		var index = 0
 		var instruction = v[index]
-		string_ += fmt.Sprintf("%04x", instruction)
+		string_ += instruction.String()
 		for index++; index < size; index++ {
 			instruction = v[index]
-			string_ += " " + fmt.Sprintf("%04x", instruction)
+			string_ += " " + instruction.String()
 		}
 	}
 	string_ += "'"
@@ -166,6 +166,10 @@ func (v bytecode_) GetValues(
 }
 
 // PROTECTED INTERFACE
+
+func (v Instruction) String() string {
+	return fmt.Sprintf("%04x", uint16(v))
+}
 
 func (v bytecode_) String() string {
 	return v.AsString()

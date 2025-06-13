@@ -20,6 +20,12 @@ import (
 	tes "testing"
 )
 
+func TestUnits(t *tes.T) {
+	ass.Equal(t, "Degrees", ele.Degrees.String())
+	ass.Equal(t, "Radians", ele.Radians.String())
+	ass.Equal(t, "Gradians", ele.Gradians.String())
+}
+
 var AngleClass = ele.AngleClass()
 
 func TestZeroAngles(t *tes.T) {
@@ -172,10 +178,10 @@ func TestBooleansLibrary(t *tes.T) {
 var CitationClass = ele.CitationClass()
 
 func TestCitation(t *tes.T) {
-	var v1 = CitationClass.Citation("/bali/types/abstractions/String@v1.2.3")
-	ass.Equal(t, "/bali/types/abstractions/String@v1.2.3", v1.AsIntrinsic())
-	ass.Equal(t, "/bali/types/abstractions/String@v1.2.3", v1.AsString())
-	ass.Equal(t, "/bali/types/abstractions/String", v1.GetName())
+	var v1 = CitationClass.Citation("/bali-nebula/types/abstractions/String@v1.2.3")
+	ass.Equal(t, "/bali-nebula/types/abstractions/String@v1.2.3", v1.AsIntrinsic())
+	ass.Equal(t, "/bali-nebula/types/abstractions/String@v1.2.3", v1.AsString())
+	ass.Equal(t, "/bali-nebula/types/abstractions/String", v1.GetName())
 	ass.Equal(t, "v1.2.3", v1.GetVersion())
 }
 

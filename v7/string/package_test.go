@@ -98,22 +98,26 @@ func TestBytecode(t *tes.T) {
 var NameClass = str.NameClass()
 
 func TestName(t *tes.T) {
-	var v1 = NameClass.NameFromString("/bali/types/abstractions/String")
-	ass.Equal(t, "/bali/types/abstractions/String", v1.AsString())
+	var v1 = NameClass.NameFromString("/bali-nebula/types/abstractions/String")
+	ass.Equal(t, "/bali-nebula/types/abstractions/String", v1.AsString())
 	ass.False(t, v1.IsEmpty())
 	ass.Equal(t, 4, int(v1.GetSize()))
-	ass.Equal(t, str.Identifier("bali"), v1.GetValue(1))
+	ass.Equal(t, str.Identifier("bali-nebula"), v1.GetValue(1))
 	ass.Equal(t, str.Identifier("String"), v1.GetValue(-1))
 	var v2 = NameClass.Name(v1.AsArray())
 	ass.Equal(t, v1.AsString(), v2.AsString())
 	var v3 = NameClass.NameFromSequence(v1.GetValues(1, 2))
-	ass.Equal(t, "/bali/types", v3.AsString())
+	ass.Equal(t, "/bali-nebula/types", v3.AsString())
 }
 
 func TestNamesLibrary(t *tes.T) {
-	var v1 = NameClass.NameFromString("/bali/types/abstractions")
+	var v1 = NameClass.NameFromString("/bali-nebula/types/abstractions")
 	var v2 = NameClass.NameFromString("/String")
-	ass.Equal(t, "/bali/types/abstractions/String", NameClass.Concatenate(v1, v2).AsString())
+	ass.Equal(
+		t,
+		"/bali-nebula/types/abstractions/String",
+		NameClass.Concatenate(v1, v2).AsString(),
+	)
 }
 
 var NarrativeClass = str.NarrativeClass()
@@ -250,12 +254,12 @@ func TestQuotesLibrary(t *tes.T) {
 var SymbolClass = str.SymbolClass()
 
 func TestSymbol(t *tes.T) {
-	var foobar = "$foobar"
+	var foobar = "$foo-bar"
 	var v = SymbolClass.SymbolFromString(foobar)
 	ass.Equal(t, foobar, v.AsString())
 	ass.False(t, v.IsEmpty())
-	ass.Equal(t, 6, int(v.GetSize()))
-	ass.Equal(t, []rune("foobar"), v.AsArray())
+	ass.Equal(t, 7, int(v.GetSize()))
+	ass.Equal(t, []rune("foo-bar"), v.AsArray())
 }
 
 var TagClass = str.TagClass()

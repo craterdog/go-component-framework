@@ -86,6 +86,19 @@ func (v *collator_[V]) GetMaximumDepth() Cardinal {
 
 // PROTECTED INTERFACE
 
+func (v Rank) String() string {
+	var string_ string
+	switch v {
+	case LesserRank:
+		string_ = "LesserRank"
+	case EqualRank:
+		string_ = "EqualRank"
+	case GreaterRank:
+		string_ = "GreaterRank"
+	}
+	return string_
+}
+
 // Private Methods
 
 func (v *collator_[V]) compareArrays(
