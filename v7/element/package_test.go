@@ -205,13 +205,13 @@ func TestZeroDurations(t *tes.T) {
 }
 
 func TestStringDurations(t *tes.T) {
-	var duration = DurationClass.DurationFromString("~-P1Y2M3DT4H5M6S")
-	ass.Equal(t, "~-P1Y2M3DT4H5M6S", duration.AsString())
+	var duration = DurationClass.DurationFromString("~P1Y2M3DT4H5M6S")
+	ass.Equal(t, "~P1Y2M3DT4H5M6S", duration.AsString())
 	duration = DurationClass.DurationFromString("~P0W")
 	ass.Equal(t, "~P0W", duration.AsString())
 }
 
-func TestPositiveDurations(t *tes.T) {
+func TestDurations(t *tes.T) {
 	var v = DurationClass.Duration(60000)
 	ass.Equal(t, "~PT1M", v.AsString())
 	ass.Equal(t, 60000, v.AsInteger())
@@ -225,28 +225,6 @@ func TestPositiveDurations(t *tes.T) {
 	ass.Equal(t, 9.92063492063492e-05, v.AsWeeks())
 	ass.Equal(t, 2.2815891724904232e-05, v.AsMonths())
 	ass.Equal(t, 1.9013243104086858e-06, v.AsYears())
-	ass.Equal(t, 0, v.GetMilliseconds())
-	ass.Equal(t, 0, v.GetSeconds())
-	ass.Equal(t, 1, v.GetMinutes())
-	ass.Equal(t, 0, v.GetHours())
-	ass.Equal(t, 0, v.GetDays())
-	ass.Equal(t, 0, v.GetWeeks())
-	ass.Equal(t, 0, v.GetMonths())
-	ass.Equal(t, 0, v.GetYears())
-}
-
-func TestNegativeDurations(t *tes.T) {
-	var v = DurationClass.Duration(-60000)
-	ass.Equal(t, -60000, v.AsInteger())
-	ass.True(t, v.IsNegative())
-	ass.Equal(t, -60000.0, v.AsMilliseconds())
-	ass.Equal(t, -60.0, v.AsSeconds())
-	ass.Equal(t, -1.0, v.AsMinutes())
-	ass.Equal(t, -0.016666666666666666, v.AsHours())
-	ass.Equal(t, -0.0006944444444444445, v.AsDays())
-	ass.Equal(t, -9.92063492063492e-05, v.AsWeeks())
-	ass.Equal(t, -2.2815891724904232e-05, v.AsMonths())
-	ass.Equal(t, -1.9013243104086858e-06, v.AsYears())
 	ass.Equal(t, 0, v.GetMilliseconds())
 	ass.Equal(t, 0, v.GetSeconds())
 	ass.Equal(t, 1, v.GetMinutes())
@@ -323,6 +301,7 @@ func TestMomentsLibrary(t *tes.T) {
 	var after = MomentClass.Moment(before.AsInteger() + duration.AsInteger())
 
 	ass.Equal(t, duration, MomentClass.Duration(before, after))
+	ass.Equal(t, duration, MomentClass.Duration(after, before))
 	ass.Equal(t, after, MomentClass.Later(before, duration))
 	ass.Equal(t, before, MomentClass.Earlier(after, duration))
 }

@@ -34,6 +34,9 @@ func DurationClass() DurationClassLike {
 func (c *durationClass_) Duration(
 	milliseconds int,
 ) DurationLike {
+	if milliseconds < 0 {
+		milliseconds = -milliseconds
+	}
 	return duration_(milliseconds)
 }
 
@@ -358,49 +361,44 @@ func (v duration_) String() string {
 // Private Methods
 
 func (c *durationClass_) durationFromMatches(matches []string) int {
-	var sign = 1.0
 	var milliseconds = 0.0
-	if matches[1] == "-" {
-		// The duration is negative.
-		sign = -sign
+	if len(matches[1]) > 0 {
+		// The duration is in weeks.
+		var float, _ = stc.ParseFloat(matches[1], 64)
+		milliseconds += float * float64(c.millisecondsPerWeek_)
+		return int(milliseconds)
 	}
 	if len(matches[2]) > 0 {
-		// The duration is in weeks.
-		var float, _ = stc.ParseFloat(matches[2], 64)
-		milliseconds += float * float64(c.millisecondsPerWeek_)
-		return int(sign * milliseconds)
-	}
-	if len(matches[3]) > 0 {
 		// The duration has a years component.
-		var float, _ = stc.ParseFloat(matches[3], 64)
+		var float, _ = stc.ParseFloat(matches[2], 64)
 		milliseconds += float * float64(c.millisecondsPerYear_)
 	}
-	if len(matches[4]) > 0 {
+	if len(matches[3]) > 0 {
 		// The duration has a months component.
-		var float, _ = stc.ParseFloat(matches[4], 64)
+		var float, _ = stc.ParseFloat(matches[3], 64)
 		milliseconds += float * float64(c.millisecondsPerMonth_)
 	}
-	if len(matches[5]) > 0 {
+	if len(matches[4]) > 0 {
 		// The duration has a days component.
-		var float, _ = stc.ParseFloat(matches[5], 64)
+		var float, _ = stc.ParseFloat(matches[4], 64)
 		milliseconds += float * float64(c.millisecondsPerDay_)
 	}
-	if len(matches[6]) > 0 {
+	if len(matches[5]) > 0 {
 		// The duration has an hours component.
-		var float, _ = stc.ParseFloat(matches[6], 64)
+		var float, _ = stc.ParseFloat(matches[5], 64)
 		milliseconds += float * float64(c.millisecondsPerHour_)
 	}
-	if len(matches[7]) > 0 {
+	if len(matches[6]) > 0 {
 		// The duration has a minutes component.
-		var float, _ = stc.ParseFloat(matches[7], 64)
+		var float, _ = stc.ParseFloat(matches[6], 64)
 		milliseconds += float * float64(c.millisecondsPerMinute_)
 	}
-	if len(matches[8]) > 0 {
+	if len(matches[7]) > 0 {
 		// The duration has a seconds component.
-		var float, _ = stc.ParseFloat(matches[8], 64)
+		var float, _ = stc.ParseFloat(matches[7], 64)
 		milliseconds += float * float64(c.millisecondsPerSecond_)
 	}
-	return int(sign * milliseconds)
+	return int(milliseconds)
 }
 
 func (c *durationClass_) magnitude(value int) int {
@@ -460,8 +458,8 @@ func durationClass() *durationClass_ {
 var durationClassReference_ = &durationClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^~(" + sign_ + ")?P(?:(?:" + weeks_ + ")|(?:(?:" + years_ + ")?(?:" +
-			months_ + ")?(?:" + days_ + ")?(?:T(?:" + hours_ + ")?(?:" + minutes_ +
+		"^~P(?:(?:" + weeks_ + ")|(?:(?:" + years_ + ")?(?:" + months_ +
+			")?(?:" + days_ + ")?(?:T(?:" + hours_ + ")?(?:" + minutes_ +
 			")?(?:" + seconds_ + ")?)?))",
 	),
 	minimum_: duration_(0),
