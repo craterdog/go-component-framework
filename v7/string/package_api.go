@@ -181,7 +181,7 @@ pattern-like concrete class.
 type PatternClassLike interface {
 	// Constructor Methods
 	Pattern(
-		string_ string,
+		runes []rune,
 	) PatternLike
 	PatternFromSequence(
 		sequence col.Sequential[rune],
@@ -209,7 +209,7 @@ quote-like concrete class.
 type QuoteClassLike interface {
 	// Constructor Methods
 	Quote(
-		string_ string,
+		runes []rune,
 	) QuoteLike
 	QuoteFromSequence(
 		sequence col.Sequential[rune],
@@ -233,7 +233,7 @@ symbol-like concrete class.
 type SymbolClassLike interface {
 	// Constructor Methods
 	Symbol(
-		string_ string,
+		runes []rune,
 	) SymbolLike
 	SymbolFromSequence(
 		sequence col.Sequential[rune],
@@ -382,7 +382,7 @@ instance of a pattern-like elemental class.
 type PatternLike interface {
 	// Principal Methods
 	GetClass() PatternClassLike
-	AsIntrinsic() string
+	AsIntrinsic() []rune
 	AsString() string
 	AsRegexp() *reg.Regexp
 	MatchesText(
@@ -405,7 +405,7 @@ concrete quote-like class.
 type QuoteLike interface {
 	// Principal Methods
 	GetClass() QuoteClassLike
-	AsIntrinsic() string
+	AsIntrinsic() []rune
 	AsString() string
 
 	// Aspect Interfaces
@@ -421,7 +421,7 @@ concrete symbol-like class.
 type SymbolLike interface {
 	// Principal Methods
 	GetClass() SymbolClassLike
-	AsIntrinsic() string
+	AsIntrinsic() []rune
 	AsString() string
 
 	// Aspect Interfaces

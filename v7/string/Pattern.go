@@ -32,10 +32,10 @@ func PatternClass() PatternClassLike {
 // Constructor Methods
 
 func (c *patternClass_) Pattern(
-	string_ string,
+	runes []rune,
 ) PatternLike {
-	reg.MustCompile(string_)
-	return pattern_(string_)
+	reg.MustCompile(string(runes))
+	return pattern_(runes)
 }
 
 func (c *patternClass_) PatternFromSequence(
@@ -85,7 +85,7 @@ func (c *patternClass_) Concatenate(
 	first PatternLike,
 	second PatternLike,
 ) PatternLike {
-	return c.Pattern(first.AsIntrinsic() + second.AsIntrinsic())
+	return c.Pattern(uti.CombineArrays(first.AsIntrinsic(), second.AsIntrinsic()))
 }
 
 // INSTANCE INTERFACE
@@ -96,8 +96,8 @@ func (v pattern_) GetClass() PatternClassLike {
 	return patternClass()
 }
 
-func (v pattern_) AsIntrinsic() string {
-	return string(v)
+func (v pattern_) AsIntrinsic() []rune {
+	return []rune(v)
 }
 
 func (v pattern_) AsString() string {
@@ -108,26 +108,26 @@ func (v pattern_) AsString() string {
 	case `.*`:
 		string_ = `any`
 	default:
-		string_ = stc.Quote(v.AsIntrinsic()) + "?"
+		string_ = stc.Quote(string(v)) + "?"
 	}
 	return string_
 }
 
 func (v pattern_) AsRegexp() *reg.Regexp {
-	return reg.MustCompile(v.AsIntrinsic())
+	return reg.MustCompile(string(v))
 }
 
 func (v pattern_) MatchesText(
 	text string,
 ) bool {
-	var matcher = reg.MustCompile(v.AsIntrinsic())
+	var matcher = reg.MustCompile(string(v))
 	return matcher.MatchString(text)
 }
 
 func (v pattern_) GetMatches(
 	text string,
 ) []string {
-	var matcher = reg.MustCompile(v.AsIntrinsic())
+	var matcher = reg.MustCompile(string(v))
 	return matcher.FindStringSubmatch(text)
 }
 

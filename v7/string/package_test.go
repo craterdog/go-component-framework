@@ -229,8 +229,8 @@ func TestSomePattern(t *tes.T) {
 var QuoteClass = str.QuoteClass()
 
 func TestEmptyQuote(t *tes.T) {
-	var v = QuoteClass.Quote("")
-	ass.Equal(t, "", v.AsIntrinsic())
+	var v = QuoteClass.Quote([]rune{})
+	ass.Equal(t, []rune{}, v.AsIntrinsic())
 	ass.True(t, v.IsEmpty())
 	ass.Equal(t, 0, int(v.GetSize()))
 }
@@ -246,8 +246,8 @@ func TestQuote(t *tes.T) {
 }
 
 func TestQuotesLibrary(t *tes.T) {
-	var v1 = QuoteClass.Quote("abcd本")
-	var v2 = QuoteClass.Quote("1234")
+	var v1 = QuoteClass.QuoteFromString(`"abcd本"`)
+	var v2 = QuoteClass.QuoteFromString(`"1234"`)
 	ass.Equal(t, `"abcd本1234"`, QuoteClass.Concatenate(v1, v2).AsString())
 }
 

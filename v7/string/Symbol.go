@@ -31,9 +31,9 @@ func SymbolClass() SymbolClassLike {
 // Constructor Methods
 
 func (c *symbolClass_) Symbol(
-	string_ string,
+	runes []rune,
 ) SymbolLike {
-	return symbol_(string_)
+	return symbol_(runes)
 }
 
 func (c *symbolClass_) SymbolFromSequence(
@@ -66,7 +66,7 @@ func (c *symbolClass_) Concatenate(
 	first SymbolLike,
 	second SymbolLike,
 ) SymbolLike {
-	return c.Symbol(first.AsIntrinsic() + second.AsIntrinsic())
+	return c.Symbol(uti.CombineArrays(first.AsIntrinsic(), second.AsIntrinsic()))
 }
 
 // INSTANCE INTERFACE
@@ -77,12 +77,12 @@ func (v symbol_) GetClass() SymbolClassLike {
 	return symbolClass()
 }
 
-func (v symbol_) AsIntrinsic() string {
-	return string(v)
+func (v symbol_) AsIntrinsic() []rune {
+	return []rune(v)
 }
 
 func (v symbol_) AsString() string {
-	return "$" + v.AsIntrinsic()
+	return "$" + string(v)
 }
 
 // Attribute Methods

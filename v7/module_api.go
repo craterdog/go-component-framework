@@ -553,10 +553,10 @@ func PatternClass() PatternClassLike {
 }
 
 func Pattern(
-	string_ string,
+	runes []rune,
 ) PatternLike {
 	return PatternClass().Pattern(
-		string_,
+		runes,
 	)
 }
 
@@ -581,10 +581,10 @@ func QuoteClass() QuoteClassLike {
 }
 
 func Quote(
-	string_ string,
+	runes []rune,
 ) QuoteLike {
 	return QuoteClass().Quote(
-		string_,
+		runes,
 	)
 }
 
@@ -609,10 +609,10 @@ func SymbolClass() SymbolClassLike {
 }
 
 func Symbol(
-	string_ string,
+	runes []rune,
 ) SymbolLike {
 	return SymbolClass().Symbol(
-		string_,
+		runes,
 	)
 }
 

@@ -32,9 +32,9 @@ func QuoteClass() QuoteClassLike {
 // Constructor Methods
 
 func (c *quoteClass_) Quote(
-	string_ string,
+	runes []rune,
 ) QuoteLike {
-	return quote_(string_)
+	return quote_(runes)
 }
 
 func (c *quoteClass_) QuoteFromSequence(
@@ -68,7 +68,7 @@ func (c *quoteClass_) Concatenate(
 	first QuoteLike,
 	second QuoteLike,
 ) QuoteLike {
-	return c.Quote(first.AsIntrinsic() + second.AsIntrinsic())
+	return c.Quote(uti.CombineArrays(first.AsIntrinsic(), second.AsIntrinsic()))
 }
 
 // INSTANCE INTERFACE
@@ -79,12 +79,12 @@ func (v quote_) GetClass() QuoteClassLike {
 	return quoteClass()
 }
 
-func (v quote_) AsIntrinsic() string {
-	return string(v)
+func (v quote_) AsIntrinsic() []rune {
+	return []rune(v)
 }
 
 func (v quote_) AsString() string {
-	return stc.Quote(v.AsIntrinsic())
+	return stc.Quote(string(v))
 }
 
 // Attribute Methods
