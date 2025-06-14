@@ -54,6 +54,11 @@ Line is a constrained type representing a single line of a narrative.
 */
 type Line string
 
+/*
+Character is a constrained type representing a single character of a quote.
+*/
+type Character rune
+
 // FUNCTIONAL DECLARATIONS
 
 // CLASS DECLARATIONS
@@ -181,10 +186,10 @@ pattern-like concrete class.
 type PatternClassLike interface {
 	// Constructor Methods
 	Pattern(
-		runes []rune,
+		characters []Character,
 	) PatternLike
 	PatternFromSequence(
-		sequence col.Sequential[rune],
+		sequence col.Sequential[Character],
 	) PatternLike
 	PatternFromString(
 		string_ string,
@@ -209,10 +214,10 @@ quote-like concrete class.
 type QuoteClassLike interface {
 	// Constructor Methods
 	Quote(
-		runes []rune,
+		characters []Character,
 	) QuoteLike
 	QuoteFromSequence(
-		sequence col.Sequential[rune],
+		sequence col.Sequential[Character],
 	) QuoteLike
 	QuoteFromString(
 		string_ string,
@@ -233,10 +238,10 @@ symbol-like concrete class.
 type SymbolClassLike interface {
 	// Constructor Methods
 	Symbol(
-		runes []rune,
+		characters []Character,
 	) SymbolLike
 	SymbolFromSequence(
-		sequence col.Sequential[rune],
+		sequence col.Sequential[Character],
 	) SymbolLike
 	SymbolFromString(
 		string_ string,
@@ -382,7 +387,7 @@ instance of a pattern-like elemental class.
 type PatternLike interface {
 	// Principal Methods
 	GetClass() PatternClassLike
-	AsIntrinsic() []rune
+	AsIntrinsic() []Character
 	AsString() string
 	AsRegexp() *reg.Regexp
 	MatchesText(
@@ -393,8 +398,8 @@ type PatternLike interface {
 	) []string
 
 	// Aspect Interfaces
-	col.Accessible[rune]
-	col.Sequential[rune]
+	col.Accessible[Character]
+	col.Sequential[Character]
 }
 
 /*
@@ -405,12 +410,12 @@ concrete quote-like class.
 type QuoteLike interface {
 	// Principal Methods
 	GetClass() QuoteClassLike
-	AsIntrinsic() []rune
+	AsIntrinsic() []Character
 	AsString() string
 
 	// Aspect Interfaces
-	col.Accessible[rune]
-	col.Sequential[rune]
+	col.Accessible[Character]
+	col.Sequential[Character]
 }
 
 /*
@@ -421,12 +426,12 @@ concrete symbol-like class.
 type SymbolLike interface {
 	// Principal Methods
 	GetClass() SymbolClassLike
-	AsIntrinsic() []rune
+	AsIntrinsic() []Character
 	AsString() string
 
 	// Aspect Interfaces
-	col.Accessible[rune]
-	col.Sequential[rune]
+	col.Accessible[Character]
+	col.Sequential[Character]
 }
 
 /*

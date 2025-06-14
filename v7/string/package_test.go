@@ -229,8 +229,8 @@ func TestSomePattern(t *tes.T) {
 var QuoteClass = str.QuoteClass()
 
 func TestEmptyQuote(t *tes.T) {
-	var v = QuoteClass.Quote([]rune{})
-	ass.Equal(t, []rune{}, v.AsIntrinsic())
+	var v = QuoteClass.Quote([]str.Character{})
+	ass.Equal(t, []str.Character{}, v.AsIntrinsic())
 	ass.True(t, v.IsEmpty())
 	ass.Equal(t, 0, int(v.GetSize()))
 }
@@ -240,8 +240,8 @@ func TestQuote(t *tes.T) {
 	ass.Equal(t, `"abcd本1234"`, v.AsString())
 	ass.False(t, v.IsEmpty())
 	ass.Equal(t, 9, int(v.GetSize()))
-	ass.Equal(t, 'a', v.GetValue(1))
-	ass.Equal(t, '4', v.GetValue(-1))
+	ass.Equal(t, 'a', rune(v.GetValue(1)))
+	ass.Equal(t, '4', rune(v.GetValue(-1)))
 	ass.Equal(t, `"d本1"`, QuoteClass.QuoteFromSequence(v.GetValues(4, 6)).AsString())
 }
 
@@ -259,7 +259,7 @@ func TestSymbol(t *tes.T) {
 	ass.Equal(t, foobar, v.AsString())
 	ass.False(t, v.IsEmpty())
 	ass.Equal(t, 7, int(v.GetSize()))
-	ass.Equal(t, []rune("foo-bar"), v.AsArray())
+	ass.Equal(t, []str.Character("foo-bar"), v.AsArray())
 }
 
 var TagClass = str.TagClass()

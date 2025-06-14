@@ -32,16 +32,16 @@ func PatternClass() PatternClassLike {
 // Constructor Methods
 
 func (c *patternClass_) Pattern(
-	runes []rune,
+	characters []Character,
 ) PatternLike {
-	reg.MustCompile(string(runes))
-	return pattern_(runes)
+	reg.MustCompile(string(characters))
+	return pattern_(characters)
 }
 
 func (c *patternClass_) PatternFromSequence(
-	sequence col.Sequential[rune],
+	sequence col.Sequential[Character],
 ) PatternLike {
-	var class = col.ListClass[rune]()
+	var class = col.ListClass[Character]()
 	var list = class.ListFromSequence(sequence)
 	return pattern_(list.AsArray())
 }
@@ -96,8 +96,8 @@ func (v pattern_) GetClass() PatternClassLike {
 	return patternClass()
 }
 
-func (v pattern_) AsIntrinsic() []rune {
-	return []rune(v)
+func (v pattern_) AsIntrinsic() []Character {
+	return []Character(v)
 }
 
 func (v pattern_) AsString() string {
@@ -133,7 +133,7 @@ func (v pattern_) GetMatches(
 
 // Attribute Methods
 
-// col.Sequential[rune] Methods
+// col.Sequential[Character] Methods
 
 func (v pattern_) IsEmpty() bool {
 	return len(v) == 0
@@ -143,22 +143,22 @@ func (v pattern_) GetSize() age.Cardinal {
 	return age.Cardinal(len(v.AsArray()))
 }
 
-func (v pattern_) AsArray() []rune {
-	return []rune(v)
+func (v pattern_) AsArray() []Character {
+	return []Character(v)
 }
 
-func (v pattern_) GetIterator() age.IteratorLike[rune] {
-	var class = age.IteratorClass[rune]()
+func (v pattern_) GetIterator() age.IteratorLike[Character] {
+	var class = age.IteratorClass[Character]()
 	var iterator = class.Iterator(v.AsArray())
 	return iterator
 }
 
-// col.Accessible[rune] Methods
+// col.Accessible[Character] Methods
 
 func (v pattern_) GetValue(
 	index col.Index,
-) rune {
-	var class = col.ListClass[rune]()
+) Character {
+	var class = col.ListClass[Character]()
 	var list = class.ListFromArray(v.AsArray())
 	return list.GetValue(index)
 }
@@ -166,8 +166,8 @@ func (v pattern_) GetValue(
 func (v pattern_) GetValues(
 	first col.Index,
 	last col.Index,
-) col.Sequential[rune] {
-	var class = col.ListClass[rune]()
+) col.Sequential[Character] {
+	var class = col.ListClass[Character]()
 	var list = class.ListFromArray(v.AsArray())
 	return list.GetValues(first, last)
 }

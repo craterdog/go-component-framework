@@ -31,15 +31,15 @@ func SymbolClass() SymbolClassLike {
 // Constructor Methods
 
 func (c *symbolClass_) Symbol(
-	runes []rune,
+	characters []Character,
 ) SymbolLike {
-	return symbol_(runes)
+	return symbol_(characters)
 }
 
 func (c *symbolClass_) SymbolFromSequence(
-	sequence col.Sequential[rune],
+	sequence col.Sequential[Character],
 ) SymbolLike {
-	var class = col.ListClass[rune]()
+	var class = col.ListClass[Character]()
 	var list = class.ListFromSequence(sequence)
 	return symbol_(list.AsArray())
 }
@@ -77,8 +77,8 @@ func (v symbol_) GetClass() SymbolClassLike {
 	return symbolClass()
 }
 
-func (v symbol_) AsIntrinsic() []rune {
-	return []rune(v)
+func (v symbol_) AsIntrinsic() []Character {
+	return []Character(v)
 }
 
 func (v symbol_) AsString() string {
@@ -87,7 +87,7 @@ func (v symbol_) AsString() string {
 
 // Attribute Methods
 
-// col.Sequential[rune] Methods
+// col.Sequential[Character] Methods
 
 func (v symbol_) IsEmpty() bool {
 	return len(v) == 0
@@ -97,22 +97,22 @@ func (v symbol_) GetSize() age.Cardinal {
 	return age.Cardinal(len(v.AsArray()))
 }
 
-func (v symbol_) AsArray() []rune {
-	return []rune(v)
+func (v symbol_) AsArray() []Character {
+	return []Character(v)
 }
 
-func (v symbol_) GetIterator() age.IteratorLike[rune] {
-	var class = age.IteratorClass[rune]()
+func (v symbol_) GetIterator() age.IteratorLike[Character] {
+	var class = age.IteratorClass[Character]()
 	var iterator = class.Iterator(v.AsArray())
 	return iterator
 }
 
-// col.Accessible[rune] Methods
+// col.Accessible[Character] Methods
 
 func (v symbol_) GetValue(
 	index col.Index,
-) rune {
-	var class = col.ListClass[rune]()
+) Character {
+	var class = col.ListClass[Character]()
 	var list = class.ListFromArray(v.AsArray())
 	return list.GetValue(index)
 }
@@ -120,8 +120,8 @@ func (v symbol_) GetValue(
 func (v symbol_) GetValues(
 	first col.Index,
 	last col.Index,
-) col.Sequential[rune] {
-	var class = col.ListClass[rune]()
+) col.Sequential[Character] {
+	var class = col.ListClass[Character]()
 	var list = class.ListFromArray(v.AsArray())
 	return list.GetValues(first, last)
 }

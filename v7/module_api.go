@@ -87,6 +87,7 @@ type (
 // String
 
 type (
+	Character   = str.Character
 	Identifier  = str.Identifier
 	Instruction = str.Instruction
 	Line        = str.Line
@@ -553,15 +554,15 @@ func PatternClass() PatternClassLike {
 }
 
 func Pattern(
-	runes []rune,
+	characters []Character,
 ) PatternLike {
 	return PatternClass().Pattern(
-		runes,
+		characters,
 	)
 }
 
 func PatternFromSequence(
-	sequence col.Sequential[rune],
+	sequence col.Sequential[Character],
 ) PatternLike {
 	return PatternClass().PatternFromSequence(
 		sequence,
@@ -581,15 +582,15 @@ func QuoteClass() QuoteClassLike {
 }
 
 func Quote(
-	runes []rune,
+	characters []Character,
 ) QuoteLike {
 	return QuoteClass().Quote(
-		runes,
+		characters,
 	)
 }
 
 func QuoteFromSequence(
-	sequence col.Sequential[rune],
+	sequence col.Sequential[Character],
 ) QuoteLike {
 	return QuoteClass().QuoteFromSequence(
 		sequence,
@@ -609,15 +610,15 @@ func SymbolClass() SymbolClassLike {
 }
 
 func Symbol(
-	runes []rune,
+	characters []Character,
 ) SymbolLike {
 	return SymbolClass().Symbol(
-		runes,
+		characters,
 	)
 }
 
 func SymbolFromSequence(
-	sequence col.Sequential[rune],
+	sequence col.Sequential[Character],
 ) SymbolLike {
 	return SymbolClass().SymbolFromSequence(
 		sequence,

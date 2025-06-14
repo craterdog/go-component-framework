@@ -32,15 +32,15 @@ func QuoteClass() QuoteClassLike {
 // Constructor Methods
 
 func (c *quoteClass_) Quote(
-	runes []rune,
+	characters []Character,
 ) QuoteLike {
-	return quote_(runes)
+	return quote_(characters)
 }
 
 func (c *quoteClass_) QuoteFromSequence(
-	sequence col.Sequential[rune],
+	sequence col.Sequential[Character],
 ) QuoteLike {
-	var class = col.ListClass[rune]()
+	var class = col.ListClass[Character]()
 	var list = class.ListFromSequence(sequence)
 	return quote_(list.AsArray())
 }
@@ -79,8 +79,8 @@ func (v quote_) GetClass() QuoteClassLike {
 	return quoteClass()
 }
 
-func (v quote_) AsIntrinsic() []rune {
-	return []rune(v)
+func (v quote_) AsIntrinsic() []Character {
+	return []Character(v)
 }
 
 func (v quote_) AsString() string {
@@ -89,7 +89,7 @@ func (v quote_) AsString() string {
 
 // Attribute Methods
 
-// col.Sequential[rune] Methods
+// col.Sequential[Character] Methods
 
 func (v quote_) IsEmpty() bool {
 	return len(v) == 0
@@ -99,22 +99,22 @@ func (v quote_) GetSize() age.Cardinal {
 	return age.Cardinal(len(v.AsArray()))
 }
 
-func (v quote_) AsArray() []rune {
-	return []rune(v)
+func (v quote_) AsArray() []Character {
+	return []Character(v)
 }
 
-func (v quote_) GetIterator() age.IteratorLike[rune] {
-	var class = age.IteratorClass[rune]()
+func (v quote_) GetIterator() age.IteratorLike[Character] {
+	var class = age.IteratorClass[Character]()
 	var iterator = class.Iterator(v.AsArray())
 	return iterator
 }
 
-// col.Accessible[rune] Methods
+// col.Accessible[Character] Methods
 
 func (v quote_) GetValue(
 	index col.Index,
-) rune {
-	var class = col.ListClass[rune]()
+) Character {
+	var class = col.ListClass[Character]()
 	var list = class.ListFromArray(v.AsArray())
 	return list.GetValue(index)
 }
@@ -122,13 +122,17 @@ func (v quote_) GetValue(
 func (v quote_) GetValues(
 	first col.Index,
 	last col.Index,
-) col.Sequential[rune] {
-	var class = col.ListClass[rune]()
+) col.Sequential[Character] {
+	var class = col.ListClass[Character]()
 	var list = class.ListFromArray(v.AsArray())
 	return list.GetValues(first, last)
 }
 
 // PROTECTED INTERFACE
+
+func (v Character) String() string {
+	return fmt.Sprintf("%c", rune(v))
+}
 
 func (v quote_) String() string {
 	return v.AsString()
