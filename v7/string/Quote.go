@@ -18,6 +18,7 @@ import (
 	col "github.com/craterdog/go-component-framework/v7/collection"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
+	stc "strconv"
 )
 
 // CLASS INTERFACE
@@ -55,7 +56,8 @@ func (c *quoteClass_) QuoteFromString(
 		)
 		panic(message)
 	}
-	return quote_(matches[1]) // Strip off the double quotes.
+	var unquoted, _ = stc.Unquote(matches[0]) // Strip off the double quotes.
+	return quote_(unquoted)
 }
 
 // Constant Methods
@@ -82,7 +84,7 @@ func (v quote_) AsIntrinsic() string {
 }
 
 func (v quote_) AsString() string {
-	return `"` + v.AsIntrinsic() + `"`
+	return stc.Quote(v.AsIntrinsic())
 }
 
 // Attribute Methods

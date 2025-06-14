@@ -18,6 +18,7 @@ import (
 	col "github.com/craterdog/go-component-framework/v7/collection"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
+	stc "strconv"
 )
 
 // CLASS INTERFACE
@@ -62,8 +63,9 @@ func (c *patternClass_) PatternFromString(
 	case "any":
 		return c.any_
 	default:
-		reg.MustCompile(matches[1]) // Make sure it is a valid regular expression.
-		return pattern_(matches[1]) // Strip off the double quotes and '?'.
+		var unquoted, _ = stc.Unquote(matches[0]) // Strip off the double quotes.
+		reg.MustCompile(unquoted)
+		return pattern_(unquoted)
 	}
 }
 
@@ -106,7 +108,7 @@ func (v pattern_) AsString() string {
 	case `.*`:
 		string_ = `any`
 	default:
-		string_ = `"` + v.AsIntrinsic() + `"?`
+		string_ = stc.Quote(v.AsIntrinsic()) + "?"
 	}
 	return string_
 }
