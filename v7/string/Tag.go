@@ -34,19 +34,14 @@ func TagClass() TagClassLike {
 func (c *tagClass_) Tag(
 	bytes []byte,
 ) TagLike {
+	c.validateSize(age.Cardinal(len(bytes)))
 	return tag_(bytes)
 }
 
 func (c *tagClass_) TagWithSize(
 	size age.Cardinal,
 ) TagLike {
-	if size < 4 {
-		var message = fmt.Sprintf(
-			"A tag must be at least four bytes long: %v",
-			size,
-		)
-		panic(message)
-	}
+	c.validateSize(size)
 	var generator = age.GeneratorClass().Generator()
 	var bytes = generator.RandomBytes(size)
 	return tag_(bytes)
@@ -55,6 +50,7 @@ func (c *tagClass_) TagWithSize(
 func (c *tagClass_) TagFromSequence(
 	sequence col.Sequential[byte],
 ) TagLike {
+	c.validateSize(sequence.GetSize())
 	var class = col.ListClass[byte]()
 	var list = class.ListFromSequence(sequence)
 	return tag_(list.AsArray())
@@ -166,6 +162,18 @@ func (v tag_) String() string {
 }
 
 // Private Methods
+
+func (c *tagClass_) validateSize(
+	size age.Cardinal,
+) {
+	if size < 8 {
+		var message = fmt.Sprintf(
+			"A tag must be at least eight bytes long: %v",
+			size,
+		)
+		panic(message)
+	}
+}
 
 // NOTE:
 // These private constants are used to define the private regular expression
