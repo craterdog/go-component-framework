@@ -422,6 +422,18 @@ type ResourceClassLike interface {
 	) ResourceLike
 }
 
+/*
+SymbolClassLike is a class interface that defines the complete set of
+class constants, constructors and functions that must be supported by each
+symbol-like concrete class.
+*/
+type SymbolClassLike interface {
+	// Constructor Methods
+	Symbol(
+		string_ string,
+	) SymbolLike
+}
+
 // INSTANCE DECLARATIONS
 
 /*
@@ -449,7 +461,7 @@ type AngleLike interface {
 /*
 BooleanLike is an instance interface that defines the complete set of
 instance attributes, abstractions and methods that must be supported by each
-instance of a boolean-like elemental class.
+instance of a boolean-like class.
 */
 type BooleanLike interface {
 	// Principal Methods
@@ -464,7 +476,7 @@ type BooleanLike interface {
 /*
 CitationLike is an instance interface that defines the complete set of
 instance attributes, abstractions and methods that must be supported by each
-instance of a citation-like elemental class.
+instance of a citation-like class.
 */
 type CitationLike interface {
 	// Principal Methods
@@ -478,7 +490,7 @@ type CitationLike interface {
 /*
 DurationLike is an instance interface that defines the complete set of
 instance attributes, abstractions and methods that must be supported by each
-instance of a duration-like elemental class.
+instance of a duration-like class.
 */
 type DurationLike interface {
 	// Principal Methods
@@ -496,7 +508,7 @@ type DurationLike interface {
 /*
 GlyphLike is an instance interface that defines the complete set of
 instance attributes, abstractions and methods that must be supported by each
-instance of a glyph-like elemental class.
+instance of a glyph-like class.
 */
 type GlyphLike interface {
 	// Principal Methods
@@ -511,7 +523,7 @@ type GlyphLike interface {
 /*
 MomentLike is an instance interface that defines the complete set of
 instance attributes, abstractions and methods that must be supported by each
-instance of a moment-like elemental class.
+instance of a moment-like class.
 */
 type MomentLike interface {
 	// Principal Methods
@@ -528,7 +540,7 @@ type MomentLike interface {
 /*
 NumberLike is an instance interface that defines the complete set of
 instance attributes, abstractions and methods that must be supported by each
-instance of a number-like elemental class.
+instance of a number-like class.
 */
 type NumberLike interface {
 	// Principal Methods
@@ -548,7 +560,7 @@ type NumberLike interface {
 /*
 PercentageLike is an instance interface that defines the complete set of
 instance attributes, abstractions and methods that must be supported by each
-instance of a percentage-like elemental class.
+instance of a percentage-like class.
 */
 type PercentageLike interface {
 	// Principal Methods
@@ -565,7 +577,7 @@ type PercentageLike interface {
 /*
 ProbabilityLike is an instance interface that defines the complete set of
 instance attributes, abstractions and methods that must be supported by each
-instance of a probability-like elemental class.
+instance of a probability-like class.
 */
 type ProbabilityLike interface {
 	// Principal Methods
@@ -581,7 +593,7 @@ type ProbabilityLike interface {
 /*
 ResourceLike is an instance interface that defines the complete set of
 instance attributes, abstractions and methods that must be supported by each
-instance of a resource-like elemental class.
+instance of a resource-like class.
 */
 type ResourceLike interface {
 	// Principal Methods
@@ -596,11 +608,23 @@ type ResourceLike interface {
 	GetFragment() string
 }
 
+/*
+SymbolLike is an instance interface that declares the complete set of principal,
+attribute and aspect methods that must be supported by each instance of a
+concrete symbol-like class.
+*/
+type SymbolLike interface {
+	// Principal Methods
+	GetClass() SymbolClassLike
+	AsIntrinsic() string
+	AsString() string
+}
+
 // ASPECT DECLARATIONS
 
 /*
 Continuous is an aspect interface that defines a set of method signatures
-that must be supported by each instance of a continuous elemental class.
+that must be supported by each instance of a continuous class.
 */
 type Continuous interface {
 	AsFloat() float64
@@ -612,7 +636,7 @@ type Continuous interface {
 
 /*
 Discrete is an aspect interface that defines a set of method signatures
-that must be supported by each instance of a discrete elemental class.
+that must be supported by each instance of a discrete class.
 */
 type Discrete interface {
 	AsBoolean() bool
@@ -621,7 +645,7 @@ type Discrete interface {
 
 /*
 Factored is an aspect interface that defines a set of method signatures
-that must be supported by each instance of a factored elemental class.
+that must be supported by each instance of a factored class.
 */
 type Factored interface {
 	GetMilliseconds() int
@@ -636,7 +660,7 @@ type Factored interface {
 
 /*
 Polarized is an aspect interface that defines a set of method signatures
-that must be supported by each instance of a polarized elemental class.
+that must be supported by each instance of a polarized class.
 */
 type Polarized interface {
 	IsNegative() bool
@@ -644,7 +668,7 @@ type Polarized interface {
 
 /*
 Temporal is an aspect interface that defines a set of method signatures
-that must be supported by each instance of a temporal elemental class.
+that must be supported by each instance of a temporal class.
 */
 type Temporal interface {
 	AsMilliseconds() float64

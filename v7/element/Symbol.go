@@ -10,12 +10,10 @@
 ................................................................................
 */
 
-package string
+package element
 
 import (
 	fmt "fmt"
-	age "github.com/craterdog/go-component-framework/v7/agent"
-	col "github.com/craterdog/go-component-framework/v7/collection"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
 )
@@ -31,20 +29,6 @@ func SymbolClass() SymbolClassLike {
 // Constructor Methods
 
 func (c *symbolClass_) Symbol(
-	characters []Character,
-) SymbolLike {
-	return symbol_(characters)
-}
-
-func (c *symbolClass_) SymbolFromSequence(
-	sequence col.Sequential[Character],
-) SymbolLike {
-	var class = col.ListClass[Character]()
-	var list = class.ListFromSequence(sequence)
-	return symbol_(list.AsArray())
-}
-
-func (c *symbolClass_) SymbolFromString(
 	string_ string,
 ) SymbolLike {
 	var matches = c.matcher_.FindStringSubmatch(string_)
@@ -62,13 +46,6 @@ func (c *symbolClass_) SymbolFromString(
 
 // Function Methods
 
-func (c *symbolClass_) Concatenate(
-	first SymbolLike,
-	second SymbolLike,
-) SymbolLike {
-	return c.Symbol(uti.CombineArrays(first.AsIntrinsic(), second.AsIntrinsic()))
-}
-
 // INSTANCE INTERFACE
 
 // Principal Methods
@@ -77,8 +54,8 @@ func (v symbol_) GetClass() SymbolClassLike {
 	return symbolClass()
 }
 
-func (v symbol_) AsIntrinsic() []Character {
-	return []Character(v)
+func (v symbol_) AsIntrinsic() string {
+	return string(v)
 }
 
 func (v symbol_) AsString() string {
@@ -86,45 +63,6 @@ func (v symbol_) AsString() string {
 }
 
 // Attribute Methods
-
-// col.Sequential[Character] Methods
-
-func (v symbol_) IsEmpty() bool {
-	return len(v) == 0
-}
-
-func (v symbol_) GetSize() age.Cardinal {
-	return age.Cardinal(len(v.AsArray()))
-}
-
-func (v symbol_) AsArray() []Character {
-	return []Character(v)
-}
-
-func (v symbol_) GetIterator() age.IteratorLike[Character] {
-	var class = age.IteratorClass[Character]()
-	var iterator = class.Iterator(v.AsArray())
-	return iterator
-}
-
-// col.Accessible[Character] Methods
-
-func (v symbol_) GetValue(
-	index col.Index,
-) Character {
-	var class = col.ListClass[Character]()
-	var list = class.ListFromArray(v.AsArray())
-	return list.GetValue(index)
-}
-
-func (v symbol_) GetValues(
-	first col.Index,
-	last col.Index,
-) col.Sequential[Character] {
-	var class = col.ListClass[Character]()
-	var list = class.ListFromArray(v.AsArray())
-	return list.GetValues(first, last)
-}
 
 // PROTECTED INTERFACE
 

@@ -870,3 +870,12 @@ func TestResourceWithAuthorityAndPathAndQueryAndFragment(t *tes.T) {
 	ass.Equal(t, "foo=bar;bar=baz", v.GetQuery())
 	ass.Equal(t, "Home", v.GetFragment())
 }
+
+var SymbolClass = ele.SymbolClass()
+
+func TestSymbol(t *tes.T) {
+	var foobar = "$foo-bar"
+	var v = SymbolClass.Symbol(foobar)
+	ass.Equal(t, foobar, v.AsString())
+	ass.Equal(t, foobar[1:], v.AsIntrinsic())
+}

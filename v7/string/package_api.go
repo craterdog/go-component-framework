@@ -231,30 +231,6 @@ type QuoteClassLike interface {
 }
 
 /*
-SymbolClassLike is a class interface that defines the complete set of
-class constants, constructors and functions that must be supported by each
-symbol-like concrete class.
-*/
-type SymbolClassLike interface {
-	// Constructor Methods
-	Symbol(
-		characters []Character,
-	) SymbolLike
-	SymbolFromSequence(
-		sequence col.Sequential[Character],
-	) SymbolLike
-	SymbolFromString(
-		string_ string,
-	) SymbolLike
-
-	// Function Methods
-	Concatenate(
-		first SymbolLike,
-		second SymbolLike,
-	) SymbolLike
-}
-
-/*
 TagClassLike is a class interface that defines the complete set of
 class constants, constructors and functions that must be supported by each
 tag-like concrete class.
@@ -410,22 +386,6 @@ concrete quote-like class.
 type QuoteLike interface {
 	// Principal Methods
 	GetClass() QuoteClassLike
-	AsIntrinsic() []Character
-	AsString() string
-
-	// Aspect Interfaces
-	col.Accessible[Character]
-	col.Sequential[Character]
-}
-
-/*
-SymbolLike is an instance interface that declares the complete set of principal,
-attribute and aspect methods that must be supported by each instance of a
-concrete symbol-like class.
-*/
-type SymbolLike interface {
-	// Principal Methods
-	GetClass() SymbolClassLike
 	AsIntrinsic() []Character
 	AsString() string
 

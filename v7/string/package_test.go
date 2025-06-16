@@ -251,17 +251,6 @@ func TestQuotesLibrary(t *tes.T) {
 	ass.Equal(t, `"abcd本1234"`, QuoteClass.Concatenate(v1, v2).AsString())
 }
 
-var SymbolClass = str.SymbolClass()
-
-func TestSymbol(t *tes.T) {
-	var foobar = "$foo-bar"
-	var v = SymbolClass.SymbolFromString(foobar)
-	ass.Equal(t, foobar, v.AsString())
-	ass.False(t, v.IsEmpty())
-	ass.Equal(t, 7, int(v.GetSize()))
-	ass.Equal(t, []str.Character("foo-bar"), v.AsArray())
-}
-
 var TagClass = str.TagClass()
 
 func TestStringTags(t *tes.T) {

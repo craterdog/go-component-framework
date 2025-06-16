@@ -61,6 +61,7 @@ type (
 	PercentageClassLike  = ele.PercentageClassLike
 	ProbabilityClassLike = ele.ProbabilityClassLike
 	ResourceClassLike    = ele.ResourceClassLike
+	SymbolClassLike      = ele.SymbolClassLike
 )
 
 type (
@@ -74,6 +75,7 @@ type (
 	PercentageLike  = ele.PercentageLike
 	ProbabilityLike = ele.ProbabilityLike
 	ResourceLike    = ele.ResourceLike
+	SymbolLike      = ele.SymbolLike
 )
 
 type (
@@ -100,7 +102,6 @@ type (
 	NarrativeClassLike = str.NarrativeClassLike
 	PatternClassLike   = str.PatternClassLike
 	QuoteClassLike     = str.QuoteClassLike
-	SymbolClassLike    = str.SymbolClassLike
 	TagClassLike       = str.TagClassLike
 	VersionClassLike   = str.VersionClassLike
 )
@@ -112,7 +113,6 @@ type (
 	NarrativeLike = str.NarrativeLike
 	PatternLike   = str.PatternLike
 	QuoteLike     = str.QuoteLike
-	SymbolLike    = str.SymbolLike
 	TagLike       = str.TagLike
 	VersionLike   = str.VersionLike
 )
@@ -606,29 +606,13 @@ func QuoteFromString(
 }
 
 func SymbolClass() SymbolClassLike {
-	return str.SymbolClass()
+	return ele.SymbolClass()
 }
 
 func Symbol(
-	characters []Character,
-) SymbolLike {
-	return SymbolClass().Symbol(
-		characters,
-	)
-}
-
-func SymbolFromSequence(
-	sequence col.Sequential[Character],
-) SymbolLike {
-	return SymbolClass().SymbolFromSequence(
-		sequence,
-	)
-}
-
-func SymbolFromString(
 	string_ string,
 ) SymbolLike {
-	return SymbolClass().SymbolFromString(
+	return SymbolClass().Symbol(
 		string_,
 	)
 }
