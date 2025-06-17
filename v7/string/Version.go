@@ -15,7 +15,6 @@ package string
 import (
 	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agent"
-	col "github.com/craterdog/go-component-framework/v7/collection"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
 	stc "strconv"
@@ -33,17 +32,15 @@ func VersionClass() VersionClassLike {
 // Constructor Methods
 
 func (c *versionClass_) Version(
-	ordinals []age.Ordinal,
+	ordinals []uti.Ordinal,
 ) VersionLike {
 	return version_(ordinals)
 }
 
 func (c *versionClass_) VersionFromSequence(
-	sequence col.Sequential[age.Ordinal],
+	sequence Sequential[uti.Ordinal],
 ) VersionLike {
-	var class = col.ListClass[age.Ordinal]()
-	var list = class.ListFromSequence(sequence)
-	return version_(list.AsArray())
+	return version_(sequence.AsArray())
 }
 
 func (c *versionClass_) VersionFromString(
@@ -59,10 +56,10 @@ func (c *versionClass_) VersionFromString(
 	}
 	var match = matches[1] // Strip off the leading "v".
 	var levels = sts.Split(match, ".")
-	var ordinals = make([]age.Ordinal, len(levels))
+	var ordinals = make([]uti.Ordinal, len(levels))
 	for index, level := range levels {
 		var ordinal, _ = stc.ParseUint(level, 10, 64)
-		ordinals[index] = age.Ordinal(ordinal)
+		ordinals[index] = uti.Ordinal(ordinal)
 	}
 	return version_(ordinals)
 }
@@ -85,7 +82,7 @@ func (c *versionClass_) IsValidNextVersion(
 	}
 
 	// Iterate through the versions comparing level values.
-	var class = age.IteratorClass[age.Ordinal]()
+	var class = age.IteratorClass[uti.Ordinal]()
 	var currentIterator = class.Iterator(current.AsArray())
 	var nextIterator = class.Iterator(next.AsArray())
 	for currentIterator.HasNext() && nextIterator.HasNext() {
@@ -104,11 +101,11 @@ func (c *versionClass_) IsValidNextVersion(
 
 func (c *versionClass_) GetNextVersion(
 	current VersionLike,
-	level age.Ordinal,
+	level uti.Ordinal,
 ) VersionLike {
 	// Adjust the size of the ordinals as needed.
 	var ordinals = current.AsArray()
-	var size = age.Ordinal(len(ordinals))
+	var size = uti.Ordinal(len(ordinals))
 	switch {
 	case level == 0:
 		level = size // Normalize the level to the current size.
@@ -137,7 +134,7 @@ func (c *versionClass_) Concatenate(
 	var firstOrdinals = first.AsArray()
 	var secondOrdinals = second.AsArray()
 	var allOrdinals = make(
-		[]age.Ordinal,
+		[]uti.Ordinal,
 		len(firstOrdinals)+len(secondOrdinals),
 	)
 	copy(allOrdinals, firstOrdinals)
@@ -153,8 +150,8 @@ func (v version_) GetClass() VersionClassLike {
 	return versionClass()
 }
 
-func (v version_) AsIntrinsic() []age.Ordinal {
-	return []age.Ordinal(v)
+func (v version_) AsIntrinsic() []uti.Ordinal {
+	return []uti.Ordinal(v)
 }
 
 func (v version_) AsString() string {
@@ -168,44 +165,43 @@ func (v version_) AsString() string {
 
 // Attribute Methods
 
-// col.Sequential[age.Ordinal] Methods
+// Sequential[uti.Ordinal] Methods
 
 func (v version_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v version_) GetSize() age.Cardinal {
-	return age.Cardinal(len(v))
+func (v version_) GetSize() uti.Cardinal {
+	return uti.Cardinal(len(v))
 }
 
-func (v version_) AsArray() []age.Ordinal {
+func (v version_) AsArray() []uti.Ordinal {
 	return uti.CopyArray(v)
 }
 
-func (v version_) GetIterator() age.IteratorLike[age.Ordinal] {
+func (v version_) GetIterator() age.IteratorLike[uti.Ordinal] {
 	var array = uti.CopyArray(v)
-	var class = age.IteratorClass[age.Ordinal]()
+	var class = age.IteratorClass[uti.Ordinal]()
 	var iterator = class.Iterator(array)
 	return iterator
 }
 
-// col.Accessible[age.Ordinal] Methods
+// Accessible[uti.Ordinal] Methods
 
 func (v version_) GetValue(
-	index col.Index,
-) age.Ordinal {
-	var class = col.ListClass[age.Ordinal]()
-	var list = class.ListFromArray(v)
-	return list.GetValue(index)
+	index uti.Index,
+) uti.Ordinal {
+	var goIndex = uti.RelativeToZeroBased(v, index)
+	return v[goIndex]
 }
 
 func (v version_) GetValues(
-	first col.Index,
-	last col.Index,
-) col.Sequential[age.Ordinal] {
-	var class = col.ListClass[age.Ordinal]()
-	var list = class.ListFromArray(v)
-	return list.GetValues(first, last)
+	first uti.Index,
+	last uti.Index,
+) Sequential[uti.Ordinal] {
+	var goFirst = uti.RelativeToZeroBased(v, first)
+	var goLast = uti.RelativeToZeroBased(v, last)
+	return version_(v[goFirst : goLast+1])
 }
 
 // PROTECTED INTERFACE
@@ -229,7 +225,7 @@ const (
 
 // Instance Structure
 
-type version_ []age.Ordinal
+type version_ []uti.Ordinal
 
 // Class Structure
 

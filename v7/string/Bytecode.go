@@ -15,7 +15,6 @@ package string
 import (
 	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agent"
-	col "github.com/craterdog/go-component-framework/v7/collection"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
 	sts "strings"
@@ -38,11 +37,9 @@ func (c *bytecodeClass_) Bytecode(
 }
 
 func (c *bytecodeClass_) BytecodeFromSequence(
-	sequence col.Sequential[Instruction],
+	sequence Sequential[Instruction],
 ) BytecodeLike {
-	var class = col.ListClass[Instruction]()
-	var list = class.ListFromSequence(sequence)
-	return bytecode_(list.AsArray())
+	return bytecode_(sequence.AsArray())
 }
 
 func (c *bytecodeClass_) BytecodeFromString(
@@ -125,14 +122,14 @@ func (v bytecode_) AsString() string {
 
 // Attribute Methods
 
-// col.Sequential[Instruction] Methods
+// Sequential[Instruction] Methods
 
 func (v bytecode_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v bytecode_) GetSize() age.Cardinal {
-	return age.Cardinal(len(v))
+func (v bytecode_) GetSize() uti.Cardinal {
+	return uti.Cardinal(len(v))
 }
 
 func (v bytecode_) AsArray() []Instruction {
@@ -146,23 +143,22 @@ func (v bytecode_) GetIterator() age.IteratorLike[Instruction] {
 	return iterator
 }
 
-// col.Accessible[Instruction] Methods
+// Accessible[Instruction] Methods
 
 func (v bytecode_) GetValue(
-	index col.Index,
+	index uti.Index,
 ) Instruction {
-	var class = col.ListClass[Instruction]()
-	var list = class.ListFromArray(v)
-	return list.GetValue(index)
+	var goIndex = uti.RelativeToZeroBased(v, index)
+	return v[goIndex]
 }
 
 func (v bytecode_) GetValues(
-	first col.Index,
-	last col.Index,
-) col.Sequential[Instruction] {
-	var class = col.ListClass[Instruction]()
-	var list = class.ListFromArray(v)
-	return list.GetValues(first, last)
+	first uti.Index,
+	last uti.Index,
+) Sequential[Instruction] {
+	var goFirst = uti.RelativeToZeroBased(v, first)
+	var goLast = uti.RelativeToZeroBased(v, last)
+	return bytecode_(v[goFirst : goLast+1])
 }
 
 // PROTECTED INTERFACE

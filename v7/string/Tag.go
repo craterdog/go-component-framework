@@ -16,7 +16,6 @@ import (
 	bin "encoding/binary"
 	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agent"
-	col "github.com/craterdog/go-component-framework/v7/collection"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
 )
@@ -34,12 +33,12 @@ func TagClass() TagClassLike {
 func (c *tagClass_) Tag(
 	bytes []byte,
 ) TagLike {
-	c.validateSize(age.Cardinal(len(bytes)))
+	c.validateSize(uti.Cardinal(len(bytes)))
 	return tag_(bytes)
 }
 
 func (c *tagClass_) TagWithSize(
-	size age.Cardinal,
+	size uti.Cardinal,
 ) TagLike {
 	c.validateSize(size)
 	var generator = age.GeneratorClass().Generator()
@@ -48,12 +47,10 @@ func (c *tagClass_) TagWithSize(
 }
 
 func (c *tagClass_) TagFromSequence(
-	sequence col.Sequential[byte],
+	sequence Sequential[byte],
 ) TagLike {
 	c.validateSize(sequence.GetSize())
-	var class = col.ListClass[byte]()
-	var list = class.ListFromSequence(sequence)
-	return tag_(list.AsArray())
+	return tag_(sequence.AsArray())
 }
 
 func (c *tagClass_) TagFromString(
@@ -115,14 +112,14 @@ func (v tag_) GetHash() uint64 {
 
 // Attribute Methods
 
-// col.Sequential[byte] Methods
+// Sequential[byte] Methods
 
 func (v tag_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v tag_) GetSize() age.Cardinal {
-	return age.Cardinal(len(v))
+func (v tag_) GetSize() uti.Cardinal {
+	return uti.Cardinal(len(v))
 }
 
 func (v tag_) AsArray() []byte {
@@ -136,23 +133,22 @@ func (v tag_) GetIterator() age.IteratorLike[byte] {
 	return iterator
 }
 
-// col.Accessible[byte] Methods
+// Accessible[byte] Methods
 
 func (v tag_) GetValue(
-	index col.Index,
+	index uti.Index,
 ) byte {
-	var class = col.ListClass[byte]()
-	var list = class.ListFromArray(v)
-	return list.GetValue(index)
+	var goIndex = uti.RelativeToZeroBased(v, index)
+	return v[goIndex]
 }
 
 func (v tag_) GetValues(
-	first col.Index,
-	last col.Index,
-) col.Sequential[byte] {
-	var class = col.ListClass[byte]()
-	var list = class.ListFromArray(v)
-	return list.GetValues(first, last)
+	first uti.Index,
+	last uti.Index,
+) Sequential[byte] {
+	var goFirst = uti.RelativeToZeroBased(v, first)
+	var goLast = uti.RelativeToZeroBased(v, last)
+	return tag_(v[goFirst : goLast+1])
 }
 
 // PROTECTED INTERFACE
@@ -164,7 +160,7 @@ func (v tag_) String() string {
 // Private Methods
 
 func (c *tagClass_) validateSize(
-	size age.Cardinal,
+	size uti.Cardinal,
 ) {
 	if size < 8 {
 		var message = fmt.Sprintf(

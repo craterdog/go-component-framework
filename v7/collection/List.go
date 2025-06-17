@@ -15,6 +15,7 @@ package collection
 import (
 	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agent"
+	str "github.com/craterdog/go-component-framework/v7/string"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	syn "sync"
 )
@@ -46,7 +47,7 @@ func (c *listClass_[V]) ListFromArray(
 }
 
 func (c *listClass_[V]) ListFromSequence(
-	values Sequential[V],
+	values str.Sequential[V],
 ) ListLike[V] {
 	var instance = &list_[V]{
 		array_: values.AsArray(),
@@ -80,19 +81,19 @@ func (v *list_[V]) GetClass() ListClassLike[V] {
 // Accessible[V] Methods
 
 func (v *list_[V]) GetValue(
-	index Index,
+	index uti.Index,
 ) V {
-	var goIndex = v.toZeroBased(index)
+	var goIndex = uti.RelativeToZeroBased(v.array_, index)
 	var value = v.array_[goIndex]
 	return value
 }
 
 func (v *list_[V]) GetValues(
-	first Index,
-	last Index,
-) Sequential[V] {
-	var goFirst = v.toZeroBased(first)
-	var goLast = v.toZeroBased(last) + 1 // In Go, the last index is exclusive.
+	first uti.Index,
+	last uti.Index,
+) str.Sequential[V] {
+	var goFirst = uti.RelativeToZeroBased(v.array_, first)
+	var goLast = uti.RelativeToZeroBased(v.array_, last) + 1
 	var values = listClass[V]().ListFromArray(v.array_[goFirst:goLast])
 	return values
 }
@@ -119,7 +120,7 @@ func (v *list_[V]) InsertValue(
 
 func (v *list_[V]) InsertValues(
 	slot age.Slot,
-	values Sequential[V],
+	values str.Sequential[V],
 ) {
 	// Create a new larger array.
 	var newValues = values.AsArray()
@@ -152,7 +153,7 @@ func (v *list_[V]) AppendValue(
 }
 
 func (v *list_[V]) AppendValues(
-	values Sequential[V],
+	values str.Sequential[V],
 ) {
 	// Create a new larger array.
 	var newValues = values.AsArray()
@@ -168,14 +169,14 @@ func (v *list_[V]) AppendValues(
 }
 
 func (v *list_[V]) RemoveValue(
-	index Index,
+	index uti.Index,
 ) V {
 	// Create a new smaller array.
 	var size = len(v.array_) - 1
 	var array = make([]V, size)
 
 	// Copy the values into the new array.
-	var goIndex = v.toZeroBased(index)
+	var goIndex = uti.RelativeToZeroBased(v.array_, index)
 	copy(array, v.array_[:goIndex])
 	var removed = v.array_[goIndex]
 	copy(array[goIndex:], v.array_[goIndex+1:])
@@ -186,12 +187,12 @@ func (v *list_[V]) RemoveValue(
 }
 
 func (v *list_[V]) RemoveValues(
-	first Index,
-	last Index,
-) Sequential[V] {
+	first uti.Index,
+	last uti.Index,
+) str.Sequential[V] {
 	// Create two smaller arrays.
-	var goFirst = v.toZeroBased(first)
-	var goLast = v.toZeroBased(last) + 1 // In Go, the last index is exclusive.
+	var goFirst = uti.RelativeToZeroBased(v.array_, first)
+	var goLast = uti.RelativeToZeroBased(v.array_, last) + 1
 	var delta = goLast - goFirst
 	var size = len(v.array_) - delta
 	var array = make([]V, size)
@@ -223,7 +224,7 @@ func (v *list_[V]) ContainsValue(
 }
 
 func (v *list_[V]) ContainsAny(
-	values Sequential[V],
+	values str.Sequential[V],
 ) bool {
 	var iterator = values.GetIterator()
 	for iterator.HasNext() {
@@ -238,7 +239,7 @@ func (v *list_[V]) ContainsAny(
 }
 
 func (v *list_[V]) ContainsAll(
-	values Sequential[V],
+	values str.Sequential[V],
 ) bool {
 	var iterator = values.GetIterator()
 	for iterator.HasNext() {
@@ -254,8 +255,8 @@ func (v *list_[V]) ContainsAll(
 
 func (v *list_[V]) GetIndex(
 	value V,
-) Index {
-	var index Index
+) uti.Index {
+	var index uti.Index
 	var collatorClass = age.CollatorClass[V]()
 	var compare = collatorClass.Collator().CompareValues
 	var iterator = v.GetIterator()
@@ -271,14 +272,14 @@ func (v *list_[V]) GetIndex(
 	return 0
 }
 
-// Sequential[V] Methods
+// str.Sequential[V] Methods
 
 func (v *list_[V]) IsEmpty() bool {
 	return len(v.array_) == 0
 }
 
-func (v *list_[V]) GetSize() age.Cardinal {
-	return age.Cardinal(len(v.array_))
+func (v *list_[V]) GetSize() uti.Cardinal {
+	return uti.Cardinal(len(v.array_))
 }
 
 func (v *list_[V]) AsArray() []V {
@@ -324,18 +325,18 @@ func (v *list_[V]) ShuffleValues() {
 // Updatable[V] Methods
 
 func (v *list_[V]) SetValue(
-	index Index,
+	index uti.Index,
 	value V,
 ) {
-	var goIndex = v.toZeroBased(index)
+	var goIndex = uti.RelativeToZeroBased(v.array_, index)
 	v.array_[goIndex] = value
 }
 
 func (v *list_[V]) SetValues(
-	index Index,
-	values Sequential[V],
+	index uti.Index,
+	values str.Sequential[V],
 ) {
-	var goIndex = v.toZeroBased(index)
+	var goIndex = uti.RelativeToZeroBased(v.array_, index)
 	var newValues = values.AsArray()
 	copy(v.array_[goIndex:], newValues)
 }
@@ -349,42 +350,6 @@ func (v *list_[V]) String() string {
 // PROTECTED INTERFACE
 
 // Private Methods
-
-// This private instance method transforms a relative (ORDINAL-based) index into
-// the corresponding Go (ZERO-based) index.  The following transformation is
-// performed:
-//
-//	[-size..-1] and [1..size] => [0..size)
-//
-// Notice that the specified relative index cannot be zero since zero is NOT an
-// ordinal.
-func (v *list_[V]) toZeroBased(index Index) int {
-	var size = Index(len(v.array_))
-	switch {
-	case size == 0:
-		// The Array is empty.
-		panic("Cannot index an empty Array.")
-	case index == 0:
-		// Zero is not an ordinal.
-		panic("Indices must be positive or negative ordinals, not zero.")
-	case index < -size || index > size:
-		// The index is outside the bounds of the specified range.
-		panic(fmt.Sprintf(
-			"The specified index is outside the allowed ranges [-%v..-1] and [1..%v]: %v",
-			size,
-			size,
-			index))
-	case index < 0:
-		// Convert a negative index.
-		return int(index + size)
-	case index > 0:
-		// Convert a positive index.
-		return int(index - 1)
-	default:
-		// This should never happen so time to...
-		panic(fmt.Sprintf("Go compiler problem, unexpected index value: %v", index))
-	}
-}
 
 // Instance Structure
 

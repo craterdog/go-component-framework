@@ -15,6 +15,7 @@ package collection
 import (
 	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agent"
+	str "github.com/craterdog/go-component-framework/v7/string"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	syn "sync"
 )
@@ -35,7 +36,7 @@ func (c *queueClass_[V]) Queue() QueueLike[V] {
 }
 
 func (c *queueClass_[V]) QueueWithCapacity(
-	capacity age.Cardinal,
+	capacity uti.Cardinal,
 ) QueueLike[V] {
 	if capacity < 1 {
 		capacity = 16 // This is the default capacity.
@@ -63,7 +64,7 @@ func (c *queueClass_[V]) QueueFromArray(
 }
 
 func (c *queueClass_[V]) QueueFromSequence(
-	values Sequential[V],
+	values str.Sequential[V],
 ) QueueLike[V] {
 	var queue = c.Queue()
 	var iterator = values.GetIterator()
@@ -83,8 +84,8 @@ func (c *queueClass_[V]) QueueFromSequence(
 func (c *queueClass_[V]) Fork(
 	group Synchronized,
 	input QueueLike[V],
-	size age.Cardinal,
-) Sequential[QueueLike[V]] {
+	size uti.Cardinal,
+) str.Sequential[QueueLike[V]] {
 	// Validate the arguments.
 	if size < 2 {
 		panic("The fan out size for a queue must be greater than one.")
@@ -94,7 +95,7 @@ func (c *queueClass_[V]) Fork(
 	var capacity = input.GetCapacity()
 	var listClass = ListClass[QueueLike[V]]()
 	var outputs = listClass.List()
-	var i age.Cardinal
+	var i uti.Cardinal
 	for ; i < size; i++ {
 		outputs.AppendValue(c.QueueWithCapacity(capacity))
 	}
@@ -136,8 +137,8 @@ func (c *queueClass_[V]) Fork(
 func (c *queueClass_[V]) Split(
 	group Synchronized,
 	input QueueLike[V],
-	size age.Cardinal,
-) Sequential[QueueLike[V]] {
+	size uti.Cardinal,
+) str.Sequential[QueueLike[V]] {
 	// Validate the arguments.
 	if size < 2 {
 		panic("The size of the split must be greater than one.")
@@ -147,7 +148,7 @@ func (c *queueClass_[V]) Split(
 	var capacity = input.GetCapacity()
 	var listClass = ListClass[QueueLike[V]]()
 	var outputs = listClass.List()
-	var i age.Cardinal
+	var i uti.Cardinal
 	for ; i < size; i++ {
 		outputs.AppendValue(c.QueueWithCapacity(capacity))
 	}
@@ -188,7 +189,7 @@ func (c *queueClass_[V]) Split(
 
 func (c *queueClass_[V]) Join(
 	group Synchronized,
-	inputs Sequential[QueueLike[V]],
+	inputs str.Sequential[QueueLike[V]],
 ) QueueLike[V] {
 	// Validate the arguments.
 	if !uti.IsDefined(inputs) || inputs.IsEmpty() {
@@ -237,7 +238,7 @@ func (v *queue_[V]) GetClass() QueueClassLike[V] {
 
 // Attribute Methods
 
-func (v *queue_[V]) GetCapacity() age.Cardinal {
+func (v *queue_[V]) GetCapacity() uti.Cardinal {
 	return v.capacity_
 }
 
@@ -281,7 +282,7 @@ func (v *queue_[V]) CloseChannel() {
 	v.mutex_.Unlock()
 }
 
-// Sequential[V] Methods
+// str.Sequential[V] Methods
 
 func (v *queue_[V]) IsEmpty() bool {
 	v.mutex_.Lock()
@@ -290,9 +291,9 @@ func (v *queue_[V]) IsEmpty() bool {
 	return result
 }
 
-func (v *queue_[V]) GetSize() age.Cardinal {
+func (v *queue_[V]) GetSize() uti.Cardinal {
 	v.mutex_.Lock()
-	var size = age.Cardinal(len(v.available_))
+	var size = uti.Cardinal(len(v.available_))
 	v.mutex_.Unlock()
 	return size
 }
@@ -331,7 +332,7 @@ func (v *queue_[V]) String() string {
 type queue_[V any] struct {
 	// Declare the instance attributes.
 	available_ chan bool
-	capacity_  age.Cardinal
+	capacity_  uti.Cardinal
 	mutex_     syn.Mutex
 	values_    ListLike[V]
 }

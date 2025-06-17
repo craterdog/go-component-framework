@@ -35,27 +35,11 @@ package collection
 
 import (
 	age "github.com/craterdog/go-component-framework/v7/agent"
+	str "github.com/craterdog/go-component-framework/v7/string"
+	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
 // TYPE DECLARATIONS
-
-/*
-Index is a constrained type representing the positive (or negative) ORDINAL
-index of a value in a sequence.  The indices are ordinal rather than zero-based
-which never really made sense except for pointer offsets.  What is the "zeroth
-value" anyway?  It's the "first value", right?  So we start a fresh...
-
-This approach allows for positive indices starting at the beginning of a
-sequence—and negative indices starting at the end of the sequence, as follows:
-
-	    1           2           3             N
-	[value 1] . [value 2] . [value 3] ... [value N]
-	   -N        -(N-1)      -(N-2)          -1
-
-Notice that because the indices are ordinal based, the positive and negative
-indices are symmetrical.  An index can NEVER be zero.
-*/
-type Index int
 
 // FUNCTIONAL DECLARATIONS
 
@@ -109,13 +93,13 @@ type CatalogClassLike[K comparable, V any] interface {
 		associations map[K]V,
 	) CatalogLike[K, V]
 	CatalogFromSequence(
-		associations Sequential[AssociationLike[K, V]],
+		associations str.Sequential[AssociationLike[K, V]],
 	) CatalogLike[K, V]
 
 	// Function Methods
 	Extract(
 		catalog CatalogLike[K, V],
-		keys Sequential[K],
+		keys str.Sequential[K],
 	) CatalogLike[K, V]
 	Merge(
 		first CatalogLike[K, V],
@@ -132,7 +116,7 @@ A list-like class maintains a dynamic sequence of values which can grow or
 shrink as needed.  Each value is associated with an implicit positive integer
 index.  It uses ORDINAL based indexing rather than the more common—and
 nonsensical—ZERO based indexing scheme (see the description of what
-this means in the Accessible[V] interface definition).
+this means in the str.Accessible[V] interface definition).
 
 The following class functions are supported:
 
@@ -146,7 +130,7 @@ type ListClassLike[V any] interface {
 		values []V,
 	) ListLike[V]
 	ListFromSequence(
-		values Sequential[V],
+		values str.Sequential[V],
 	) ListLike[V]
 
 	// Function Methods
@@ -195,29 +179,29 @@ type QueueClassLike[V any] interface {
 	// Constructor Methods
 	Queue() QueueLike[V]
 	QueueWithCapacity(
-		capacity age.Cardinal,
+		capacity uti.Cardinal,
 	) QueueLike[V]
 	QueueFromArray(
 		values []V,
 	) QueueLike[V]
 	QueueFromSequence(
-		values Sequential[V],
+		values str.Sequential[V],
 	) QueueLike[V]
 
 	// Function Methods
 	Fork(
 		group Synchronized,
 		input QueueLike[V],
-		size age.Cardinal,
-	) Sequential[QueueLike[V]]
+		size uti.Cardinal,
+	) str.Sequential[QueueLike[V]]
 	Split(
 		group Synchronized,
 		input QueueLike[V],
-		size age.Cardinal,
-	) Sequential[QueueLike[V]]
+		size uti.Cardinal,
+	) str.Sequential[QueueLike[V]]
 	Join(
 		group Synchronized,
-		inputs Sequential[QueueLike[V]],
+		inputs str.Sequential[QueueLike[V]],
 	) QueueLike[V]
 }
 
@@ -254,7 +238,7 @@ type SetClassLike[V any] interface {
 		values []V,
 	) SetLike[V]
 	SetFromSequence(
-		values Sequential[V],
+		values str.Sequential[V],
 	) SetLike[V]
 
 	// Function Methods
@@ -289,13 +273,13 @@ type StackClassLike[V any] interface {
 	// Constructor Methods
 	Stack() StackLike[V]
 	StackWithCapacity(
-		capacity age.Cardinal,
+		capacity uti.Cardinal,
 	) StackLike[V]
 	StackFromArray(
 		values []V,
 	) StackLike[V]
 	StackFromSequence(
-		values Sequential[V],
+		values str.Sequential[V],
 	) StackLike[V]
 }
 
@@ -329,7 +313,7 @@ type CatalogLike[K comparable, V any] interface {
 
 	// Aspect Interfaces
 	Associative[K, V]
-	Sequential[AssociationLike[K, V]]
+	str.Sequential[AssociationLike[K, V]]
 	Sortable[AssociationLike[K, V]]
 }
 
@@ -343,10 +327,10 @@ type ListLike[V any] interface {
 	GetClass() ListClassLike[V]
 
 	// Aspect Interfaces
-	Accessible[V]
+	str.Accessible[V]
 	Malleable[V]
 	Searchable[V]
-	Sequential[V]
+	str.Sequential[V]
 	Sortable[V]
 	Updatable[V]
 }
@@ -361,11 +345,11 @@ type QueueLike[V any] interface {
 	GetClass() QueueClassLike[V]
 
 	// Attribute Methods
-	GetCapacity() age.Cardinal
+	GetCapacity() uti.Cardinal
 
 	// Aspect Interfaces
 	Fifo[V]
-	Sequential[V]
+	str.Sequential[V]
 }
 
 /*
@@ -381,10 +365,10 @@ type SetLike[V any] interface {
 	GetCollator() age.CollatorLike[V]
 
 	// Aspect Interfaces
-	Accessible[V]
+	str.Accessible[V]
 	Elastic[V]
 	Searchable[V]
-	Sequential[V]
+	str.Sequential[V]
 }
 
 /*
@@ -397,44 +381,14 @@ type StackLike[V any] interface {
 	GetClass() StackClassLike[V]
 
 	// Attribute Methods
-	GetCapacity() age.Cardinal
+	GetCapacity() uti.Cardinal
 
 	// Aspect Interfaces
 	Lifo[V]
-	Sequential[V]
+	str.Sequential[V]
 }
 
 // ASPECT DECLARATIONS
-
-/*
-Accessible[V any] is an aspect interface that declares a set of method
-signatures that must be supported by each instance of an accessible concrete
-class.
-
-An accessible class maintains values that can be accessed using indices. The
-indices of an accessible sequence are ORDINAL rather than ZERO based—which
-never really made sense except for pointer offsets. What is the "zeroth
-value" anyway? It's the "first value", right?  So we start fresh...
-
-This approach allows for positive indices starting at the beginning of the
-sequence, and negative indices starting at the end of the sequence as follows:
-
-	    1           2           3             N
-	[value 1] . [value 2] . [value 3] ... [value N]
-	   -N        -(N-1)      -(N-2)          -1
-
-Notice that because the indices are ordinal based, the positive and negative
-indices are symmetrical.
-*/
-type Accessible[V any] interface {
-	GetValue(
-		index Index,
-	) V
-	GetValues(
-		first Index,
-		last Index,
-	) Sequential[V]
-}
 
 /*
 Associative[K comparable, V any] is an aspect interface that declares a set of
@@ -453,16 +407,16 @@ type Associative[K comparable, V any] interface {
 		key K,
 		value V,
 	)
-	GetKeys() Sequential[K]
+	GetKeys() str.Sequential[K]
 	GetValues(
-		keys Sequential[K],
-	) Sequential[V]
+		keys str.Sequential[K],
+	) str.Sequential[V]
 	RemoveValue(
 		key K,
 	) V
 	RemoveValues(
-		keys Sequential[K],
-	) Sequential[V]
+		keys str.Sequential[K],
+	) str.Sequential[V]
 	RemoveAll()
 }
 
@@ -475,13 +429,13 @@ type Elastic[V any] interface {
 		value V,
 	)
 	AddValues(
-		values Sequential[V],
+		values str.Sequential[V],
 	)
 	RemoveValue(
 		value V,
 	)
 	RemoveValues(
-		values Sequential[V],
+		values str.Sequential[V],
 	)
 	RemoveAll()
 }
@@ -527,21 +481,21 @@ type Malleable[V any] interface {
 	)
 	InsertValues(
 		slot age.Slot,
-		values Sequential[V],
+		values str.Sequential[V],
 	)
 	AppendValue(
 		value V,
 	)
 	AppendValues(
-		values Sequential[V],
+		values str.Sequential[V],
 	)
 	RemoveValue(
-		index Index,
+		index uti.Index,
 	) V
 	RemoveValues(
-		first Index,
-		last Index,
-	) Sequential[V]
+		first uti.Index,
+		last uti.Index,
+	) str.Sequential[V]
 	RemoveAll()
 }
 
@@ -555,26 +509,14 @@ type Searchable[V any] interface {
 		value V,
 	) bool
 	ContainsAny(
-		values Sequential[V],
+		values str.Sequential[V],
 	) bool
 	ContainsAll(
-		values Sequential[V],
+		values str.Sequential[V],
 	) bool
 	GetIndex(
 		value V,
-	) Index
-}
-
-/*
-Sequential[V any] is an aspect interface that declares a set of method
-signatures that must be supported by each instance of a sequential concrete
-class.
-*/
-type Sequential[V any] interface {
-	IsEmpty() bool
-	GetSize() age.Cardinal
-	AsArray() []V
-	GetIterator() age.IteratorLike[V]
+	) uti.Index
 }
 
 /*
@@ -613,11 +555,11 @@ class.
 */
 type Updatable[V any] interface {
 	SetValue(
-		index Index,
+		index uti.Index,
 		value V,
 	)
 	SetValues(
-		index Index,
-		values Sequential[V],
+		index uti.Index,
+		values str.Sequential[V],
 	)
 }

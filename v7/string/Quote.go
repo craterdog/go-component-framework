@@ -15,7 +15,6 @@ package string
 import (
 	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agent"
-	col "github.com/craterdog/go-component-framework/v7/collection"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
 	stc "strconv"
@@ -38,11 +37,9 @@ func (c *quoteClass_) Quote(
 }
 
 func (c *quoteClass_) QuoteFromSequence(
-	sequence col.Sequential[Character],
+	sequence Sequential[Character],
 ) QuoteLike {
-	var class = col.ListClass[Character]()
-	var list = class.ListFromSequence(sequence)
-	return quote_(list.AsArray())
+	return quote_(sequence.AsArray())
 }
 
 func (c *quoteClass_) QuoteFromString(
@@ -89,14 +86,14 @@ func (v quote_) AsString() string {
 
 // Attribute Methods
 
-// col.Sequential[Character] Methods
+// Sequential[Character] Methods
 
 func (v quote_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v quote_) GetSize() age.Cardinal {
-	return age.Cardinal(len(v.AsArray()))
+func (v quote_) GetSize() uti.Cardinal {
+	return uti.Cardinal(len(v.AsArray()))
 }
 
 func (v quote_) AsArray() []Character {
@@ -109,23 +106,24 @@ func (v quote_) GetIterator() age.IteratorLike[Character] {
 	return iterator
 }
 
-// col.Accessible[Character] Methods
+// Accessible[Character] Methods
 
 func (v quote_) GetValue(
-	index col.Index,
+	index uti.Index,
 ) Character {
-	var class = col.ListClass[Character]()
-	var list = class.ListFromArray(v.AsArray())
-	return list.GetValue(index)
+	var characters = []Character(v)
+	var goIndex = uti.RelativeToZeroBased(characters, index)
+	return characters[goIndex]
 }
 
 func (v quote_) GetValues(
-	first col.Index,
-	last col.Index,
-) col.Sequential[Character] {
-	var class = col.ListClass[Character]()
-	var list = class.ListFromArray(v.AsArray())
-	return list.GetValues(first, last)
+	first uti.Index,
+	last uti.Index,
+) Sequential[Character] {
+	var characters = []Character(v)
+	var goFirst = uti.RelativeToZeroBased(characters, first)
+	var goLast = uti.RelativeToZeroBased(characters, last)
+	return quote_(characters[goFirst : goLast+1])
 }
 
 // PROTECTED INTERFACE

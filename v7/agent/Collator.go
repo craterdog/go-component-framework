@@ -40,7 +40,7 @@ func (c *collatorClass_[V]) Collator() CollatorLike[V] {
 }
 
 func (c *collatorClass_[V]) CollatorWithMaximumDepth(
-	maximumDepth Cardinal,
+	maximumDepth uti.Cardinal,
 ) CollatorLike[V] {
 	if uti.IsUndefined(maximumDepth) {
 		panic("The \"maximumDepth\" attribute is required by this class.")
@@ -80,7 +80,7 @@ func (v *collator_[V]) RankValues(
 
 // Attribute Methods
 
-func (v *collator_[V]) GetMaximumDepth() Cardinal {
+func (v *collator_[V]) GetMaximumDepth() uti.Cardinal {
 	return v.maximumDepth_
 }
 
@@ -806,8 +806,8 @@ func (v *collator_[V]) rankValues(
 
 type collator_[V any] struct {
 	// Declare the instance attributes.
-	currentDepth_ Cardinal
-	maximumDepth_ Cardinal
+	currentDepth_ uti.Cardinal
+	maximumDepth_ uti.Cardinal
 }
 
 // Class Structure

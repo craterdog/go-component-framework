@@ -15,6 +15,7 @@ package collection
 import (
 	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agent"
+	str "github.com/craterdog/go-component-framework/v7/string"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	syn "sync"
 )
@@ -63,7 +64,7 @@ func (c *setClass_[V]) SetFromArray(
 }
 
 func (c *setClass_[V]) SetFromSequence(
-	values Sequential[V],
+	values str.Sequential[V],
 ) SetLike[V] {
 	var set = c.Set()
 	var iterator = values.GetIterator()
@@ -140,16 +141,16 @@ func (v *set_[V]) GetCollator() age.CollatorLike[V] {
 // Accessible[V] Methods
 
 func (v *set_[V]) GetValue(
-	index Index,
+	index uti.Index,
 ) V {
 	var value = v.values_.GetValue(index)
 	return value
 }
 
 func (v *set_[V]) GetValues(
-	first Index,
-	last Index,
-) Sequential[V] {
+	first uti.Index,
+	last uti.Index,
+) str.Sequential[V] {
 	var values = v.values_.GetValues(first, last)
 	return values
 }
@@ -168,7 +169,7 @@ func (v *set_[V]) AddValue(
 }
 
 func (v *set_[V]) AddValues(
-	values Sequential[V],
+	values str.Sequential[V],
 ) {
 	var iterator = values.GetIterator()
 	for iterator.HasNext() {
@@ -188,7 +189,7 @@ func (v *set_[V]) RemoveValue(
 }
 
 func (v *set_[V]) RemoveValues(
-	values Sequential[V],
+	values str.Sequential[V],
 ) {
 	var iterator = values.GetIterator()
 	for iterator.HasNext() {
@@ -211,7 +212,7 @@ func (v *set_[V]) ContainsValue(
 }
 
 func (v *set_[V]) ContainsAny(
-	values Sequential[V],
+	values str.Sequential[V],
 ) bool {
 	var iterator = values.GetIterator()
 	for iterator.HasNext() {
@@ -226,7 +227,7 @@ func (v *set_[V]) ContainsAny(
 }
 
 func (v *set_[V]) ContainsAll(
-	values Sequential[V],
+	values str.Sequential[V],
 ) bool {
 	var iterator = values.GetIterator()
 	for iterator.HasNext() {
@@ -242,7 +243,7 @@ func (v *set_[V]) ContainsAll(
 
 func (v *set_[V]) GetIndex(
 	value V,
-) Index {
+) uti.Index {
 	var index, found = v.findIndex(value)
 	if !found {
 		return 0
@@ -250,13 +251,13 @@ func (v *set_[V]) GetIndex(
 	return index
 }
 
-// Sequential[V] Methods
+// str.Sequential[V] Methods
 
 func (v *set_[V]) IsEmpty() bool {
 	return v.values_.IsEmpty()
 }
 
-func (v *set_[V]) GetSize() age.Cardinal {
+func (v *set_[V]) GetSize() uti.Cardinal {
 	var size = v.values_.GetSize()
 	return size
 }
@@ -288,15 +289,15 @@ func (v *set_[V]) String() string {
 //   - found: A boolean stating whether or not the value was found.
 //
 // The algorithm performs a true O[log(n)] worst case search.
-func (v *set_[V]) findIndex(value V) (index Index, found bool) {
+func (v *set_[V]) findIndex(value V) (index uti.Index, found bool) {
 	// We use iteration instead of recursion for better performance.
 	//    start        first      middle       last          end
 	//    |-------------||----------||----------||-------------|
 	//                  |<-- size -------------->|
 	//
-	var first Index = 1           // Start at the beginning.
-	var last = Index(v.GetSize()) // End at the end.
-	var size = last               // Initially all values are candidates.
+	var first uti.Index = 1           // Start at the beginning.
+	var last = uti.Index(v.GetSize()) // End at the end.
+	var size = last                   // Initially all values are candidates.
 	for size > 0 {
 		var middle = first + size/2 // Rounds down to the nearest integer.
 		var candidate = v.GetValue(middle)

@@ -15,7 +15,6 @@ package string
 import (
 	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agent"
-	col "github.com/craterdog/go-component-framework/v7/collection"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
 	stc "strconv"
@@ -39,11 +38,9 @@ func (c *patternClass_) Pattern(
 }
 
 func (c *patternClass_) PatternFromSequence(
-	sequence col.Sequential[Character],
+	sequence Sequential[Character],
 ) PatternLike {
-	var class = col.ListClass[Character]()
-	var list = class.ListFromSequence(sequence)
-	return pattern_(list.AsArray())
+	return pattern_(sequence.AsArray())
 }
 
 func (c *patternClass_) PatternFromString(
@@ -133,14 +130,14 @@ func (v pattern_) GetMatches(
 
 // Attribute Methods
 
-// col.Sequential[Character] Methods
+// Sequential[Character] Methods
 
 func (v pattern_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v pattern_) GetSize() age.Cardinal {
-	return age.Cardinal(len(v.AsArray()))
+func (v pattern_) GetSize() uti.Cardinal {
+	return uti.Cardinal(len(v.AsArray()))
 }
 
 func (v pattern_) AsArray() []Character {
@@ -153,23 +150,24 @@ func (v pattern_) GetIterator() age.IteratorLike[Character] {
 	return iterator
 }
 
-// col.Accessible[Character] Methods
+// Accessible[Character] Methods
 
 func (v pattern_) GetValue(
-	index col.Index,
+	index uti.Index,
 ) Character {
-	var class = col.ListClass[Character]()
-	var list = class.ListFromArray(v.AsArray())
-	return list.GetValue(index)
+	var characters = []Character(v)
+	var goIndex = uti.RelativeToZeroBased(characters, index)
+	return characters[goIndex]
 }
 
 func (v pattern_) GetValues(
-	first col.Index,
-	last col.Index,
-) col.Sequential[Character] {
-	var class = col.ListClass[Character]()
-	var list = class.ListFromArray(v.AsArray())
-	return list.GetValues(first, last)
+	first uti.Index,
+	last uti.Index,
+) Sequential[Character] {
+	var characters = []Character(v)
+	var goFirst = uti.RelativeToZeroBased(characters, first)
+	var goLast = uti.RelativeToZeroBased(characters, last)
+	return pattern_(characters[goFirst : goLast+1])
 }
 
 // PROTECTED INTERFACE

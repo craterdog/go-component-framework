@@ -15,7 +15,6 @@ package string
 import (
 	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agent"
-	col "github.com/craterdog/go-component-framework/v7/collection"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
 	sts "strings"
@@ -38,11 +37,9 @@ func (c *narrativeClass_) Narrative(
 }
 
 func (c *narrativeClass_) NarrativeFromSequence(
-	sequence col.Sequential[Line],
+	sequence Sequential[Line],
 ) NarrativeLike {
-	var class = col.ListClass[Line]()
-	var list = class.ListFromSequence(sequence)
-	return narrative_(list.AsArray())
+	return narrative_(sequence.AsArray())
 }
 
 func (c *narrativeClass_) NarrativeFromString(
@@ -116,14 +113,14 @@ func (v narrative_) AsString() string {
 
 // Attribute Methods
 
-// col.Sequential[Line] Methods
+// Sequential[Line] Methods
 
 func (v narrative_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v narrative_) GetSize() age.Cardinal {
-	return age.Cardinal(len(v))
+func (v narrative_) GetSize() uti.Cardinal {
+	return uti.Cardinal(len(v))
 }
 
 func (v narrative_) AsArray() []Line {
@@ -137,23 +134,22 @@ func (v narrative_) GetIterator() age.IteratorLike[Line] {
 	return iterator
 }
 
-// col.Accessible[Line] Methods
+// Accessible[Line] Methods
 
 func (v narrative_) GetValue(
-	index col.Index,
+	index uti.Index,
 ) Line {
-	var class = col.ListClass[Line]()
-	var list = class.ListFromArray(v)
-	return list.GetValue(index)
+	var goIndex = uti.RelativeToZeroBased(v, index)
+	return v[goIndex]
 }
 
 func (v narrative_) GetValues(
-	first col.Index,
-	last col.Index,
-) col.Sequential[Line] {
-	var class = col.ListClass[Line]()
-	var list = class.ListFromArray(v)
-	return list.GetValues(first, last)
+	first uti.Index,
+	last uti.Index,
+) Sequential[Line] {
+	var goFirst = uti.RelativeToZeroBased(v, first)
+	var goLast = uti.RelativeToZeroBased(v, last)
+	return narrative_(v[goFirst : goLast+1])
 }
 
 // PROTECTED INTERFACE

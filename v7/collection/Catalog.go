@@ -15,6 +15,7 @@ package collection
 import (
 	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agent"
+	str "github.com/craterdog/go-component-framework/v7/string"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	syn "sync"
 )
@@ -70,7 +71,7 @@ func (c *catalogClass_[K, V]) CatalogFromMap(
 }
 
 func (c *catalogClass_[K, V]) CatalogFromSequence(
-	associations Sequential[AssociationLike[K, V]],
+	associations str.Sequential[AssociationLike[K, V]],
 ) CatalogLike[K, V] {
 	var catalog = c.Catalog()
 	var iterator = associations.GetIterator()
@@ -89,7 +90,7 @@ func (c *catalogClass_[K, V]) CatalogFromSequence(
 
 func (c *catalogClass_[K, V]) Extract(
 	catalog CatalogLike[K, V],
-	keys Sequential[K],
+	keys str.Sequential[K],
 ) CatalogLike[K, V] {
 	var result = c.Catalog()
 	var iterator = keys.GetIterator()
@@ -169,7 +170,7 @@ func (v *catalog_[K, V]) SetValue(
 	}
 }
 
-func (v *catalog_[K, V]) GetKeys() Sequential[K] {
+func (v *catalog_[K, V]) GetKeys() str.Sequential[K] {
 	var listClass = ListClass[K]()
 	var keys = listClass.List()
 	var iterator = v.associations_.GetIterator()
@@ -181,8 +182,8 @@ func (v *catalog_[K, V]) GetKeys() Sequential[K] {
 }
 
 func (v *catalog_[K, V]) GetValues(
-	keys Sequential[K],
-) Sequential[V] {
+	keys str.Sequential[K],
+) str.Sequential[V] {
 	var listClass = ListClass[V]()
 	var values = listClass.List()
 	var iterator = keys.GetIterator()
@@ -208,8 +209,8 @@ func (v *catalog_[K, V]) RemoveValue(
 }
 
 func (v *catalog_[K, V]) RemoveValues(
-	keys Sequential[K],
-) Sequential[V] {
+	keys str.Sequential[K],
+) str.Sequential[V] {
 	var listClass = ListClass[V]()
 	var values = listClass.List()
 	var iterator = keys.GetIterator()
@@ -225,13 +226,13 @@ func (v *catalog_[K, V]) RemoveAll() {
 	v.associations_.RemoveAll()
 }
 
-// Sequential[AssociationLike[K, V]] Methods
+// str.Sequential[AssociationLike[K, V]] Methods
 
 func (v *catalog_[K, V]) IsEmpty() bool {
 	return v.associations_.IsEmpty()
 }
 
-func (v *catalog_[K, V]) GetSize() age.Cardinal {
+func (v *catalog_[K, V]) GetSize() uti.Cardinal {
 	var size = v.associations_.GetSize()
 	return size
 }

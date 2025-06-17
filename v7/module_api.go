@@ -33,6 +33,7 @@ import (
 	col "github.com/craterdog/go-component-framework/v7/collection"
 	ele "github.com/craterdog/go-component-framework/v7/element"
 	str "github.com/craterdog/go-component-framework/v7/string"
+	uti "github.com/craterdog/go-missing-utilities/v7"
 	uri "net/url"
 )
 
@@ -89,10 +90,10 @@ type (
 // String
 
 type (
-	Character   = str.Character
 	Identifier  = str.Identifier
 	Instruction = str.Instruction
 	Line        = str.Line
+	Character   = str.Character
 )
 
 type (
@@ -117,11 +118,12 @@ type (
 	VersionLike   = str.VersionLike
 )
 
-// Collection
-
 type (
-	Index = col.Index
+	Accessible[V any] = str.Accessible[V]
+	Sequential[V any] = str.Sequential[V]
 )
+
+// Collection
 
 type (
 	AssociationClassLike[K comparable, V any] = col.AssociationClassLike[K, V]
@@ -142,14 +144,12 @@ type (
 )
 
 type (
-	Accessible[V any]                = col.Accessible[V]
 	Associative[K comparable, V any] = col.Associative[K, V]
 	Elastic[V any]                   = col.Elastic[V]
 	Fifo[V any]                      = col.Fifo[V]
 	Lifo[V any]                      = col.Lifo[V]
 	Malleable[V any]                 = col.Malleable[V]
 	Searchable[V any]                = col.Searchable[V]
-	Sequential[V any]                = col.Sequential[V]
 	Sortable[V any]                  = col.Sortable[V]
 	Synchronized                     = col.Synchronized
 	Updatable[V any]                 = col.Updatable[V]
@@ -158,9 +158,7 @@ type (
 // Agent
 
 type (
-	Cardinal    = age.Cardinal
 	Event       = age.Event
-	Ordinal     = age.Ordinal
 	Rank        = age.Rank
 	Slot        = age.Slot
 	State       = age.State
@@ -435,6 +433,18 @@ func ResourceFromUri(
 	)
 }
 
+func SymbolClass() SymbolClassLike {
+	return ele.SymbolClass()
+}
+
+func Symbol(
+	string_ string,
+) SymbolLike {
+	return SymbolClass().Symbol(
+		string_,
+	)
+}
+
 // String
 
 func BinaryClass() BinaryClassLike {
@@ -450,7 +460,7 @@ func Binary(
 }
 
 func BinaryFromSequence(
-	sequence col.Sequential[byte],
+	sequence str.Sequential[byte],
 ) BinaryLike {
 	return BinaryClass().BinaryFromSequence(
 		sequence,
@@ -478,7 +488,7 @@ func Bytecode(
 }
 
 func BytecodeFromSequence(
-	sequence col.Sequential[str.Instruction],
+	sequence str.Sequential[str.Instruction],
 ) BytecodeLike {
 	return BytecodeClass().BytecodeFromSequence(
 		sequence,
@@ -506,7 +516,7 @@ func Name(
 }
 
 func NameFromSequence(
-	sequence col.Sequential[str.Identifier],
+	sequence str.Sequential[str.Identifier],
 ) NameLike {
 	return NameClass().NameFromSequence(
 		sequence,
@@ -534,7 +544,7 @@ func Narrative(
 }
 
 func NarrativeFromSequence(
-	sequence col.Sequential[str.Line],
+	sequence str.Sequential[str.Line],
 ) NarrativeLike {
 	return NarrativeClass().NarrativeFromSequence(
 		sequence,
@@ -554,7 +564,7 @@ func PatternClass() PatternClassLike {
 }
 
 func Pattern(
-	characters []Character,
+	characters []str.Character,
 ) PatternLike {
 	return PatternClass().Pattern(
 		characters,
@@ -562,7 +572,7 @@ func Pattern(
 }
 
 func PatternFromSequence(
-	sequence col.Sequential[Character],
+	sequence str.Sequential[str.Character],
 ) PatternLike {
 	return PatternClass().PatternFromSequence(
 		sequence,
@@ -582,7 +592,7 @@ func QuoteClass() QuoteClassLike {
 }
 
 func Quote(
-	characters []Character,
+	characters []str.Character,
 ) QuoteLike {
 	return QuoteClass().Quote(
 		characters,
@@ -590,7 +600,7 @@ func Quote(
 }
 
 func QuoteFromSequence(
-	sequence col.Sequential[Character],
+	sequence str.Sequential[str.Character],
 ) QuoteLike {
 	return QuoteClass().QuoteFromSequence(
 		sequence,
@@ -601,18 +611,6 @@ func QuoteFromString(
 	string_ string,
 ) QuoteLike {
 	return QuoteClass().QuoteFromString(
-		string_,
-	)
-}
-
-func SymbolClass() SymbolClassLike {
-	return ele.SymbolClass()
-}
-
-func Symbol(
-	string_ string,
-) SymbolLike {
-	return SymbolClass().Symbol(
 		string_,
 	)
 }
@@ -630,7 +628,7 @@ func Tag(
 }
 
 func TagWithSize(
-	size Cardinal,
+	size uti.Cardinal,
 ) TagLike {
 	return TagClass().TagWithSize(
 		size,
@@ -638,7 +636,7 @@ func TagWithSize(
 }
 
 func TagFromSequence(
-	sequence col.Sequential[byte],
+	sequence str.Sequential[byte],
 ) TagLike {
 	return TagClass().TagFromSequence(
 		sequence,
@@ -658,7 +656,7 @@ func VersionClass() VersionClassLike {
 }
 
 func Version(
-	ordinals []Ordinal,
+	ordinals []uti.Ordinal,
 ) VersionLike {
 	return VersionClass().Version(
 		ordinals,
@@ -666,7 +664,7 @@ func Version(
 }
 
 func VersionFromSequence(
-	sequence col.Sequential[Ordinal],
+	sequence str.Sequential[uti.Ordinal],
 ) VersionLike {
 	return VersionClass().VersionFromSequence(
 		sequence,
@@ -722,7 +720,7 @@ func CatalogFromMap[K comparable, V any](
 }
 
 func CatalogFromSequence[K comparable, V any](
-	associations col.Sequential[col.AssociationLike[K, V]],
+	associations str.Sequential[col.AssociationLike[K, V]],
 ) CatalogLike[K, V] {
 	return CatalogClass[K, V]().CatalogFromSequence(
 		associations,
@@ -746,7 +744,7 @@ func ListFromArray[V any](
 }
 
 func ListFromSequence[V any](
-	values col.Sequential[V],
+	values str.Sequential[V],
 ) ListLike[V] {
 	return ListClass[V]().ListFromSequence(
 		values,
@@ -762,7 +760,7 @@ func Queue[V any]() QueueLike[V] {
 }
 
 func QueueWithCapacity[V any](
-	capacity Cardinal,
+	capacity uti.Cardinal,
 ) QueueLike[V] {
 	return QueueClass[V]().QueueWithCapacity(
 		capacity,
@@ -778,7 +776,7 @@ func QueueFromArray[V any](
 }
 
 func QueueFromSequence[V any](
-	values col.Sequential[V],
+	values str.Sequential[V],
 ) QueueLike[V] {
 	return QueueClass[V]().QueueFromSequence(
 		values,
@@ -810,7 +808,7 @@ func SetFromArray[V any](
 }
 
 func SetFromSequence[V any](
-	values col.Sequential[V],
+	values str.Sequential[V],
 ) SetLike[V] {
 	return SetClass[V]().SetFromSequence(
 		values,
@@ -826,7 +824,7 @@ func Stack[V any]() StackLike[V] {
 }
 
 func StackWithCapacity[V any](
-	capacity Cardinal,
+	capacity uti.Cardinal,
 ) StackLike[V] {
 	return StackClass[V]().StackWithCapacity(
 		capacity,
@@ -842,7 +840,7 @@ func StackFromArray[V any](
 }
 
 func StackFromSequence[V any](
-	values col.Sequential[V],
+	values str.Sequential[V],
 ) StackLike[V] {
 	return StackClass[V]().StackFromSequence(
 		values,
@@ -860,7 +858,7 @@ func Collator[V any]() CollatorLike[V] {
 }
 
 func CollatorWithMaximumDepth[V any](
-	maximumDepth age.Cardinal,
+	maximumDepth uti.Cardinal,
 ) CollatorLike[V] {
 	return CollatorClass[V]().CollatorWithMaximumDepth(
 		maximumDepth,

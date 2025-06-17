@@ -29,28 +29,16 @@ on interfaces, not on each other.
 */
 package agent
 
-import ()
+import (
+	uti "github.com/craterdog/go-missing-utilities/v7"
+)
 
 // TYPE DECLARATIONS
-
-/*
-Cardinal represents a cardinal number in the range [0..MaxUint].  A cardinal
-number tells how many of something there are.
-*/
-type Cardinal uint
 
 /*
 Event is a constrained type representing an event type in a state machine.
 */
 type Event uint8
-
-/*
-Ordinal represents an ordinal number in the range [1..MaxUint].  An ordinal
-number refers to an item in a sequence, first, second, third, etc.  Only early
-computer programmers would make the mistake of calling something the "zeroth"
-item in an array!
-*/
-type Ordinal uint
 
 /*
 Rank is a constrained type representing the possible rankings for two values.
@@ -106,7 +94,7 @@ type CollatorClassLike[V any] interface {
 	// Constructor Methods
 	Collator() CollatorLike[V]
 	CollatorWithMaximumDepth(
-		maximumDepth Cardinal,
+		maximumDepth uti.Cardinal,
 	) CollatorLike[V]
 }
 
@@ -242,7 +230,7 @@ type CollatorLike[V any] interface {
 	) Rank
 
 	// Attribute Methods
-	GetMaximumDepth() Cardinal
+	GetMaximumDepth() uti.Cardinal
 }
 
 /*
@@ -304,11 +292,11 @@ type GeneratorLike interface {
 	GetClass() GeneratorClassLike
 	RandomBoolean() bool
 	RandomOrdinal(
-		maximum Ordinal,
-	) Ordinal
+		maximum uti.Ordinal,
+	) uti.Ordinal
 	RandomProbability() float64
 	RandomBytes(
-		size Cardinal,
+		size uti.Cardinal,
 	) []byte
 }
 
@@ -329,7 +317,7 @@ type IteratorLike[V any] interface {
 	GetNext() V
 
 	// Attribute Methods
-	GetSize() Cardinal
+	GetSize() uti.Cardinal
 	GetSlot() Slot
 	SetSlot(
 		slot Slot,

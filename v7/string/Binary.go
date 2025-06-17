@@ -15,7 +15,6 @@ package string
 import (
 	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agent"
-	col "github.com/craterdog/go-component-framework/v7/collection"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
 	sts "strings"
@@ -38,11 +37,9 @@ func (c *binaryClass_) Binary(
 }
 
 func (c *binaryClass_) BinaryFromSequence(
-	sequence col.Sequential[byte],
+	sequence Sequential[byte],
 ) BinaryLike {
-	var class = col.ListClass[byte]()
-	var list = class.ListFromSequence(sequence)
-	return binary_(list.AsArray())
+	return binary_(sequence.AsArray())
 }
 
 func (c *binaryClass_) BinaryFromString(
@@ -225,14 +222,14 @@ func (v binary_) AsString() string {
 
 // Attribute Methods
 
-// col.Sequential[byte] Methods
+// Sequential[byte] Methods
 
 func (v binary_) IsEmpty() bool {
 	return len(v) == 0
 }
 
-func (v binary_) GetSize() age.Cardinal {
-	return age.Cardinal(len(v))
+func (v binary_) GetSize() uti.Cardinal {
+	return uti.Cardinal(len(v))
 }
 
 func (v binary_) AsArray() []byte {
@@ -246,23 +243,22 @@ func (v binary_) GetIterator() age.IteratorLike[byte] {
 	return iterator
 }
 
-// col.Accessible[byte] Methods
+// Accessible[byte] Methods
 
 func (v binary_) GetValue(
-	index col.Index,
+	index uti.Index,
 ) byte {
-	var class = col.ListClass[byte]()
-	var list = class.ListFromArray(v)
-	return list.GetValue(index)
+	var goIndex = uti.RelativeToZeroBased(v, index)
+	return v[goIndex]
 }
 
 func (v binary_) GetValues(
-	first col.Index,
-	last col.Index,
-) col.Sequential[byte] {
-	var class = col.ListClass[byte]()
-	var list = class.ListFromArray(v)
-	return list.GetValues(first, last)
+	first uti.Index,
+	last uti.Index,
+) Sequential[byte] {
+	var goFirst = uti.RelativeToZeroBased(v, first)
+	var goLast = uti.RelativeToZeroBased(v, last)
+	return binary_(v[goFirst : goLast+1])
 }
 
 // PROTECTED INTERFACE

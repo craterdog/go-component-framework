@@ -15,6 +15,7 @@ package collection
 import (
 	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agent"
+	str "github.com/craterdog/go-component-framework/v7/string"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 	syn "sync"
 )
@@ -41,7 +42,7 @@ func (c *stackClass_[V]) Stack() StackLike[V] {
 }
 
 func (c *stackClass_[V]) StackWithCapacity(
-	capacity age.Cardinal,
+	capacity uti.Cardinal,
 ) StackLike[V] {
 	if capacity < 1 {
 		capacity = c.defaultCapacity_
@@ -70,7 +71,7 @@ func (c *stackClass_[V]) StackFromArray(
 }
 
 func (c *stackClass_[V]) StackFromSequence(
-	sequence Sequential[V],
+	sequence str.Sequential[V],
 ) StackLike[V] {
 	var listClass = ListClass[V]()
 	var values = listClass.ListFromSequence(sequence)
@@ -96,7 +97,7 @@ func (v *stack_[V]) GetClass() StackClassLike[V] {
 
 // Attribute Methods
 
-func (v *stack_[V]) GetCapacity() age.Cardinal {
+func (v *stack_[V]) GetCapacity() uti.Cardinal {
 	return v.capacity_
 }
 
@@ -123,13 +124,13 @@ func (v *stack_[V]) RemoveAll() {
 	v.values_.RemoveAll()
 }
 
-// Sequential[V] Methods
+// str.Sequential[V] Methods
 
 func (v *stack_[V]) IsEmpty() bool {
 	return v.values_.IsEmpty()
 }
 
-func (v *stack_[V]) GetSize() age.Cardinal {
+func (v *stack_[V]) GetSize() uti.Cardinal {
 	var size = v.values_.GetSize()
 	return size
 }
@@ -158,7 +159,7 @@ func (v *stack_[V]) String() string {
 
 type stack_[V any] struct {
 	// Declare the instance attributes.
-	capacity_ age.Cardinal
+	capacity_ uti.Cardinal
 	values_   ListLike[V]
 }
 
@@ -166,7 +167,7 @@ type stack_[V any] struct {
 
 type stackClass_[V any] struct {
 	// Declare the class constants.
-	defaultCapacity_ age.Cardinal
+	defaultCapacity_ uti.Cardinal
 }
 
 // Class Reference
