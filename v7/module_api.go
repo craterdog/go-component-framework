@@ -126,20 +126,33 @@ type (
 // Collection
 
 type (
+	Bracket = col.Bracket
+)
+
+const (
+	Inclusive = col.Inclusive
+	Exclusive = col.Exclusive
+)
+
+type (
 	AssociationClassLike[K comparable, V any] = col.AssociationClassLike[K, V]
 	CatalogClassLike[K comparable, V any]     = col.CatalogClassLike[K, V]
+	IntervalClassLike[V Discrete]             = col.IntervalClassLike[V]
 	ListClassLike[V any]                      = col.ListClassLike[V]
 	QueueClassLike[V any]                     = col.QueueClassLike[V]
 	SetClassLike[V any]                       = col.SetClassLike[V]
+	SpectrumClassLike[V Continuous]           = col.SpectrumClassLike[V]
 	StackClassLike[V any]                     = col.StackClassLike[V]
 )
 
 type (
 	AssociationLike[K comparable, V any] = col.AssociationLike[K, V]
 	CatalogLike[K comparable, V any]     = col.CatalogLike[K, V]
+	IntervalLike[V Discrete]             = col.IntervalLike[V]
 	ListLike[V any]                      = col.ListLike[V]
 	QueueLike[V any]                     = col.QueueLike[V]
 	SetLike[V any]                       = col.SetLike[V]
+	SpectrumLike[V Continuous]           = col.SpectrumLike[V]
 	StackLike[V any]                     = col.StackLike[V]
 )
 
@@ -727,6 +740,24 @@ func CatalogFromSequence[K comparable, V any](
 	)
 }
 
+func IntervalClass[V Discrete]() IntervalClassLike[V] {
+	return col.IntervalClass[V]()
+}
+
+func Interval[V Discrete](
+	left Bracket,
+	minimum V,
+	maximum V,
+	right Bracket,
+) IntervalLike[V] {
+	return IntervalClass[V]().Interval(
+		left,
+		minimum,
+		maximum,
+		right,
+	)
+}
+
 func ListClass[V any]() ListClassLike[V] {
 	return col.ListClass[V]()
 }
@@ -812,6 +843,24 @@ func SetFromSequence[V any](
 ) SetLike[V] {
 	return SetClass[V]().SetFromSequence(
 		values,
+	)
+}
+
+func SpectrumClass[V Continuous]() SpectrumClassLike[V] {
+	return col.SpectrumClass[V]()
+}
+
+func Spectrum[V Continuous](
+	left Bracket,
+	minimum V,
+	maximum V,
+	right Bracket,
+) SpectrumLike[V] {
+	return SpectrumClass[V]().Spectrum(
+		left,
+		minimum,
+		maximum,
+		right,
 	)
 }
 

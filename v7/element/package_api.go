@@ -445,7 +445,6 @@ type AngleLike interface {
 	// Principal Methods
 	GetClass() AngleClassLike
 	AsIntrinsic() float64
-	AsString() string
 	AsUnits(
 		units Units,
 	) float64
@@ -467,7 +466,6 @@ type BooleanLike interface {
 	// Principal Methods
 	GetClass() BooleanClassLike
 	AsIntrinsic() bool
-	AsString() string
 
 	// Aspect Interfaces
 	Discrete
@@ -496,7 +494,6 @@ type DurationLike interface {
 	// Principal Methods
 	GetClass() DurationClassLike
 	AsIntrinsic() int
-	AsString() string
 
 	// Aspect Interfaces
 	Discrete
@@ -514,7 +511,6 @@ type GlyphLike interface {
 	// Principal Methods
 	GetClass() GlyphClassLike
 	AsIntrinsic() rune
-	AsString() string
 
 	// Aspect Interfaces
 	Discrete
@@ -529,7 +525,6 @@ type MomentLike interface {
 	// Principal Methods
 	GetClass() MomentClassLike
 	AsIntrinsic() int
-	AsString() string
 
 	// Aspect Interfaces
 	Discrete
@@ -546,7 +541,6 @@ type NumberLike interface {
 	// Principal Methods
 	GetClass() NumberClassLike
 	AsIntrinsic() complex128
-	AsString() string
 	GetReal() float64
 	GetImaginary() float64
 	GetMagnitude() float64
@@ -566,7 +560,6 @@ type PercentageLike interface {
 	// Principal Methods
 	GetClass() PercentageClassLike
 	AsIntrinsic() float64
-	AsString() string
 
 	// Aspect Interfaces
 	Continuous
@@ -583,7 +576,6 @@ type ProbabilityLike interface {
 	// Principal Methods
 	GetClass() ProbabilityClassLike
 	AsIntrinsic() float64
-	AsString() string
 
 	// Aspect Interfaces
 	Continuous
@@ -627,6 +619,7 @@ Continuous is an aspect interface that defines a set of method signatures
 that must be supported by each instance of a continuous class.
 */
 type Continuous interface {
+	AsString() string
 	AsFloat() float64
 	IsZero() bool
 	IsInfinite() bool
@@ -639,6 +632,7 @@ Discrete is an aspect interface that defines a set of method signatures
 that must be supported by each instance of a discrete class.
 */
 type Discrete interface {
+	AsString() string
 	AsBoolean() bool
 	AsInteger() int
 }

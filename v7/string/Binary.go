@@ -248,7 +248,8 @@ func (v binary_) GetIterator() age.IteratorLike[byte] {
 func (v binary_) GetValue(
 	index uti.Index,
 ) byte {
-	var goIndex = uti.RelativeToZeroBased(v, index)
+	var size = v.GetSize()
+	var goIndex = uti.RelativeToZeroBased(index, size)
 	return v[goIndex]
 }
 
@@ -256,9 +257,27 @@ func (v binary_) GetValues(
 	first uti.Index,
 	last uti.Index,
 ) Sequential[byte] {
-	var goFirst = uti.RelativeToZeroBased(v, first)
-	var goLast = uti.RelativeToZeroBased(v, last)
+	var size = v.GetSize()
+	var goFirst = uti.RelativeToZeroBased(first, size)
+	var goLast = uti.RelativeToZeroBased(last, size)
 	return binary_(v[goFirst : goLast+1])
+}
+
+func (v binary_) GetIndex(
+	value byte,
+) uti.Index {
+	var index uti.Index
+	var iterator = v.GetIterator()
+	for iterator.HasNext() {
+		index++
+		var candidate = iterator.GetNext()
+		if candidate == value {
+			// Found the value.
+			return index
+		}
+	}
+	// The value was not found.
+	return 0
 }
 
 // PROTECTED INTERFACE

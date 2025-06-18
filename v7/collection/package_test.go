@@ -15,6 +15,7 @@ package collection_test
 import (
 	age "github.com/craterdog/go-component-framework/v7/agent"
 	col "github.com/craterdog/go-component-framework/v7/collection"
+	ele "github.com/craterdog/go-component-framework/v7/element"
 	ass "github.com/stretchr/testify/assert"
 	syn "sync"
 	tes "testing"
@@ -166,6 +167,39 @@ func TestCatalogsWithEmptyCatalogs(t *tes.T) {
 	ass.True(t, collator.CompareValues(catalog2, catalog3))
 	ass.True(t, collator.CompareValues(catalog3, catalog4))
 	ass.True(t, collator.CompareValues(catalog4, catalog1))
+}
+
+func TestIntervalConstructors(t *tes.T) {
+	var glyphClass = ele.GlyphClass()
+	var intervalClass = col.IntervalClass[ele.GlyphLike]()
+	var interval = intervalClass.Interval(
+		col.Exclusive,
+		glyphClass.Glyph(65),
+		glyphClass.Glyph(70),
+		col.Exclusive,
+	)
+	ass.Equal(t, 4, int(interval.GetSize()))
+	interval = intervalClass.Interval(
+		col.Exclusive,
+		glyphClass.Glyph(65),
+		glyphClass.Glyph(70),
+		col.Inclusive,
+	)
+	ass.Equal(t, 5, int(interval.GetSize()))
+	interval = intervalClass.Interval(
+		col.Inclusive,
+		glyphClass.Glyph(65),
+		glyphClass.Glyph(70),
+		col.Exclusive,
+	)
+	ass.Equal(t, 5, int(interval.GetSize()))
+	interval = intervalClass.Interval(
+		col.Inclusive,
+		glyphClass.Glyph(65),
+		glyphClass.Glyph(70),
+		col.Inclusive,
+	)
+	ass.Equal(t, 6, int(interval.GetSize()))
 }
 
 func TestListConstructors(t *tes.T) {

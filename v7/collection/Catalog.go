@@ -267,13 +267,11 @@ func (v *catalog_[K, V]) ShuffleValues() {
 	v.associations_.ShuffleValues()
 }
 
-// Stringer Methods
+// PROTECTED INTERFACE
 
 func (v *catalog_[K, V]) String() string {
 	return uti.Format(v)
 }
-
-// PROTECTED INTERFACE
 
 // Private Methods
 

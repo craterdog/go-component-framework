@@ -78,6 +78,10 @@ func (v percentage_) AsIntrinsic() float64 {
 
 // Continuous Methods
 
+func (v percentage_) AsString() string {
+	return numberClass().stringFromFloat(float64(v)*100.0) + "%"
+}
+
 func (v percentage_) AsFloat() float64 {
 	return float64(v * 100.0)
 }
@@ -106,12 +110,6 @@ func (v percentage_) AsBoolean() bool {
 
 func (v percentage_) AsInteger() int {
 	return int(float64(v) * 100.0)
-}
-
-// Lexical Methods
-
-func (v percentage_) AsString() string {
-	return numberClass().stringFromFloat(float64(v)*100.0) + "%"
 }
 
 // Polarized Methods

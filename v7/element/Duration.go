@@ -122,16 +122,6 @@ func (v duration_) AsIntrinsic() int {
 
 // Discrete Methods
 
-func (v duration_) AsBoolean() bool {
-	return v != 0
-}
-
-func (v duration_) AsInteger() int {
-	return int(v)
-}
-
-// Lexical Methods
-
 func (v duration_) AsString() string {
 	var builder sts.Builder
 	builder.WriteString("~")
@@ -188,6 +178,14 @@ func (v duration_) AsString() string {
 		builder.WriteString("S")
 	}
 	return builder.String()
+}
+
+func (v duration_) AsBoolean() bool {
+	return v != 0
+}
+
+func (v duration_) AsInteger() int {
+	return int(v)
 }
 
 // Polarized Methods

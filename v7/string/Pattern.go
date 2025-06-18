@@ -155,8 +155,9 @@ func (v pattern_) GetIterator() age.IteratorLike[Character] {
 func (v pattern_) GetValue(
 	index uti.Index,
 ) Character {
+	var size = v.GetSize()
+	var goIndex = uti.RelativeToZeroBased(index, size)
 	var characters = []Character(v)
-	var goIndex = uti.RelativeToZeroBased(characters, index)
 	return characters[goIndex]
 }
 
@@ -164,10 +165,28 @@ func (v pattern_) GetValues(
 	first uti.Index,
 	last uti.Index,
 ) Sequential[Character] {
+	var size = v.GetSize()
+	var goFirst = uti.RelativeToZeroBased(first, size)
+	var goLast = uti.RelativeToZeroBased(last, size)
 	var characters = []Character(v)
-	var goFirst = uti.RelativeToZeroBased(characters, first)
-	var goLast = uti.RelativeToZeroBased(characters, last)
 	return pattern_(characters[goFirst : goLast+1])
+}
+
+func (v pattern_) GetIndex(
+	value Character,
+) uti.Index {
+	var index uti.Index
+	var iterator = v.GetIterator()
+	for iterator.HasNext() {
+		index++
+		var candidate = iterator.GetNext()
+		if candidate == value {
+			// Found the value.
+			return index
+		}
+	}
+	// The value was not found.
+	return 0
 }
 
 // PROTECTED INTERFACE

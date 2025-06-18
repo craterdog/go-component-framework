@@ -148,6 +148,10 @@ func (v probability_) AsIntrinsic() float64 {
 
 // Continuous Methods
 
+func (v probability_) AsString() string {
+	return "p" + numberClass().stringFromFloat(float64(v))
+}
+
 func (v probability_) AsFloat() float64 {
 	return float64(v)
 }
@@ -182,12 +186,6 @@ func (v probability_) AsInteger() int {
 		return 1
 	}
 	return 0
-}
-
-// Lexical Methods
-
-func (v probability_) AsString() string {
-	return "p" + numberClass().stringFromFloat(float64(v))
 }
 
 // PROTECTED INTERFACE

@@ -257,11 +257,6 @@ func (v angle_) AsIntrinsic() float64 {
 	return float64(v)
 }
 
-func (v angle_) AsString() string {
-	var result_ = angleClass().stringFromAngle(v)
-	return result_
-}
-
 func (v angle_) AsUnits(
 	units Units,
 ) float64 {
@@ -293,6 +288,11 @@ func (v angle_) AsParts() (
 // Attribute Methods
 
 // Continuous Methods
+
+func (v angle_) AsString() string {
+	var result_ = angleClass().stringFromAngle(v)
+	return result_
+}
 
 func (v angle_) AsFloat() float64 {
 	return float64(v)

@@ -145,13 +145,11 @@ func (v *stack_[V]) GetIterator() age.IteratorLike[V] {
 	return iterator
 }
 
-// Stringer Methods
+// PROTECTED INTERFACE
 
 func (v *stack_[V]) String() string {
 	return uti.Format(v)
 }
-
-// PROTECTED INTERFACE
 
 // Private Methods
 

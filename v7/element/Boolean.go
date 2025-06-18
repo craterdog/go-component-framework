@@ -126,6 +126,11 @@ func (v boolean_) AsIntrinsic() bool {
 
 // Discrete Methods
 
+func (v boolean_) AsString() string {
+	var result_ = stc.FormatBool(bool(v))
+	return result_
+}
+
 func (v boolean_) AsBoolean() bool {
 	var result_ = bool(v)
 	return result_
@@ -136,13 +141,6 @@ func (v boolean_) AsInteger() int {
 	if v {
 		result_ = 1
 	}
-	return result_
-}
-
-// Lexical Methods
-
-func (v boolean_) AsString() string {
-	var result_ = stc.FormatBool(bool(v))
 	return result_
 }
 

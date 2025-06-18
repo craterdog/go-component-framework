@@ -83,7 +83,8 @@ func (v *list_[V]) GetClass() ListClassLike[V] {
 func (v *list_[V]) GetValue(
 	index uti.Index,
 ) V {
-	var goIndex = uti.RelativeToZeroBased(v.array_, index)
+	var size = v.GetSize()
+	var goIndex = uti.RelativeToZeroBased(index, size)
 	var value = v.array_[goIndex]
 	return value
 }
@@ -92,10 +93,30 @@ func (v *list_[V]) GetValues(
 	first uti.Index,
 	last uti.Index,
 ) str.Sequential[V] {
-	var goFirst = uti.RelativeToZeroBased(v.array_, first)
-	var goLast = uti.RelativeToZeroBased(v.array_, last) + 1
+	var size = v.GetSize()
+	var goFirst = uti.RelativeToZeroBased(first, size)
+	var goLast = uti.RelativeToZeroBased(last, size) + 1
 	var values = listClass[V]().ListFromArray(v.array_[goFirst:goLast])
 	return values
+}
+
+func (v *list_[V]) GetIndex(
+	value V,
+) uti.Index {
+	var index uti.Index
+	var collatorClass = age.CollatorClass[V]()
+	var compare = collatorClass.Collator().CompareValues
+	var iterator = v.GetIterator()
+	for iterator.HasNext() {
+		index++
+		var candidate = iterator.GetNext()
+		if compare(candidate, value) {
+			// Found the value.
+			return index
+		}
+	}
+	// The value was not found.
+	return 0
 }
 
 // Malleable[V] Methods
@@ -105,7 +126,7 @@ func (v *list_[V]) InsertValue(
 	value V,
 ) {
 	// Create a new larger array.
-	var size = len(v.array_) + 1
+	var size = v.GetSize() + 1
 	var array = make([]V, size)
 
 	// Copy the values into the new array.
@@ -124,14 +145,15 @@ func (v *list_[V]) InsertValues(
 ) {
 	// Create a new larger array.
 	var newValues = values.AsArray()
-	var size = len(v.array_) + len(newValues)
+	var delta = len(newValues)
+	var size = len(v.array_) + delta
 	var array = make([]V, size)
 
 	// Copy the values into the new array.
 	var goIndex = int(slot) // The Go index is after the matching slot.
 	copy(array, v.array_[:goIndex])
 	copy(array[goIndex:], newValues)
-	copy(array[goIndex+len(newValues):], v.array_[goIndex:])
+	copy(array[goIndex+delta:], v.array_[goIndex:])
 
 	// Update the internal array.
 	v.array_ = array
@@ -171,12 +193,15 @@ func (v *list_[V]) AppendValues(
 func (v *list_[V]) RemoveValue(
 	index uti.Index,
 ) V {
+	// Convert to zero-based index.
+	var size = v.GetSize()
+	var goIndex = uti.RelativeToZeroBased(index, size)
+
 	// Create a new smaller array.
-	var size = len(v.array_) - 1
+	size--
 	var array = make([]V, size)
 
 	// Copy the values into the new array.
-	var goIndex = uti.RelativeToZeroBased(v.array_, index)
 	copy(array, v.array_[:goIndex])
 	var removed = v.array_[goIndex]
 	copy(array[goIndex:], v.array_[goIndex+1:])
@@ -191,10 +216,11 @@ func (v *list_[V]) RemoveValues(
 	last uti.Index,
 ) str.Sequential[V] {
 	// Create two smaller arrays.
-	var goFirst = uti.RelativeToZeroBased(v.array_, first)
-	var goLast = uti.RelativeToZeroBased(v.array_, last) + 1
-	var delta = goLast - goFirst
-	var size = len(v.array_) - delta
+	var size = v.GetSize()
+	var goFirst = uti.RelativeToZeroBased(first, size)
+	var goLast = uti.RelativeToZeroBased(last, size) + 1
+	var delta = uti.Cardinal(goLast - goFirst)
+	size -= delta
 	var array = make([]V, size)
 	var removed = make([]V, delta)
 
@@ -253,25 +279,6 @@ func (v *list_[V]) ContainsAll(
 	return true
 }
 
-func (v *list_[V]) GetIndex(
-	value V,
-) uti.Index {
-	var index uti.Index
-	var collatorClass = age.CollatorClass[V]()
-	var compare = collatorClass.Collator().CompareValues
-	var iterator = v.GetIterator()
-	for iterator.HasNext() {
-		index++
-		var candidate = iterator.GetNext()
-		if compare(candidate, value) {
-			// Found the value.
-			return index
-		}
-	}
-	// The value was not found.
-	return 0
-}
-
 // str.Sequential[V] Methods
 
 func (v *list_[V]) IsEmpty() bool {
@@ -328,7 +335,8 @@ func (v *list_[V]) SetValue(
 	index uti.Index,
 	value V,
 ) {
-	var goIndex = uti.RelativeToZeroBased(v.array_, index)
+	var size = v.GetSize()
+	var goIndex = uti.RelativeToZeroBased(index, size)
 	v.array_[goIndex] = value
 }
 
@@ -336,18 +344,17 @@ func (v *list_[V]) SetValues(
 	index uti.Index,
 	values str.Sequential[V],
 ) {
-	var goIndex = uti.RelativeToZeroBased(v.array_, index)
+	var size = v.GetSize()
+	var goIndex = uti.RelativeToZeroBased(index, size)
 	var newValues = values.AsArray()
 	copy(v.array_[goIndex:], newValues)
 }
 
-// Stringer Methods
+// PROTECTED INTERFACE
 
 func (v *list_[V]) String() string {
 	return uti.Format(v)
 }
-
-// PROTECTED INTERFACE
 
 // Private Methods
 

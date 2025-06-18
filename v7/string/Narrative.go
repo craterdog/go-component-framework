@@ -139,7 +139,8 @@ func (v narrative_) GetIterator() age.IteratorLike[Line] {
 func (v narrative_) GetValue(
 	index uti.Index,
 ) Line {
-	var goIndex = uti.RelativeToZeroBased(v, index)
+	var size = v.GetSize()
+	var goIndex = uti.RelativeToZeroBased(index, size)
 	return v[goIndex]
 }
 
@@ -147,9 +148,27 @@ func (v narrative_) GetValues(
 	first uti.Index,
 	last uti.Index,
 ) Sequential[Line] {
-	var goFirst = uti.RelativeToZeroBased(v, first)
-	var goLast = uti.RelativeToZeroBased(v, last)
+	var size = v.GetSize()
+	var goFirst = uti.RelativeToZeroBased(first, size)
+	var goLast = uti.RelativeToZeroBased(last, size)
 	return narrative_(v[goFirst : goLast+1])
+}
+
+func (v narrative_) GetIndex(
+	value Line,
+) uti.Index {
+	var index uti.Index
+	var iterator = v.GetIterator()
+	for iterator.HasNext() {
+		index++
+		var candidate = iterator.GetNext()
+		if candidate == value {
+			// Found the value.
+			return index
+		}
+	}
+	// The value was not found.
+	return 0
 }
 
 // PROTECTED INTERFACE

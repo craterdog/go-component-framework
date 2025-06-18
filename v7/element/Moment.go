@@ -110,17 +110,6 @@ func (v moment_) AsIntrinsic() int {
 
 // Discrete Methods
 
-func (v moment_) AsBoolean() bool {
-	// There is no beginning of time (EPOCH is arbitrary).
-	return true
-}
-
-func (v moment_) AsInteger() int {
-	return int(v)
-}
-
-// Lexical Methods
-
 func (v moment_) AsString() string {
 	var builder sts.Builder
 	var year = v.GetYears()
@@ -158,6 +147,15 @@ func (v moment_) AsString() string {
 	}
 	builder.WriteString(">")
 	return builder.String()
+}
+
+func (v moment_) AsBoolean() bool {
+	// There is no beginning of time (EPOCH is arbitrary).
+	return true
+}
+
+func (v moment_) AsInteger() int {
+	return int(v)
 }
 
 // Temporal Methods

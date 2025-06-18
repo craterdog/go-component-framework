@@ -457,6 +457,9 @@ type Accessible[V any] interface {
 		first uti.Index,
 		last uti.Index,
 	) Sequential[V]
+	GetIndex(
+		value V,
+	) uti.Index
 }
 
 /*

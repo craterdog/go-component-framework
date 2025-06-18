@@ -363,6 +363,26 @@ func (v number_) AsIntrinsic() complex128 {
 	return complex128(v)
 }
 
+func (v number_) GetReal() float64 {
+	return real(v)
+}
+
+func (v number_) GetImaginary() float64 {
+	return imag(v)
+}
+
+func (v number_) GetMagnitude() float64 {
+	return numberClass().lockMagnitude(cmp.Abs(complex128(v)))
+}
+
+func (v number_) GetPhase() float64 {
+	return cmp.Phase(complex128(v))
+}
+
+// Attribute Methods
+
+// Continuous Methods
+
 func (v number_) AsString() string {
 	var string_ string
 	switch {
@@ -390,26 +410,6 @@ func (v number_) AsString() string {
 	}
 	return string_
 }
-
-func (v number_) GetReal() float64 {
-	return real(v)
-}
-
-func (v number_) GetImaginary() float64 {
-	return imag(v)
-}
-
-func (v number_) GetMagnitude() float64 {
-	return numberClass().lockMagnitude(cmp.Abs(complex128(v)))
-}
-
-func (v number_) GetPhase() float64 {
-	return cmp.Phase(complex128(v))
-}
-
-// Attribute Methods
-
-// Continuous Methods
 
 func (v number_) AsFloat() float64 {
 	return real(v)

@@ -148,7 +148,8 @@ func (v bytecode_) GetIterator() age.IteratorLike[Instruction] {
 func (v bytecode_) GetValue(
 	index uti.Index,
 ) Instruction {
-	var goIndex = uti.RelativeToZeroBased(v, index)
+	var size = v.GetSize()
+	var goIndex = uti.RelativeToZeroBased(index, size)
 	return v[goIndex]
 }
 
@@ -156,9 +157,27 @@ func (v bytecode_) GetValues(
 	first uti.Index,
 	last uti.Index,
 ) Sequential[Instruction] {
-	var goFirst = uti.RelativeToZeroBased(v, first)
-	var goLast = uti.RelativeToZeroBased(v, last)
+	var size = v.GetSize()
+	var goFirst = uti.RelativeToZeroBased(first, size)
+	var goLast = uti.RelativeToZeroBased(last, size)
 	return bytecode_(v[goFirst : goLast+1])
+}
+
+func (v bytecode_) GetIndex(
+	value Instruction,
+) uti.Index {
+	var index uti.Index
+	var iterator = v.GetIterator()
+	for iterator.HasNext() {
+		index++
+		var candidate = iterator.GetNext()
+		if candidate == value {
+			// Found the value.
+			return index
+		}
+	}
+	// The value was not found.
+	return 0
 }
 
 // PROTECTED INTERFACE

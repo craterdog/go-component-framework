@@ -45,6 +45,7 @@ func TestBinary(t *tes.T) {
 	ass.Equal(t, byte(0xf8), v.GetValue(-1))
 	ass.Equal(t, v.AsArray(), BinaryClass.Binary(v.AsArray()).AsArray())
 	ass.Equal(t, b2, BinaryClass.BinaryFromSequence(v.GetValues(1, 3)).AsString())
+	ass.Equal(t, 1, int(v.GetIndex(0x69)))
 }
 
 func TestBinaryLibrary(t *tes.T) {
@@ -107,6 +108,7 @@ func TestName(t *tes.T) {
 	var v2 = NameClass.Name(v1.AsArray())
 	ass.Equal(t, v1.AsString(), v2.AsString())
 	var v3 = NameClass.NameFromSequence(v1.GetValues(1, 2))
+	ass.Equal(t, 1, int(v1.GetIndex("bali-nebula")))
 	ass.Equal(t, "/bali-nebula/types", v3.AsString())
 }
 
@@ -243,6 +245,7 @@ func TestQuote(t *tes.T) {
 	ass.Equal(t, 'a', rune(v.GetValue(1)))
 	ass.Equal(t, '4', rune(v.GetValue(-1)))
 	ass.Equal(t, `"d本1"`, QuoteClass.QuoteFromSequence(v.GetValues(4, 6)).AsString())
+	ass.Equal(t, 8, int(v.GetIndex('3')))
 }
 
 func TestQuotesLibrary(t *tes.T) {
@@ -277,6 +280,7 @@ func TestVersion(t *tes.T) {
 	ass.Equal(t, uti.Ordinal(1), v1.GetValue(1))
 	ass.Equal(t, uti.Ordinal(3), v1.GetValue(-1))
 	var v3 = VersionClass.VersionFromSequence(v1.GetValues(1, 2))
+	ass.Equal(t, 2, int(v1.GetIndex(2)))
 	ass.Equal(t, "v1.2", v3.AsString())
 }
 

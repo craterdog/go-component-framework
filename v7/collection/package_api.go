@@ -13,11 +13,13 @@
 /*
 Package "collection" declares a set of collection classes that maintain values
 of a generic type:
-  - List (a sortable list)
   - Catalog (a sortable map of key-value associations)
-  - Set (an ordered set)
-  - Stack (a LIFO)
+  - Interval (a discrete range)
+  - List (a sortable list)
   - Queue (a blocking FIFO)
+  - Set (an ordered set)
+  - Spectrum (a continuous range)
+  - Stack (a LIFO)
 
 For detailed documentation on this package refer to the wiki:
   - https://github.com/craterdog/go-component-framework/wiki
@@ -35,11 +37,23 @@ package collection
 
 import (
 	age "github.com/craterdog/go-component-framework/v7/agent"
+	ele "github.com/craterdog/go-component-framework/v7/element"
 	str "github.com/craterdog/go-component-framework/v7/string"
 	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
 // TYPE DECLARATIONS
+
+/*
+Bracket is a constrained type representing the inclusiveness of a bounded
+collection.
+*/
+type Bracket uint8
+
+const (
+	Inclusive Bracket = iota
+	Exclusive
+)
 
 // FUNCTIONAL DECLARATIONS
 
@@ -105,6 +119,25 @@ type CatalogClassLike[K comparable, V any] interface {
 		first CatalogLike[K, V],
 		second CatalogLike[K, V],
 	) CatalogLike[K, V]
+}
+
+/*
+IntervalClassLike[V ele.Discrete] is a class interface that declares the
+complete set of class constructors, constants and functions that must be
+supported by each concrete interval-like class.
+
+An interval-like class defines two endpoints for a discrete sequence of
+primitive components.  The endpoints may be inclusive (denoted by a square
+bracket) or exclusive (denoted by a round bracket).
+*/
+type IntervalClassLike[V ele.Discrete] interface {
+	// Constructor Methods
+	Interval(
+		left Bracket,
+		minimum V,
+		maximum V,
+		right Bracket,
+	) IntervalLike[V]
 }
 
 /*
@@ -261,6 +294,25 @@ type SetClassLike[V any] interface {
 }
 
 /*
+SpectrumClassLike[V ele.Continuous] is a class interface that declares the
+complete set of class constructors, constants and functions that must be
+supported by each concrete spectrum-like class.
+
+A spectrum-like class defines two endpoints for a continuous sequence of
+primitive components.  The endpoints may be inclusive (denoted by a square
+bracket) or exclusive (denoted by a round bracket).
+*/
+type SpectrumClassLike[V ele.Continuous] interface {
+	// Constructor Methods
+	Spectrum(
+		left Bracket,
+		minimum V,
+		maximum V,
+		right Bracket,
+	) SpectrumLike[V]
+}
+
+/*
 StackClassLike[V any] is a class interface that declares the complete set of
 class constructors, constants and functions that must be supported by each
 concrete stack-like class.
@@ -318,6 +370,22 @@ type CatalogLike[K comparable, V any] interface {
 }
 
 /*
+IntervalLike[V ele.Discrete] is an instance interface that declares the
+complete set of principal, attribute and aspect methods that must be supported
+by each instance of a concrete interval-like class.
+*/
+type IntervalLike[V ele.Discrete] interface {
+	// Principal Methods
+	GetClass() IntervalClassLike[V]
+
+	// Aspect Interfaces
+	str.Accessible[V]
+	Bounded[V]
+	Searchable[V]
+	str.Sequential[V]
+}
+
+/*
 ListLike[V any] is an instance interface that declares the complete set of
 principal, attribute and aspect methods that must be supported by each
 instance of a concrete list-like class.
@@ -372,6 +440,20 @@ type SetLike[V any] interface {
 }
 
 /*
+SpectrumLike[V ele.Continuous] is an instance interface that declares the
+complete set of principal, attribute and aspect methods that must be supported
+by each instance of a concrete spectrum-like class.
+*/
+type SpectrumLike[V ele.Continuous] interface {
+	// Principal Methods
+	GetClass() SpectrumClassLike[V]
+
+	// Aspect Interfaces
+	Bounded[V]
+	Searchable[V]
+}
+
+/*
 StackLike[V any] is an instance interface that declares the complete set of
 principal, attribute and aspect methods that must be supported by each
 instance of a concrete stack-like class.
@@ -418,6 +500,24 @@ type Associative[K comparable, V any] interface {
 		keys str.Sequential[K],
 	) str.Sequential[V]
 	RemoveAll()
+}
+
+/*
+Bounded[V any] is an aspect interface that declares a set of method signatures
+that must be supported by each instance of an bounded concrete class.
+
+A bounded class maintains the endpoints for a sequence of generic typed
+primitive components.
+*/
+type Bounded[V any] interface {
+	GetLeft() Bracket
+	SetLeft(Bracket)
+	GetMinimum() V
+	SetMinimum(V)
+	GetMaximum() V
+	SetMaximum(V)
+	GetRight() Bracket
+	SetRight(Bracket)
 }
 
 /*
@@ -514,9 +614,6 @@ type Searchable[V any] interface {
 	ContainsAll(
 		values str.Sequential[V],
 	) bool
-	GetIndex(
-		value V,
-	) uti.Index
 }
 
 /*

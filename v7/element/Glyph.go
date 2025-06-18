@@ -98,18 +98,16 @@ func (v glyph_) AsIntrinsic() rune {
 
 // Discrete Methods
 
+func (v glyph_) AsString() string {
+	return "'" + string([]rune{rune(v)}) + "'"
+}
+
 func (v glyph_) AsBoolean() bool {
 	return v > -1
 }
 
 func (v glyph_) AsInteger() int {
 	return int(v)
-}
-
-// Lexical Methods
-
-func (v glyph_) AsString() string {
-	return "'" + string([]rune{rune(v)}) + "'"
 }
 
 // PROTECTED INTERFACE

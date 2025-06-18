@@ -155,6 +155,16 @@ func (v *set_[V]) GetValues(
 	return values
 }
 
+func (v *set_[V]) GetIndex(
+	value V,
+) uti.Index {
+	var index, found = v.findIndex(value)
+	if !found {
+		return 0
+	}
+	return index
+}
+
 // Elastic[V] Methods
 
 func (v *set_[V]) AddValue(
@@ -241,16 +251,6 @@ func (v *set_[V]) ContainsAll(
 	return true
 }
 
-func (v *set_[V]) GetIndex(
-	value V,
-) uti.Index {
-	var index, found = v.findIndex(value)
-	if !found {
-		return 0
-	}
-	return index
-}
-
 // str.Sequential[V] Methods
 
 func (v *set_[V]) IsEmpty() bool {
@@ -272,13 +272,11 @@ func (v *set_[V]) GetIterator() age.IteratorLike[V] {
 	return iterator
 }
 
-// Stringer Methods
+// PROTECTED INTERFACE
 
 func (v *set_[V]) String() string {
 	return uti.Format(v)
 }
-
-// PROTECTED INTERFACE
 
 // Private Methods
 
