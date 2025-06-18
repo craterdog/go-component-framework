@@ -44,6 +44,7 @@ func (c *spectrumClass_[V]) Spectrum(
 		maximum_: maximum,
 		right_:   right,
 	}
+	instance.validateSpectrum()
 	return instance
 }
 
@@ -119,11 +120,11 @@ func (v *spectrum_[V]) ContainsAny(
 	for iterator.HasNext() {
 		var value = iterator.GetNext()
 		if v.ContainsValue(value) {
-			// This set contains at least one of the values.
+			// This spectrum contains at least one of the values.
 			return true
 		}
 	}
-	// This set does not contain any of the values.
+	// This spectrum does not contain any of the values.
 	return false
 }
 
@@ -134,11 +135,11 @@ func (v *spectrum_[V]) ContainsAll(
 	for iterator.HasNext() {
 		var value = iterator.GetNext()
 		if !v.ContainsValue(value) {
-			// This set is missing at least one of the values.
+			// This spectrum is missing at least one of the values.
 			return false
 		}
 	}
-	// This set does contains all of the values.
+	// This spectrum does contains all of the values.
 	return true
 }
 
@@ -204,6 +205,16 @@ func (v *spectrum_[V]) validateSpectrum() {
 			"The minimum %v in a spectrum must be less than the maximum %v.",
 			v.minimum_,
 			v.maximum_,
+		)
+		panic(message)
+	}
+
+	// Validate the size.
+	var size = v.maximum_.AsFloat() - v.minimum_.AsFloat()
+	if size <= 0 {
+		var message = fmt.Sprintf(
+			"The size of a spectrum must be greater than zero: %v.",
+			size,
 		)
 		panic(message)
 	}

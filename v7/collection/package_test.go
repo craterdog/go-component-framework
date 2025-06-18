@@ -13,6 +13,7 @@
 package collection_test
 
 import (
+	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agent"
 	col "github.com/craterdog/go-component-framework/v7/collection"
 	ele "github.com/craterdog/go-component-framework/v7/element"
@@ -756,6 +757,39 @@ func TestSetsWithEmptySets(t *tes.T) {
 	ass.True(t, collator.CompareValues(set4, set5))
 	ass.True(t, collator.CompareValues(set5, set6))
 	ass.True(t, collator.CompareValues(set6, set1))
+}
+
+func TestSpectrumConstructors(t *tes.T) {
+	var numberClass = ele.NumberClass()
+	var spectrumClass = col.SpectrumClass[ele.NumberLike]()
+	var spectrum = spectrumClass.Spectrum(
+		col.Exclusive,
+		numberClass.Number(-1.23),
+		numberClass.Number(4.56),
+		col.Exclusive,
+	)
+	ass.Equal(t, "(-1.23..4.56)", fmt.Sprintf("%v", spectrum))
+	spectrum = spectrumClass.Spectrum(
+		col.Exclusive,
+		numberClass.Number(-1.23),
+		numberClass.Number(4.56),
+		col.Inclusive,
+	)
+	ass.Equal(t, "(-1.23..4.56]", fmt.Sprintf("%v", spectrum))
+	spectrum = spectrumClass.Spectrum(
+		col.Inclusive,
+		numberClass.Number(-1.23),
+		numberClass.Number(4.56),
+		col.Exclusive,
+	)
+	ass.Equal(t, "[-1.23..4.56)", fmt.Sprintf("%v", spectrum))
+	spectrum = spectrumClass.Spectrum(
+		col.Inclusive,
+		numberClass.Number(-1.23),
+		numberClass.Number(4.56),
+		col.Inclusive,
+	)
+	ass.Equal(t, "[-1.23..4.56]", fmt.Sprintf("%v", spectrum))
 }
 
 func TestStackConstructors(t *tes.T) {
