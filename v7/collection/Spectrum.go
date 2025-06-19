@@ -17,7 +17,6 @@ import (
 	age "github.com/craterdog/go-component-framework/v7/agent"
 	ele "github.com/craterdog/go-component-framework/v7/element"
 	str "github.com/craterdog/go-component-framework/v7/string"
-	uti "github.com/craterdog/go-missing-utilities/v7"
 	syn "sync"
 )
 
@@ -103,14 +102,13 @@ func (v *spectrum_[V]) SetRight(right Bracket) {
 func (v *spectrum_[V]) ContainsValue(
 	value V,
 ) bool {
-	switch {
-	case value.AsFloat() < v.minimum_.AsFloat():
+	if v.minimum_.IsDefined() && value.AsFloat() < v.minimum_.AsFloat() {
 		return false
-	case value.AsFloat() > v.maximum_.AsFloat():
-		return false
-	default:
-		return true
 	}
+	if v.maximum_.IsDefined() && value.AsFloat() > v.maximum_.AsFloat() {
+		return false
+	}
+	return true
 }
 
 func (v *spectrum_[V]) ContainsAny(
@@ -153,11 +151,11 @@ func (v *spectrum_[V]) String() string {
 	case Exclusive:
 		string_ += "("
 	}
-	if uti.IsDefined(v.minimum_) {
+	if v.minimum_.IsDefined() {
 		string_ += v.minimum_.AsString()
 	}
 	string_ += ".."
-	if uti.IsDefined(v.maximum_) {
+	if v.maximum_.IsDefined() {
 		string_ += v.maximum_.AsString()
 	}
 	switch v.right_ {
@@ -171,8 +169,7 @@ func (v *spectrum_[V]) String() string {
 
 // Private Methods
 
-// This method determines whether or not the first and last endpoints are
-// invalid.
+// This method ensures that the endpoints are valid.
 func (v *spectrum_[V]) validateSpectrum() {
 	// Validate the left bracket.
 	switch v.left_ {
@@ -199,24 +196,24 @@ func (v *spectrum_[V]) validateSpectrum() {
 	}
 
 	// Validate the endpoints.
-	var collator = age.CollatorClass[V]().Collator()
-	if collator.RankValues(v.minimum_, v.maximum_) != age.LesserRank {
-		var message = fmt.Sprintf(
-			"The minimum %v in a spectrum must be less than the maximum %v.",
-			v.minimum_,
-			v.maximum_,
-		)
-		panic(message)
-	}
-
-	// Validate the size.
-	var size = v.maximum_.AsFloat() - v.minimum_.AsFloat()
-	if size <= 0 {
-		var message = fmt.Sprintf(
-			"The size of a spectrum must be greater than zero: %v.",
-			size,
-		)
-		panic(message)
+	if v.minimum_.IsDefined() && v.maximum_.IsDefined() {
+		var collator = age.CollatorClass[V]().Collator()
+		if collator.RankValues(v.minimum_, v.maximum_) != age.LesserRank {
+			var message = fmt.Sprintf(
+				"The minimum %v in a spectrum must be less than the maximum %v.",
+				v.minimum_,
+				v.maximum_,
+			)
+			panic(message)
+		}
+		var size = v.maximum_.AsFloat() - v.minimum_.AsFloat()
+		if size <= 0 {
+			var message = fmt.Sprintf(
+				"The size of a spectrum must be greater than zero: %v.",
+				size,
+			)
+			panic(message)
+		}
 	}
 }
 

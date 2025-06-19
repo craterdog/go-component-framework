@@ -416,6 +416,14 @@ func (v *collator_[V]) rankBytes(
 	return EqualRank
 }
 
+// NOTE:
+// There is no canonical ordering of complex numbers that preserves their
+// mathematical field structure.  However, we can provide the following
+// useful ordering using the Riemann Sphere:
+//
+//	0 < z < ∞  ordered by magnitude(z) followed by -phase(z)
+//
+// This ordering preserves the standard order of the real number line.
 func (v *collator_[V]) rankComplex(
 	first complex128,
 	second complex128,
@@ -424,23 +432,34 @@ func (v *collator_[V]) rankComplex(
 		return EqualRank
 	}
 	switch {
-	case cmp.Abs(first) < cmp.Abs(second):
-		// The magnitude of the first vector is less than the second.
-		return LesserRank
-	case cmp.Abs(first) > cmp.Abs(second):
-		// The magnitude of the first vector is greater than the second.
+	case cmp.IsInf(first):
 		return GreaterRank
-	default:
-		// The magnitudes of the vectors are equal.
+	case cmp.IsInf(second):
+		return LesserRank
+	case cmp.Abs(first) < cmp.Abs(second):
 		switch {
 		case cmp.Phase(first) < cmp.Phase(second):
-			// The phase of the first vector is less than the second.
-			return LesserRank
-		case cmp.Phase(first) > cmp.Phase(second):
-			// The phase of the first vector is greater than the second.
+			// Reverse the direction since larger phases head negative.
 			return GreaterRank
 		default:
-			// The phases of the vectors are also equal.
+			return LesserRank
+		}
+	case cmp.Abs(first) > cmp.Abs(second):
+		switch {
+		case cmp.Phase(first) < cmp.Phase(second):
+			// Reverse the direction since larger phases head negative.
+			return LesserRank
+		default:
+			return GreaterRank
+		}
+	default:
+		switch {
+		case cmp.Phase(first) < cmp.Phase(second):
+			// Reverse the direction since larger phases head negative.
+			return GreaterRank
+		case cmp.Phase(first) > cmp.Phase(second):
+			return LesserRank
+		default:
 			return EqualRank
 		}
 	}

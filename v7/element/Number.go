@@ -128,12 +128,8 @@ func (c *numberClass_) NumberFromString(
 
 // Constant Methods
 
-func (c *numberClass_) Minimum() NumberLike {
-	return c.minimum_
-}
-
-func (c *numberClass_) Maximum() NumberLike {
-	return c.maximum_
+func (c *numberClass_) Undefined() NumberLike {
+	return c.undefined_
 }
 
 func (c *numberClass_) Zero() NumberLike {
@@ -168,10 +164,6 @@ func (c *numberClass_) Infinity() NumberLike {
 	return c.infinity_
 }
 
-func (c *numberClass_) Undefined() NumberLike {
-	return c.undefined_
-}
-
 // Function Methods
 
 func (c *numberClass_) Inverse(
@@ -183,12 +175,24 @@ func (c *numberClass_) Inverse(
 	return number
 }
 
+func (c *numberClass_) Reciprocal(
+	number NumberLike,
+) NumberLike {
+	return c.normalize(1.0 / number.AsIntrinsic())
+}
+
+func (c *numberClass_) Conjugate(
+	number NumberLike,
+) NumberLike {
+	return c.normalize(cmp.Conj(number.AsIntrinsic()))
+}
+
 func (c *numberClass_) Sum(
 	first NumberLike,
 	second NumberLike,
 ) NumberLike {
 	switch {
-	case first.IsUndefined() || second.IsUndefined():
+	case !first.IsDefined() || !second.IsDefined():
 		return c.undefined_
 	case first.IsInfinite() || second.IsInfinite():
 		return c.infinity_
@@ -202,7 +206,7 @@ func (c *numberClass_) Difference(
 	second NumberLike,
 ) NumberLike {
 	switch {
-	case first.IsUndefined() || second.IsUndefined():
+	case !first.IsDefined() || !second.IsDefined():
 		return c.undefined_
 	case first.IsInfinite() && second.IsInfinite():
 		return c.undefined_
@@ -221,25 +225,13 @@ func (c *numberClass_) Scaled(
 	return number
 }
 
-func (c *numberClass_) Reciprocal(
-	number NumberLike,
-) NumberLike {
-	return c.normalize(1.0 / number.AsIntrinsic())
-}
-
-func (c *numberClass_) Conjugate(
-	number NumberLike,
-) NumberLike {
-	return c.normalize(cmp.Conj(number.AsIntrinsic()))
-}
-
 func (c *numberClass_) Product(
 	first NumberLike,
 	second NumberLike,
 ) NumberLike {
 	var number NumberLike
 	switch {
-	case first.IsUndefined() || second.IsUndefined():
+	case !first.IsDefined() || !second.IsDefined():
 		// Any undefined arguments result in an undefined result.
 		number = c.undefined_
 	case first.IsInfinite() && !second.IsZero():
@@ -260,7 +252,7 @@ func (c *numberClass_) Quotient(
 ) NumberLike {
 	var number NumberLike
 	switch {
-	case first.IsUndefined() || second.IsUndefined():
+	case !first.IsDefined() || !second.IsDefined():
 		// Any undefined arguments result in an undefined result.
 		number = c.undefined_
 	case first.IsZero() && second.IsZero():
@@ -307,7 +299,7 @@ func (c *numberClass_) Power(
 ) NumberLike {
 	var number NumberLike
 	switch {
-	case base.IsUndefined() || exponent.IsUndefined():
+	case !base.IsDefined() || !exponent.IsDefined():
 		// Any undefined arguments result in an undefined result.
 		number = c.undefined_
 	case exponent.IsZero():
@@ -390,7 +382,7 @@ func (v number_) AsString() string {
 		string_ = "0"
 	case v.IsInfinite():
 		string_ = "∞"
-	case v.IsUndefined():
+	case !v.IsDefined():
 		string_ = "undefined"
 	default:
 		var realPart = v.GetReal()
@@ -415,20 +407,28 @@ func (v number_) AsFloat() float64 {
 	return real(v)
 }
 
-func (v number_) IsZero() bool {
-	return real(v) == 0 && imag(v) == 0
+func (v number_) HasMagnitude() bool {
+	return v.IsDefined() && !v.IsZero() && !v.IsInfinite()
 }
 
 func (v number_) IsInfinite() bool {
 	return mat.IsInf(real(v), 0) || mat.IsInf(imag(v), 0)
 }
 
-func (v number_) IsUndefined() bool {
-	return mat.IsNaN(real(v)) || mat.IsNaN(imag(v))
+func (v number_) IsDefined() bool {
+	return !(mat.IsNaN(real(v)) || mat.IsNaN(imag(v)))
 }
 
-func (v number_) HasMagnitude() bool {
-	return !v.IsZero() && !v.IsInfinite() && !v.IsUndefined()
+func (v number_) IsMinimum() bool {
+	return v.GetMagnitude() == -mat.MaxFloat64
+}
+
+func (v number_) IsZero() bool {
+	return real(v) == 0 && imag(v) == 0
+}
+
+func (v number_) IsMaximum() bool {
+	return v.GetMagnitude() == mat.MaxFloat64
 }
 
 // Polarized Methods
@@ -634,8 +634,7 @@ type number_ complex128
 type numberClass_ struct {
 	// Declare the class constants.
 	matcher_   *reg.Regexp
-	minimum_   NumberLike
-	maximum_   NumberLike
+	undefined_ NumberLike
 	zero_      NumberLike
 	one_       NumberLike
 	i_         NumberLike
@@ -644,7 +643,6 @@ type numberClass_ struct {
 	phi_       NumberLike
 	tau_       NumberLike
 	infinity_  NumberLike
-	undefined_ NumberLike
 }
 
 // Class Reference
@@ -659,8 +657,7 @@ var numberClassReference_ = &numberClass_{
 		"^(" + polar_ + ")|(" + rectangular_ + ")|(" + float_ +
 			")i|(" + real_ + ")",
 	),
-	maximum_:   number_(complex(mat.Inf(0), mat.Inf(0))),
-	minimum_:   number_(0),
+	undefined_: number_(complex(mat.NaN(), mat.NaN())),
 	zero_:      number_(0),
 	one_:       number_(1.0),
 	i_:         number_(1.0i),
@@ -669,5 +666,4 @@ var numberClassReference_ = &numberClass_{
 	tau_:       number_(2.0 * mat.Pi),
 	phi_:       number_(mat.Phi),
 	infinity_:  number_(complex(mat.Inf(0), mat.Inf(0))),
-	undefined_: number_(complex(mat.NaN(), mat.NaN())),
 }

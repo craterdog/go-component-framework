@@ -69,7 +69,7 @@ func (v *interval_[V]) GetValue(
 ) V {
 	var size = v.effectiveSize()
 	var goIndex = uti.RelativeToZeroBased(index, size)
-	var integer = v.effectiveMinimum().AsInteger() + goIndex
+	var integer = v.effectiveMinimum() + goIndex
 	return v.valueOf(integer)
 }
 
@@ -145,7 +145,13 @@ func (v *interval_[V]) SetRight(right Bracket) {
 func (v *interval_[V]) ContainsValue(
 	value V,
 ) bool {
-	return v.GetIndex(value) > 0
+	if v.minimum_.IsDefined() && value.AsInteger() < v.minimum_.AsInteger() {
+		return false
+	}
+	if v.maximum_.IsDefined() && value.AsInteger() > v.maximum_.AsInteger() {
+		return false
+	}
+	return true
 }
 
 func (v *interval_[V]) ContainsAny(
@@ -222,11 +228,11 @@ func (v *interval_[V]) String() string {
 	case Exclusive:
 		string_ += "("
 	}
-	if uti.IsDefined(v.minimum_) {
+	if v.minimum_.IsDefined() {
 		string_ += v.minimum_.AsString()
 	}
 	string_ += ".."
-	if uti.IsDefined(v.maximum_) {
+	if v.maximum_.IsDefined() {
 		string_ += v.maximum_.AsString()
 	}
 	switch v.right_ {
@@ -240,26 +246,25 @@ func (v *interval_[V]) String() string {
 
 // Private Methods
 
-func (v *interval_[V]) effectiveMaximum() V {
+func (v *interval_[V]) effectiveMaximum() int {
 	var maximum = v.maximum_.AsInteger()
 	maximum -= int(v.right_)
-	return v.valueOf(maximum)
+	return maximum
 }
 
-func (v *interval_[V]) effectiveMinimum() V {
+func (v *interval_[V]) effectiveMinimum() int {
 	var minimum = v.minimum_.AsInteger()
 	minimum += int(v.left_)
-	return v.valueOf(minimum)
+	return minimum
 }
 
 func (v *interval_[V]) effectiveSize() uti.Cardinal {
-	var size = v.effectiveMaximum().AsInteger()
-	size = size - v.effectiveMinimum().AsInteger() + 1
+	var size = v.effectiveMaximum()
+	size = size - v.effectiveMinimum() + 1
 	return uti.Cardinal(size)
 }
 
-// This method determines whether or not the first and last endpoints are
-// invalid.
+// This method ensures that the endpoints are valid.
 func (v *interval_[V]) validateInterval() {
 	// Validate the left bracket.
 	switch v.left_ {
@@ -286,24 +291,24 @@ func (v *interval_[V]) validateInterval() {
 	}
 
 	// Validate the endpoints.
-	var collator = age.CollatorClass[V]().Collator()
-	if collator.RankValues(v.minimum_, v.maximum_) != age.LesserRank {
-		var message = fmt.Sprintf(
-			"The minimum %v in an interval must be less than the maximum %v.",
-			v.minimum_,
-			v.maximum_,
-		)
-		panic(message)
-	}
-
-	// Validate the effective size.
-	var size = v.effectiveSize()
-	if size <= 0 {
-		var message = fmt.Sprintf(
-			"The effective size of an interval must be greater than zero: %v.",
-			size,
-		)
-		panic(message)
+	if v.minimum_.IsDefined() && v.maximum_.IsDefined() {
+		var collator = age.CollatorClass[V]().Collator()
+		if collator.RankValues(v.minimum_, v.maximum_) != age.LesserRank {
+			var message = fmt.Sprintf(
+				"The minimum %v in an interval must be less than the maximum %v.",
+				v.minimum_,
+				v.maximum_,
+			)
+			panic(message)
+		}
+		var size = v.effectiveSize()
+		if size <= 0 {
+			var message = fmt.Sprintf(
+				"The effective size of an interval must be greater than zero: %v.",
+				size,
+			)
+			panic(message)
+		}
 	}
 }
 

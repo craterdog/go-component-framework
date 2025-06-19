@@ -54,14 +54,6 @@ func (c *momentClass_) MomentFromString(
 
 // Constant Methods
 
-func (c *momentClass_) Minimum() MomentLike {
-	return c.minimum_
-}
-
-func (c *momentClass_) Maximum() MomentLike {
-	return c.maximum_
-}
-
 func (c *momentClass_) Epoch() MomentLike {
 	return c.epoch_
 }
@@ -149,13 +141,24 @@ func (v moment_) AsString() string {
 	return builder.String()
 }
 
-func (v moment_) AsBoolean() bool {
-	// There is no beginning of time (EPOCH is arbitrary).
+func (v moment_) AsInteger() int {
+	return int(v)
+}
+
+func (v moment_) IsDefined() bool {
 	return true
 }
 
-func (v moment_) AsInteger() int {
-	return int(v)
+func (v moment_) IsMinimum() bool {
+	return v == mat.MinInt64
+}
+
+func (v moment_) IsZero() bool {
+	return v == 0
+}
+
+func (v moment_) IsMaximum() bool {
+	return v == mat.MaxInt64
 }
 
 // Temporal Methods
@@ -354,8 +357,6 @@ type moment_ int
 type momentClass_ struct {
 	// Declare the class constants.
 	matcher_ *reg.Regexp
-	minimum_ MomentLike
-	maximum_ MomentLike
 	epoch_   MomentLike
 }
 
@@ -372,7 +373,5 @@ var momentClassReference_ = &momentClass_{
 			")(?:T(" + hour_ + ")(?::(" + minute_ + ")(:(?:" + second_ +
 			")(?:" + fraction_ + ")?)?)?)?)?)?)>",
 	),
-	minimum_: moment_(mat.MinInt),
-	maximum_: moment_(mat.MaxInt),
-	epoch_:   moment_(0),
+	epoch_: moment_(0),
 }

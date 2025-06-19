@@ -53,14 +53,6 @@ func (c *booleanClass_) BooleanFromString(
 
 // Constant Methods
 
-func (c *booleanClass_) Minimum() BooleanLike {
-	return c.minimum_
-}
-
-func (c *booleanClass_) Maximum() BooleanLike {
-	return c.maximum_
-}
-
 func (c *booleanClass_) False() BooleanLike {
 	return c.false_
 }
@@ -74,7 +66,7 @@ func (c *booleanClass_) True() BooleanLike {
 func (c *booleanClass_) Not(
 	boolean BooleanLike,
 ) BooleanLike {
-	var result_ = boolean_(!boolean.AsBoolean())
+	var result_ = boolean_(!boolean.AsIntrinsic())
 	return result_
 }
 
@@ -82,7 +74,7 @@ func (c *booleanClass_) And(
 	first BooleanLike,
 	second BooleanLike,
 ) BooleanLike {
-	var result_ = boolean_(first.AsBoolean() && second.AsBoolean())
+	var result_ = boolean_(first.AsIntrinsic() && second.AsIntrinsic())
 	return result_
 }
 
@@ -90,7 +82,7 @@ func (c *booleanClass_) San(
 	first BooleanLike,
 	second BooleanLike,
 ) BooleanLike {
-	var result_ = boolean_(first.AsBoolean() && !second.AsBoolean())
+	var result_ = boolean_(first.AsIntrinsic() && !second.AsIntrinsic())
 	return result_
 }
 
@@ -98,7 +90,7 @@ func (c *booleanClass_) Ior(
 	first BooleanLike,
 	second BooleanLike,
 ) BooleanLike {
-	var result_ = boolean_(first.AsBoolean() || second.AsBoolean())
+	var result_ = boolean_(first.AsIntrinsic() || second.AsIntrinsic())
 	return result_
 }
 
@@ -131,17 +123,28 @@ func (v boolean_) AsString() string {
 	return result_
 }
 
-func (v boolean_) AsBoolean() bool {
-	var result_ = bool(v)
-	return result_
-}
-
 func (v boolean_) AsInteger() int {
 	var result_ int
 	if v {
 		result_ = 1
 	}
 	return result_
+}
+
+func (v boolean_) IsDefined() bool {
+	return true
+}
+
+func (v boolean_) IsMinimum() bool {
+	return !v.AsIntrinsic()
+}
+
+func (v boolean_) IsZero() bool {
+	return !v.AsIntrinsic()
+}
+
+func (v boolean_) IsMaximum() bool {
+	return v.AsIntrinsic()
 }
 
 // PROTECTED INTERFACE
@@ -161,8 +164,6 @@ type boolean_ bool
 type booleanClass_ struct {
 	// Declare the class constants.
 	matcher_ *reg.Regexp
-	minimum_ BooleanLike
-	maximum_ BooleanLike
 	false_   BooleanLike
 	true_    BooleanLike
 }
@@ -176,8 +177,6 @@ func booleanClass() *booleanClass_ {
 var booleanClassReference_ = &booleanClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile("^false|true"),
-	minimum_: boolean_(false),
-	maximum_: boolean_(true),
 	false_:   boolean_(false),
 	true_:    boolean_(true),
 }

@@ -113,19 +113,17 @@ func TestAnglesLibrary(t *tes.T) {
 var BooleanClass = ele.BooleanClass()
 
 func TestFalseBooleans(t *tes.T) {
-	ass.False(t, BooleanClass.Minimum().AsIntrinsic())
 	ass.False(t, BooleanClass.False().AsIntrinsic())
 	var v = BooleanClass.Boolean(false)
-	ass.False(t, v.AsBoolean())
+	ass.False(t, v.AsIntrinsic())
 	v = BooleanClass.BooleanFromString("false")
 	ass.Equal(t, "false", v.AsString())
 }
 
 func TestTrueBooleans(t *tes.T) {
-	ass.True(t, BooleanClass.Maximum().AsIntrinsic())
 	ass.True(t, BooleanClass.True().AsIntrinsic())
 	var v = BooleanClass.Boolean(true)
-	ass.True(t, v.AsBoolean())
+	ass.True(t, v.AsIntrinsic())
 	v = BooleanClass.BooleanFromString("true")
 	ass.Equal(t, "true", v.AsString())
 }
@@ -319,7 +317,7 @@ func TestZero(t *tes.T) {
 	ass.Equal(t, 0+0i, v.AsIntrinsic())
 	ass.True(t, v.IsZero())
 	ass.False(t, v.IsInfinite())
-	ass.False(t, v.IsUndefined())
+	ass.True(t, v.IsDefined())
 	ass.False(t, v.IsNegative())
 	ass.Equal(t, 0.0, v.AsFloat())
 	ass.Equal(t, 0.0, v.GetReal())
@@ -331,7 +329,7 @@ func TestInfinity(t *tes.T) {
 	ass.Equal(t, cmp.Inf(), v.AsIntrinsic())
 	ass.False(t, v.IsZero())
 	ass.True(t, v.IsInfinite())
-	ass.False(t, v.IsUndefined())
+	ass.True(t, v.IsDefined())
 	ass.False(t, v.IsNegative())
 	ass.Equal(t, mat.Inf(1), v.AsFloat())
 	ass.Equal(t, mat.Inf(1), v.GetReal())
@@ -343,7 +341,7 @@ func TestUndefined(t *tes.T) {
 	ass.True(t, cmp.IsNaN(v.AsIntrinsic()))
 	ass.False(t, v.IsZero())
 	ass.False(t, v.IsInfinite())
-	ass.True(t, v.IsUndefined())
+	ass.False(t, v.IsDefined())
 	ass.False(t, v.IsNegative())
 	ass.True(t, mat.IsNaN(v.AsFloat()))
 	ass.True(t, mat.IsNaN(v.GetReal()))
@@ -415,7 +413,7 @@ func TestNumberFromString(t *tes.T) {
 
 	v = NumberClass.NumberFromString("undefined")
 	ass.Equal(t, "undefined", v.AsString())
-	ass.True(t, v.IsUndefined())
+	ass.False(t, v.IsDefined())
 	ass.False(t, v.HasMagnitude())
 
 	v = NumberClass.NumberFromString("+infinity")
@@ -510,7 +508,7 @@ func TestNumberLibrary(t *tes.T) {
 	ass.Equal(t, minusone, NumberClass.Inverse(one))
 	ass.Equal(t, minusi, NumberClass.Inverse(i))
 	ass.Equal(t, infinity, NumberClass.Inverse(infinity))
-	ass.True(t, NumberClass.Inverse(undefined).IsUndefined())
+	ass.False(t, NumberClass.Inverse(undefined).IsDefined())
 
 	//	z + zero => z
 	ass.Equal(t, minusi, NumberClass.Sum(minusi, zero))
@@ -519,7 +517,7 @@ func TestNumberLibrary(t *tes.T) {
 	ass.Equal(t, one, NumberClass.Sum(one, zero))
 	ass.Equal(t, i, NumberClass.Sum(i, zero))
 	ass.Equal(t, infinity, NumberClass.Sum(infinity, zero))
-	ass.True(t, NumberClass.Sum(undefined, zero).IsUndefined())
+	ass.False(t, NumberClass.Sum(undefined, zero).IsDefined())
 
 	//	z + infinity => infinity
 	ass.Equal(t, infinity, NumberClass.Sum(minusi, infinity))
@@ -528,7 +526,7 @@ func TestNumberLibrary(t *tes.T) {
 	ass.Equal(t, infinity, NumberClass.Sum(one, infinity))
 	ass.Equal(t, infinity, NumberClass.Sum(i, infinity))
 	ass.Equal(t, infinity, NumberClass.Sum(infinity, infinity))
-	ass.True(t, NumberClass.Sum(undefined, infinity).IsUndefined())
+	ass.False(t, NumberClass.Sum(undefined, infinity).IsDefined())
 
 	//	z - infinity => infinity  {z != infinity}
 	ass.Equal(t, infinity, NumberClass.Difference(minusi, infinity))
@@ -536,8 +534,8 @@ func TestNumberLibrary(t *tes.T) {
 	ass.Equal(t, infinity, NumberClass.Difference(zero, infinity))
 	ass.Equal(t, infinity, NumberClass.Difference(one, infinity))
 	ass.Equal(t, infinity, NumberClass.Difference(i, infinity))
-	ass.True(t, NumberClass.Difference(infinity, infinity).IsUndefined())
-	ass.True(t, NumberClass.Difference(undefined, infinity).IsUndefined())
+	ass.False(t, NumberClass.Difference(infinity, infinity).IsDefined())
+	ass.False(t, NumberClass.Difference(undefined, infinity).IsDefined())
 
 	//	infinity - z => infinity  {z != infinity}
 	ass.Equal(t, infinity, NumberClass.Difference(infinity, minusi))
@@ -545,7 +543,7 @@ func TestNumberLibrary(t *tes.T) {
 	ass.Equal(t, infinity, NumberClass.Difference(infinity, zero))
 	ass.Equal(t, infinity, NumberClass.Difference(infinity, one))
 	ass.Equal(t, infinity, NumberClass.Difference(infinity, i))
-	ass.True(t, NumberClass.Difference(infinity, undefined).IsUndefined())
+	ass.False(t, NumberClass.Difference(infinity, undefined).IsDefined())
 
 	//	z - z => zero  {z != infinity}
 	ass.Equal(t, zero, NumberClass.Difference(minusi, minusi))
@@ -553,8 +551,8 @@ func TestNumberLibrary(t *tes.T) {
 	ass.Equal(t, zero, NumberClass.Difference(zero, zero))
 	ass.Equal(t, zero, NumberClass.Difference(one, one))
 	ass.Equal(t, zero, NumberClass.Difference(i, i))
-	ass.True(t, NumberClass.Difference(infinity, infinity).IsUndefined())
-	ass.True(t, NumberClass.Difference(undefined, undefined).IsUndefined())
+	ass.False(t, NumberClass.Difference(infinity, infinity).IsDefined())
+	ass.False(t, NumberClass.Difference(undefined, undefined).IsDefined())
 
 	//	z * r
 	ass.Equal(t, minusi, NumberClass.Scaled(minusi, 1.0))
@@ -563,7 +561,7 @@ func TestNumberLibrary(t *tes.T) {
 	ass.Equal(t, half, NumberClass.Scaled(one, 0.5))
 	ass.Equal(t, i, NumberClass.Scaled(i, 1.0))
 	ass.Equal(t, infinity, NumberClass.Scaled(infinity, 5.0))
-	ass.True(t, NumberClass.Scaled(undefined, 5.0).IsUndefined())
+	ass.False(t, NumberClass.Scaled(undefined, 5.0).IsDefined())
 
 	//	/z
 	ass.Equal(t, infinity, NumberClass.Reciprocal(zero))
@@ -572,59 +570,59 @@ func TestNumberLibrary(t *tes.T) {
 	ass.Equal(t, minushalf, NumberClass.Reciprocal(minustwo))
 	ass.Equal(t, minusi, NumberClass.Reciprocal(i))
 	ass.Equal(t, zero, NumberClass.Reciprocal(infinity))
-	ass.True(t, NumberClass.Reciprocal(undefined).IsUndefined())
+	ass.False(t, NumberClass.Reciprocal(undefined).IsDefined())
 
 	//	*z
 	ass.Equal(t, zero, NumberClass.Conjugate(zero))
 	ass.Equal(t, one, NumberClass.Conjugate(one))
 	ass.Equal(t, minusi, NumberClass.Conjugate(i))
 	ass.Equal(t, i, NumberClass.Conjugate(minusi))
-	ass.True(t, NumberClass.Conjugate(undefined).IsUndefined())
+	ass.False(t, NumberClass.Conjugate(undefined).IsDefined())
 
 	//	z * zero => zero          {z != infinity}
 	ass.Equal(t, zero, NumberClass.Product(zero, zero))
 	ass.Equal(t, zero, NumberClass.Product(one, zero))
 	ass.Equal(t, zero, NumberClass.Product(i, zero))
-	ass.True(t, NumberClass.Product(infinity, zero).IsUndefined())
-	ass.True(t, NumberClass.Product(undefined, zero).IsUndefined())
+	ass.False(t, NumberClass.Product(infinity, zero).IsDefined())
+	ass.False(t, NumberClass.Product(undefined, zero).IsDefined())
 
 	//	z * one => z
 	ass.Equal(t, zero, NumberClass.Product(zero, one))
 	ass.Equal(t, one, NumberClass.Product(one, one))
 	ass.Equal(t, i, NumberClass.Product(i, one))
 	ass.Equal(t, infinity, NumberClass.Product(infinity, one))
-	ass.True(t, NumberClass.Product(undefined, one).IsUndefined())
+	ass.False(t, NumberClass.Product(undefined, one).IsDefined())
 
 	//	z * infinity => infinity  {z != zero}
-	ass.True(t, NumberClass.Product(zero, infinity).IsUndefined())
+	ass.False(t, NumberClass.Product(zero, infinity).IsDefined())
 	ass.Equal(t, infinity, NumberClass.Product(one, infinity))
 	ass.Equal(t, infinity, NumberClass.Product(i, infinity))
 	ass.Equal(t, infinity, NumberClass.Product(infinity, infinity))
 
 	//	zero / z => zero          {z != zero}
-	ass.True(t, NumberClass.Quotient(zero, zero).IsUndefined())
+	ass.False(t, NumberClass.Quotient(zero, zero).IsDefined())
 	ass.Equal(t, zero, NumberClass.Quotient(zero, one))
 	ass.Equal(t, zero, NumberClass.Quotient(zero, i))
 	ass.Equal(t, zero, NumberClass.Quotient(zero, infinity))
-	ass.True(t, NumberClass.Quotient(zero, undefined).IsUndefined())
+	ass.False(t, NumberClass.Quotient(zero, undefined).IsDefined())
 
 	//	z / zero => infinity      {z != zero}
 	ass.Equal(t, infinity, NumberClass.Quotient(one, zero))
 	ass.Equal(t, infinity, NumberClass.Quotient(i, zero))
 	ass.Equal(t, infinity, NumberClass.Quotient(infinity, zero))
-	ass.True(t, NumberClass.Quotient(undefined, zero).IsUndefined())
+	ass.False(t, NumberClass.Quotient(undefined, zero).IsDefined())
 
 	//	z / infinity => zero      {z != infinity}
 	ass.Equal(t, zero, NumberClass.Quotient(one, infinity))
 	ass.Equal(t, zero, NumberClass.Quotient(i, infinity))
-	ass.True(t, NumberClass.Quotient(infinity, infinity).IsUndefined())
-	ass.True(t, NumberClass.Quotient(undefined, infinity).IsUndefined())
+	ass.False(t, NumberClass.Quotient(infinity, infinity).IsDefined())
+	ass.False(t, NumberClass.Quotient(undefined, infinity).IsDefined())
 
 	//	infinity / z => infinity  {z != infinity}
 	ass.Equal(t, infinity, NumberClass.Quotient(infinity, zero))
 	ass.Equal(t, infinity, NumberClass.Quotient(infinity, one))
 	ass.Equal(t, infinity, NumberClass.Quotient(infinity, i))
-	ass.True(t, NumberClass.Quotient(infinity, undefined).IsUndefined())
+	ass.False(t, NumberClass.Quotient(infinity, undefined).IsDefined())
 
 	//	y / z
 	ass.Equal(t, one, NumberClass.Quotient(one, one))
@@ -640,13 +638,13 @@ func TestNumberLibrary(t *tes.T) {
 	ass.Equal(t, one, NumberClass.Power(one, zero))
 	ass.Equal(t, one, NumberClass.Power(i, zero))
 	ass.Equal(t, one, NumberClass.Power(infinity, zero))
-	ass.True(t, NumberClass.Power(undefined, zero).IsUndefined())
+	ass.False(t, NumberClass.Power(undefined, zero).IsDefined())
 
 	//	zero ^ z => zero          {z != zero}
 	ass.Equal(t, zero, NumberClass.Power(zero, one))
 	ass.Equal(t, zero, NumberClass.Power(zero, i))
 	ass.Equal(t, zero, NumberClass.Power(zero, infinity))
-	ass.True(t, NumberClass.Power(zero, undefined).IsUndefined())
+	ass.False(t, NumberClass.Power(zero, undefined).IsDefined())
 
 	//	z ^ infinity => zero      {|z| < one}
 	//	z ^ infinity => one       {|z| = one}
@@ -665,7 +663,7 @@ func TestNumberLibrary(t *tes.T) {
 	ass.Equal(t, infinity, NumberClass.Power(infinity, one))
 	ass.Equal(t, infinity, NumberClass.Power(infinity, i))
 	ass.Equal(t, infinity, NumberClass.Power(infinity, infinity))
-	ass.True(t, NumberClass.Power(infinity, undefined).IsUndefined())
+	ass.False(t, NumberClass.Power(infinity, undefined).IsDefined())
 
 	//	one ^ z => one
 	ass.Equal(t, one, NumberClass.Power(one, one))
@@ -674,23 +672,23 @@ func TestNumberLibrary(t *tes.T) {
 	ass.Equal(t, one, NumberClass.Power(one, minusi))
 
 	//	log(zero, z) => zero
-	ass.True(t, NumberClass.Logarithm(zero, zero).IsUndefined())
+	ass.False(t, NumberClass.Logarithm(zero, zero).IsDefined())
 	ass.Equal(t, zero, NumberClass.Logarithm(zero, i))
 	ass.Equal(t, zero, NumberClass.Logarithm(zero, one))
-	ass.True(t, NumberClass.Logarithm(zero, infinity).IsUndefined())
-	ass.True(t, NumberClass.Logarithm(zero, undefined).IsUndefined())
+	ass.False(t, NumberClass.Logarithm(zero, infinity).IsDefined())
+	ass.False(t, NumberClass.Logarithm(zero, undefined).IsDefined())
 
 	//	log(one, z) => infinity
 	ass.Equal(t, infinity, NumberClass.Logarithm(one, zero))
-	ass.True(t, NumberClass.Logarithm(one, one).IsUndefined())
+	ass.False(t, NumberClass.Logarithm(one, one).IsDefined())
 	ass.Equal(t, infinity, NumberClass.Logarithm(one, infinity))
-	ass.True(t, NumberClass.Logarithm(one, undefined).IsUndefined())
+	ass.False(t, NumberClass.Logarithm(one, undefined).IsDefined())
 
 	//	log(infinity, z) => zero
-	ass.True(t, NumberClass.Logarithm(infinity, zero).IsUndefined())
+	ass.False(t, NumberClass.Logarithm(infinity, zero).IsDefined())
 	ass.Equal(t, zero, NumberClass.Logarithm(infinity, one))
-	ass.True(t, NumberClass.Logarithm(infinity, infinity).IsUndefined())
-	ass.True(t, NumberClass.Logarithm(infinity, undefined).IsUndefined())
+	ass.False(t, NumberClass.Logarithm(infinity, infinity).IsDefined())
+	ass.False(t, NumberClass.Logarithm(infinity, undefined).IsDefined())
 }
 
 var PercentageClass = ele.PercentageClass()
@@ -703,21 +701,18 @@ func TestZeroPercentages(t *tes.T) {
 func TestPositivePercentages(t *tes.T) {
 	var v = PercentageClass.Percentage(25)
 	ass.Equal(t, 0.25, v.AsIntrinsic())
-	ass.Equal(t, 25, v.AsInteger())
 	ass.Equal(t, 25.0, v.AsFloat())
 }
 
 func TestNegativePercentages(t *tes.T) {
 	var v = PercentageClass.Percentage(-75)
 	ass.Equal(t, -0.75, v.AsIntrinsic())
-	ass.Equal(t, -75, v.AsInteger())
 	ass.Equal(t, -75.0, v.AsFloat())
 }
 
 func TestStringPercentages(t *tes.T) {
 	var v = PercentageClass.PercentageFromString("-100.0%")
 	ass.Equal(t, -1.0, v.AsIntrinsic())
-	ass.Equal(t, -100, v.AsInteger())
 	ass.Equal(t, -100.0, v.AsFloat())
 	ass.Equal(t, "-100%", v.AsString())
 }

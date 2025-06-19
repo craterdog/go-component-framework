@@ -350,22 +350,20 @@ func TestCompareRecursiveMaps(t *tes.T) {
 	collator.CompareValues(catalog, catalog) // This should panic.
 }
 
-func TestRanking(t *tes.T) {
+func TestNilRanking(t *tes.T) {
 	var collator = age.CollatorClass[any]().Collator()
-
-	// Nil
 	var ShouldBeNil any
-
 	ass.Equal(t, age.EqualRank, collator.RankValues(nil, nil))
 	ass.Equal(t, age.EqualRank, collator.RankValues(nil, ShouldBeNil))
 	ass.Equal(t, age.EqualRank, collator.RankValues(ShouldBeNil, ShouldBeNil))
 	ass.Equal(t, age.EqualRank, collator.RankValues(ShouldBeNil, nil))
+}
 
-	// Boolean
+func TestBooleanRanking(t *tes.T) {
+	var collator = age.CollatorClass[any]().Collator()
 	var False = false
 	var True = true
 	var ShouldBeFalse bool
-
 	ass.Equal(t, age.EqualRank, collator.RankValues(ShouldBeFalse, ShouldBeFalse))
 	ass.Equal(t, age.LesserRank, collator.RankValues(ShouldBeFalse, True))
 	ass.Equal(t, age.EqualRank, collator.RankValues(False, ShouldBeFalse))
@@ -375,12 +373,13 @@ func TestRanking(t *tes.T) {
 	ass.Equal(t, age.EqualRank, collator.RankValues(False, False))
 	ass.Equal(t, age.GreaterRank, collator.RankValues(True, False))
 	ass.Equal(t, age.EqualRank, collator.RankValues(True, True))
+}
 
-	// Byte
+func TestByteRanking(t *tes.T) {
+	var collator = age.CollatorClass[any]().Collator()
 	var Zero byte = 0x00
 	var One byte = 0x01
 	var ShouldBeZero byte
-
 	ass.Equal(t, age.EqualRank, collator.RankValues(ShouldBeZero, ShouldBeZero))
 	ass.Equal(t, age.LesserRank, collator.RankValues(ShouldBeZero, One))
 	ass.Equal(t, age.EqualRank, collator.RankValues(Zero, ShouldBeZero))
@@ -390,13 +389,14 @@ func TestRanking(t *tes.T) {
 	ass.Equal(t, age.EqualRank, collator.RankValues(Zero, Zero))
 	ass.Equal(t, age.GreaterRank, collator.RankValues(One, Zero))
 	ass.Equal(t, age.EqualRank, collator.RankValues(One, One))
+}
 
-	// Integer
+func TestIntegerRanking(t *tes.T) {
+	var collator = age.CollatorClass[any]().Collator()
 	var Zilch = 0
 	var Two = 2
 	var Three = 3
 	var ShouldBeZilch int
-
 	ass.Equal(t, age.EqualRank, collator.RankValues(ShouldBeZilch, ShouldBeZilch))
 	ass.Equal(t, age.LesserRank, collator.RankValues(ShouldBeZilch, Two))
 	ass.Equal(t, age.EqualRank, collator.RankValues(Zilch, ShouldBeZilch))
@@ -406,13 +406,14 @@ func TestRanking(t *tes.T) {
 	ass.Equal(t, age.EqualRank, collator.RankValues(Two, Two))
 	ass.Equal(t, age.GreaterRank, collator.RankValues(Three, Two))
 	ass.Equal(t, age.EqualRank, collator.RankValues(Three, Three))
+}
 
-	// Float
+func TestFloatRanking(t *tes.T) {
+	var collator = age.CollatorClass[any]().Collator()
 	var Negligible = 0.0
 	var Fourth = 0.25
 	var Half = 0.5
 	var ShouldBeNegligible float64
-
 	ass.Equal(t, age.EqualRank, collator.RankValues(ShouldBeNegligible, ShouldBeNegligible))
 	ass.Equal(t, age.LesserRank, collator.RankValues(ShouldBeNegligible, Half))
 	ass.Equal(t, age.EqualRank, collator.RankValues(Negligible, ShouldBeNegligible))
@@ -422,29 +423,53 @@ func TestRanking(t *tes.T) {
 	ass.Equal(t, age.EqualRank, collator.RankValues(Fourth, Fourth))
 	ass.Equal(t, age.GreaterRank, collator.RankValues(Half, Fourth))
 	ass.Equal(t, age.EqualRank, collator.RankValues(Half, Half))
+}
 
-	// Complex
-	var Origin = 0 + 0i
+func TestComplexRanking(t *tes.T) {
+	var collator = age.CollatorClass[any]().Collator()
+	var Origin complex128
+	var One = 1 + 0i
+	var Pi = -1 + 0i
+	var PiOver2 = 0 + 1i
 	var PiOver4 = 1 + 1i
-	var PiOver2 = 1 + 0i
-	var ShouldBeOrigin complex128
 
-	ass.Equal(t, age.EqualRank, collator.RankValues(ShouldBeOrigin, ShouldBeOrigin))
-	ass.Equal(t, age.LesserRank, collator.RankValues(ShouldBeOrigin, PiOver4))
-	ass.Equal(t, age.EqualRank, collator.RankValues(Origin, ShouldBeOrigin))
-	ass.Equal(t, age.GreaterRank, collator.RankValues(PiOver4, ShouldBeOrigin))
-	ass.Equal(t, age.EqualRank, collator.RankValues(ShouldBeOrigin, Origin))
-	ass.Equal(t, age.LesserRank, collator.RankValues(PiOver2, PiOver4))
+	ass.Equal(t, age.EqualRank, collator.RankValues(Origin, Origin))
+	ass.Equal(t, age.LesserRank, collator.RankValues(Origin, One))
+	ass.Equal(t, age.GreaterRank, collator.RankValues(Origin, Pi))
+	ass.Equal(t, age.GreaterRank, collator.RankValues(Origin, PiOver2))
+	ass.Equal(t, age.GreaterRank, collator.RankValues(Origin, PiOver4))
+
+	ass.Equal(t, age.GreaterRank, collator.RankValues(One, Origin))
+	ass.Equal(t, age.EqualRank, collator.RankValues(One, One))
+	ass.Equal(t, age.GreaterRank, collator.RankValues(One, Pi))
+	ass.Equal(t, age.GreaterRank, collator.RankValues(One, PiOver2))
+	ass.Equal(t, age.GreaterRank, collator.RankValues(One, PiOver4))
+
+	ass.Equal(t, age.GreaterRank, collator.RankValues(Pi, Origin))
+	ass.Equal(t, age.LesserRank, collator.RankValues(Pi, One))
+	ass.Equal(t, age.EqualRank, collator.RankValues(Pi, Pi))
+	ass.Equal(t, age.LesserRank, collator.RankValues(Pi, PiOver2))
+	ass.Equal(t, age.LesserRank, collator.RankValues(Pi, PiOver4))
+
+	ass.Equal(t, age.GreaterRank, collator.RankValues(PiOver2, Origin))
+	ass.Equal(t, age.LesserRank, collator.RankValues(PiOver2, One))
+	ass.Equal(t, age.GreaterRank, collator.RankValues(PiOver2, Pi))
 	ass.Equal(t, age.EqualRank, collator.RankValues(PiOver2, PiOver2))
-	ass.Equal(t, age.GreaterRank, collator.RankValues(PiOver4, PiOver2))
-	ass.Equal(t, age.EqualRank, collator.RankValues(PiOver4, PiOver4))
+	ass.Equal(t, age.LesserRank, collator.RankValues(PiOver2, PiOver4))
 
-	// Rune
+	ass.Equal(t, age.GreaterRank, collator.RankValues(PiOver4, Origin))
+	ass.Equal(t, age.GreaterRank, collator.RankValues(PiOver4, One))
+	ass.Equal(t, age.LesserRank, collator.RankValues(PiOver4, Pi))
+	ass.Equal(t, age.LesserRank, collator.RankValues(PiOver4, PiOver2))
+	ass.Equal(t, age.EqualRank, collator.RankValues(PiOver4, PiOver4))
+}
+
+func TestRuneRanking(t *tes.T) {
+	var collator = age.CollatorClass[any]().Collator()
 	var Null = rune(0)
 	var Sad = '☹'
 	var Happy = '☺'
 	var ShouldBeNull rune
-
 	ass.Equal(t, age.EqualRank, collator.RankValues(ShouldBeNull, ShouldBeNull))
 	ass.Equal(t, age.LesserRank, collator.RankValues(ShouldBeNull, Sad))
 	ass.Equal(t, age.EqualRank, collator.RankValues(Null, ShouldBeNull))
@@ -454,13 +479,14 @@ func TestRanking(t *tes.T) {
 	ass.Equal(t, age.EqualRank, collator.RankValues(Sad, Sad))
 	ass.Equal(t, age.GreaterRank, collator.RankValues(Happy, Sad))
 	ass.Equal(t, age.EqualRank, collator.RankValues(Happy, Happy))
+}
 
-	// String
+func TestStringRanking(t *tes.T) {
+	var collator = age.CollatorClass[any]().Collator()
 	var Empty = ""
 	var Hello = "Hello"
 	var World = "World"
 	var ShouldBeEmpty string
-
 	ass.Equal(t, age.EqualRank, collator.RankValues(ShouldBeEmpty, ShouldBeEmpty))
 	ass.Equal(t, age.LesserRank, collator.RankValues(ShouldBeEmpty, Hello))
 	ass.Equal(t, age.EqualRank, collator.RankValues(Empty, ShouldBeEmpty))
@@ -470,8 +496,12 @@ func TestRanking(t *tes.T) {
 	ass.Equal(t, age.EqualRank, collator.RankValues(Hello, Hello))
 	ass.Equal(t, age.GreaterRank, collator.RankValues(World, Hello))
 	ass.Equal(t, age.EqualRank, collator.RankValues(World, World))
+}
 
-	// Array
+func TestArrayRanking(t *tes.T) {
+	var collator = age.CollatorClass[any]().Collator()
+	var Hello = "Hello"
+	var World = "World"
 	var Universe = "Universe"
 	var a0 = []any{}
 	var a1 = []any{Hello, World}
@@ -479,7 +509,6 @@ func TestRanking(t *tes.T) {
 	var a3 = []any{Hello, World, Universe}
 	var a4 = []any{Hello, Universe, World}
 	var aNil []any
-
 	ass.Equal(t, age.EqualRank, collator.RankValues(aNil, aNil))
 	ass.Equal(t, age.LesserRank, collator.RankValues(aNil, a0))
 	ass.Equal(t, age.GreaterRank, collator.RankValues(a0, aNil))
@@ -497,8 +526,17 @@ func TestRanking(t *tes.T) {
 	ass.Equal(t, age.EqualRank, collator.RankValues(a4, a4))
 	ass.Equal(t, age.GreaterRank, collator.RankValues(a1, a4))
 	ass.Equal(t, age.EqualRank, collator.RankValues(a1, a1))
+}
 
-	// Map
+func TestMapRanking(t *tes.T) {
+	var collator = age.CollatorClass[any]().Collator()
+	var True = true
+	var One byte = 0x01
+	var Two = 2
+	var Three = "three"
+	var Hello = "Hello"
+	var World = "World"
+	var Universe = "Universe"
 	var m0 = map[any]any{}
 	var m1 = map[any]any{
 		One: True,
@@ -515,7 +553,6 @@ func TestRanking(t *tes.T) {
 		Two:   Universe,
 		Three: World}
 	var mNil map[any]any
-
 	ass.Equal(t, age.EqualRank, collator.RankValues(mNil, mNil))
 	ass.Equal(t, age.LesserRank, collator.RankValues(mNil, m0))
 	ass.Equal(t, age.GreaterRank, collator.RankValues(m0, mNil))
@@ -532,8 +569,10 @@ func TestRanking(t *tes.T) {
 	ass.Equal(t, age.EqualRank, collator.RankValues(m4, m4))
 	ass.Equal(t, age.GreaterRank, collator.RankValues(m1, m4))
 	ass.Equal(t, age.EqualRank, collator.RankValues(m1, m1))
+}
 
-	// Struct
+func TestStructRanking(t *tes.T) {
+	var collator = age.CollatorClass[any]().Collator()
 	var f1 = FooBar(1, "one", nil)
 	var f2 = FooBar(1, "two", nil)
 	var f3 = FooBar(2, "two", nil)

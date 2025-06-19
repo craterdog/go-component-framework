@@ -66,8 +66,7 @@ type AngleClassLike interface {
 	) AngleLike
 
 	// Constant Methods
-	Minimum() AngleLike
-	Maximum() AngleLike
+	Undefined() AngleLike
 	Zero() AngleLike
 	Pi() AngleLike
 	Tau() AngleLike
@@ -133,8 +132,6 @@ type BooleanClassLike interface {
 	) BooleanLike
 
 	// Constant Methods
-	Minimum() BooleanLike
-	Maximum() BooleanLike
 	False() BooleanLike
 	True() BooleanLike
 
@@ -187,8 +184,7 @@ type DurationClassLike interface {
 	) DurationLike
 
 	// Constant Methods
-	Minimum() DurationLike
-	Maximum() DurationLike
+	Undefined() DurationLike
 	MillisecondsPerSecond() int
 	MillisecondsPerMinute() int
 	MillisecondsPerHour() int
@@ -219,8 +215,7 @@ type GlyphClassLike interface {
 	) GlyphLike
 
 	// Constant Methods
-	Minimum() GlyphLike
-	Maximum() GlyphLike
+	Undefined() GlyphLike
 
 	// Function Methods
 	ToLowercase(
@@ -246,8 +241,6 @@ type MomentClassLike interface {
 	) MomentLike
 
 	// Constant Methods
-	Minimum() MomentLike
-	Maximum() MomentLike
 	Epoch() MomentLike
 
 	// Function Methods
@@ -289,8 +282,7 @@ type NumberClassLike interface {
 	) NumberLike
 
 	// Constant Methods
-	Minimum() NumberLike
-	Maximum() NumberLike
+	Undefined() NumberLike
 	Zero() NumberLike
 	One() NumberLike
 	I() NumberLike
@@ -299,7 +291,6 @@ type NumberClassLike interface {
 	Phi() NumberLike
 	Tau() NumberLike
 	Infinity() NumberLike
-	Undefined() NumberLike
 
 	// Function Methods
 	Inverse(
@@ -361,6 +352,9 @@ type PercentageClassLike interface {
 	PercentageFromString(
 		string_ string,
 	) PercentageLike
+
+	// Constant Methods
+	Undefined() PercentageLike
 }
 
 /*
@@ -381,8 +375,7 @@ type ProbabilityClassLike interface {
 	) ProbabilityLike
 
 	// Constant Methods
-	Minimum() ProbabilityLike
-	Maximum() ProbabilityLike
+	Undefined() ProbabilityLike
 
 	// Function Methods
 	Random() ProbabilityLike
@@ -563,7 +556,6 @@ type PercentageLike interface {
 
 	// Aspect Interfaces
 	Continuous
-	Discrete
 	Polarized
 }
 
@@ -579,7 +571,6 @@ type ProbabilityLike interface {
 
 	// Aspect Interfaces
 	Continuous
-	Discrete
 }
 
 /*
@@ -621,10 +612,12 @@ that must be supported by each instance of a continuous class.
 type Continuous interface {
 	AsString() string
 	AsFloat() float64
-	IsZero() bool
-	IsInfinite() bool
-	IsUndefined() bool
 	HasMagnitude() bool
+	IsInfinite() bool
+	IsDefined() bool
+	IsMinimum() bool
+	IsZero() bool
+	IsMaximum() bool
 }
 
 /*
@@ -633,8 +626,11 @@ that must be supported by each instance of a discrete class.
 */
 type Discrete interface {
 	AsString() string
-	AsBoolean() bool
 	AsInteger() int
+	IsDefined() bool
+	IsMinimum() bool
+	IsZero() bool
+	IsMaximum() bool
 }
 
 /*

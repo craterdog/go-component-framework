@@ -62,12 +62,8 @@ func (c *angleClass_) AngleFromString(
 
 // Constant Methods
 
-func (c *angleClass_) Minimum() AngleLike {
-	return c.minimum_
-}
-
-func (c *angleClass_) Maximum() AngleLike {
-	return c.maximum_
+func (c *angleClass_) Undefined() AngleLike {
+	return c.undefined_
 }
 
 func (c *angleClass_) Zero() AngleLike {
@@ -298,20 +294,28 @@ func (v angle_) AsFloat() float64 {
 	return float64(v)
 }
 
-func (v angle_) IsZero() bool {
-	return v == angleClass().zero_ || v == angleClass().tau_
+func (v angle_) HasMagnitude() bool {
+	return !v.IsZero()
 }
 
 func (v angle_) IsInfinite() bool {
 	return false
 }
 
-func (v angle_) IsUndefined() bool {
-	return false
+func (v angle_) IsDefined() bool {
+	return v != angleClass().undefined_
 }
 
-func (v angle_) HasMagnitude() bool {
-	return !v.IsZero()
+func (v angle_) IsMinimum() bool {
+	return v == angleClass().zero_
+}
+
+func (v angle_) IsZero() bool {
+	return v == angleClass().zero_ || v == angleClass().tau_
+}
+
+func (v angle_) IsMaximum() bool {
+	return v == angleClass().tau_
 }
 
 // PROTECTED INTERFACE
@@ -391,12 +395,11 @@ type angle_ float64
 
 type angleClass_ struct {
 	// Declare the class constants.
-	matcher_ *reg.Regexp
-	minimum_ AngleLike
-	maximum_ AngleLike
-	zero_    AngleLike
-	pi_      AngleLike
-	tau_     AngleLike
+	matcher_   *reg.Regexp
+	undefined_ AngleLike
+	zero_      AngleLike
+	pi_        AngleLike
+	tau_       AngleLike
 }
 
 // Class Reference
@@ -407,8 +410,9 @@ func angleClass() *angleClass_ {
 
 var angleClassReference_ = &angleClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^~(0|" + amplitude_ + ")"),
-	zero_:    angle_(0.0),
-	pi_:      angle_(mat.Pi),
-	tau_:     angle_(2.0 * mat.Pi),
+	matcher_:   reg.MustCompile("^~(0|" + amplitude_ + ")"),
+	undefined_: angle_(mat.NaN()),
+	zero_:      angle_(0.0),
+	pi_:        angle_(mat.Pi),
+	tau_:       angle_(2.0 * mat.Pi),
 }

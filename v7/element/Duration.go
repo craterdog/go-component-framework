@@ -56,12 +56,8 @@ func (c *durationClass_) DurationFromString(
 
 // Constant Methods
 
-func (c *durationClass_) Minimum() DurationLike {
-	return c.minimum_
-}
-
-func (c *durationClass_) Maximum() DurationLike {
-	return c.maximum_
+func (c *durationClass_) Undefined() DurationLike {
+	return c.undefined_
 }
 
 func (c *durationClass_) MillisecondsPerSecond() int {
@@ -180,12 +176,24 @@ func (v duration_) AsString() string {
 	return builder.String()
 }
 
-func (v duration_) AsBoolean() bool {
-	return v != 0
-}
-
 func (v duration_) AsInteger() int {
 	return int(v)
+}
+
+func (v duration_) IsDefined() bool {
+	return v >= 0
+}
+
+func (v duration_) IsMinimum() bool {
+	return v == 0
+}
+
+func (v duration_) IsZero() bool {
+	return v == 0
+}
+
+func (v duration_) IsMaximum() bool {
+	return v == mat.MaxInt64
 }
 
 // Polarized Methods
@@ -433,8 +441,7 @@ type duration_ int
 type durationClass_ struct {
 	// Declare the class constants.
 	matcher_               *reg.Regexp
-	minimum_               DurationLike
-	maximum_               DurationLike
+	undefined_             DurationLike
 	millisecondsPerSecond_ int
 	millisecondsPerMinute_ int
 	millisecondsPerHour_   int
@@ -460,8 +467,7 @@ var durationClassReference_ = &durationClass_{
 			")?(?:" + days_ + ")?(?:T(?:" + hours_ + ")?(?:" + minutes_ +
 			")?(?:" + seconds_ + ")?)?))",
 	),
-	minimum_: duration_(0),
-	maximum_: duration_(mat.MaxInt),
+	undefined_: duration_(-1),
 
 	// These are locked to the Earth's daily revolutions.
 	millisecondsPerSecond_: 1000,

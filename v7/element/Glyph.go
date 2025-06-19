@@ -60,12 +60,8 @@ func (c *glyphClass_) GlyphFromString(
 
 // Constant Methods
 
-func (c *glyphClass_) Minimum() GlyphLike {
-	return c.minimum_
-}
-
-func (c *glyphClass_) Maximum() GlyphLike {
-	return c.maximum_
+func (c *glyphClass_) Undefined() GlyphLike {
+	return c.undefined_
 }
 
 // Function Methods
@@ -102,12 +98,24 @@ func (v glyph_) AsString() string {
 	return "'" + string([]rune{rune(v)}) + "'"
 }
 
-func (v glyph_) AsBoolean() bool {
-	return v > -1
-}
-
 func (v glyph_) AsInteger() int {
 	return int(v)
+}
+
+func (v glyph_) IsDefined() bool {
+	return v >= 0
+}
+
+func (v glyph_) IsMinimum() bool {
+	return v == 0
+}
+
+func (v glyph_) IsZero() bool {
+	return v == 0
+}
+
+func (v glyph_) IsMaximum() bool {
+	return v == mat.MaxInt32
 }
 
 // PROTECTED INTERFACE
@@ -140,9 +148,8 @@ type glyph_ rune
 
 type glyphClass_ struct {
 	// Declare the class constants.
-	matcher_ *reg.Regexp
-	minimum_ GlyphLike
-	maximum_ GlyphLike
+	matcher_   *reg.Regexp
+	undefined_ GlyphLike
 }
 
 // Class Reference
@@ -156,6 +163,5 @@ var glyphClassReference_ = &glyphClass_{
 	matcher_: reg.MustCompile(
 		"^'((?:" + escape_ + ")|[^" + control_ + "])'",
 	),
-	minimum_: glyph_(0),
-	maximum_: glyph_(mat.MaxInt32),
+	undefined_: glyph_(-1),
 }

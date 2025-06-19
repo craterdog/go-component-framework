@@ -60,6 +60,10 @@ func (c *percentageClass_) PercentageFromString(
 
 // Constant Methods
 
+func (c *percentageClass_) Undefined() PercentageLike {
+	return c.undefined_
+}
+
 // Function Methods
 
 // INSTANCE INTERFACE
@@ -86,30 +90,28 @@ func (v percentage_) AsFloat() float64 {
 	return float64(v * 100.0)
 }
 
-func (v percentage_) IsZero() bool {
-	return v == 0
+func (v percentage_) HasMagnitude() bool {
+	return v.IsDefined() && !(v.IsZero() || v.IsInfinite())
 }
 
 func (v percentage_) IsInfinite() bool {
 	return mat.IsInf(float64(v), 0)
 }
 
-func (v percentage_) IsUndefined() bool {
-	return mat.IsNaN(float64(v))
+func (v percentage_) IsDefined() bool {
+	return !mat.IsNaN(float64(v))
 }
 
-func (v percentage_) HasMagnitude() bool {
-	return !(v.IsZero() || v.IsInfinite() || v.IsUndefined())
+func (v percentage_) IsMinimum() bool {
+	return v == -mat.MaxFloat64
 }
 
-// Discrete Methods
-
-func (v percentage_) AsBoolean() bool {
-	return v != 0
+func (v percentage_) IsZero() bool {
+	return v == 0
 }
 
-func (v percentage_) AsInteger() int {
-	return int(float64(v) * 100.0)
+func (v percentage_) IsMaximum() bool {
+	return v == mat.MaxFloat64
 }
 
 // Polarized Methods
@@ -134,7 +136,8 @@ type percentage_ float64
 
 type percentageClass_ struct {
 	// Declare the class constants.
-	matcher_ *reg.Regexp
+	matcher_   *reg.Regexp
+	undefined_ PercentageLike
 }
 
 // Class Reference
@@ -145,5 +148,6 @@ func percentageClass() *percentageClass_ {
 
 var percentageClassReference_ = &percentageClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^(" + real_ + ")%"),
+	matcher_:   reg.MustCompile("^(" + real_ + ")%"),
+	undefined_: percentage_(mat.NaN()),
 }

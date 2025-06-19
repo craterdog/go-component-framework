@@ -16,6 +16,7 @@ import (
 	ran "crypto/rand"
 	fmt "fmt"
 	uti "github.com/craterdog/go-missing-utilities/v7"
+	mat "math"
 	big "math/big"
 	reg "regexp"
 	stc "strconv"
@@ -76,12 +77,8 @@ func (c *probabilityClass_) ProbabilityFromString(
 
 // Constant Methods
 
-func (c *probabilityClass_) Minimum() ProbabilityLike {
-	return c.minimum_
-}
-
-func (c *probabilityClass_) Maximum() ProbabilityLike {
-	return c.maximum_
+func (c *probabilityClass_) Undefined() ProbabilityLike {
+	return c.undefined_
 }
 
 // Function Methods
@@ -156,36 +153,28 @@ func (v probability_) AsFloat() float64 {
 	return float64(v)
 }
 
-func (v probability_) IsZero() bool {
-	return v == 0
+func (v probability_) HasMagnitude() bool {
+	return !v.IsZero()
 }
 
 func (v probability_) IsInfinite() bool {
 	return false
 }
 
-func (v probability_) IsUndefined() bool {
-	return false
+func (v probability_) IsDefined() bool {
+	return true
 }
 
-func (v probability_) HasMagnitude() bool {
-	return !v.IsZero()
+func (v probability_) IsMinimum() bool {
+	return v == 0
 }
 
-// Discrete Methods
-
-func (v probability_) AsBoolean() bool {
-	if v == 0.5 {
-		return probabilityClass().randomBoolean()
-	}
-	return v > 0.5
+func (v probability_) IsZero() bool {
+	return v == 0
 }
 
-func (v probability_) AsInteger() int {
-	if v.AsBoolean() {
-		return 1
-	}
-	return 0
+func (v probability_) IsMaximum() bool {
+	return v == 1
 }
 
 // PROTECTED INTERFACE
@@ -195,14 +184,6 @@ func (v probability_) String() string {
 }
 
 // Private Methods
-
-func (c *probabilityClass_) randomBoolean() bool {
-	var random, err = ran.Int(ran.Reader, big.NewInt(int64(2)))
-	if err != nil {
-		panic(fmt.Sprintf("The random number generator gave the following error: %v", err))
-	}
-	return int(random.Int64()) > 0
-}
 
 func (c *probabilityClass_) randomInteger(max int) int {
 	var random, err = ran.Int(ran.Reader, big.NewInt(int64(max+1)))
@@ -220,9 +201,8 @@ type probability_ float64
 
 type probabilityClass_ struct {
 	// Declare the class constants.
-	matcher_ *reg.Regexp
-	minimum_ ProbabilityLike
-	maximum_ ProbabilityLike
+	matcher_   *reg.Regexp
+	undefined_ ProbabilityLike
 }
 
 // Class Reference
@@ -233,7 +213,6 @@ func probabilityClass() *probabilityClass_ {
 
 var probabilityClassReference_ = &probabilityClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^p(0(?:" + fraction_ + ")?|1)"),
-	maximum_: probability_(1.0),
-	minimum_: probability_(0.0),
+	matcher_:   reg.MustCompile("^p(0(?:" + fraction_ + ")?|1)"),
+	undefined_: probability_(mat.NaN()),
 }

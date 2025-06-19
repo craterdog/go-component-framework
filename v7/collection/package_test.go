@@ -172,35 +172,39 @@ func TestCatalogsWithEmptyCatalogs(t *tes.T) {
 
 func TestIntervalConstructors(t *tes.T) {
 	var glyphClass = ele.GlyphClass()
-	var intervalClass = col.IntervalClass[ele.GlyphLike]()
-	var interval = intervalClass.Interval(
-		col.Exclusive,
-		glyphClass.Glyph(65),
-		glyphClass.Glyph(70),
-		col.Exclusive,
-	)
-	ass.Equal(t, 4, int(interval.GetSize()))
-	interval = intervalClass.Interval(
-		col.Exclusive,
-		glyphClass.Glyph(65),
-		glyphClass.Glyph(70),
-		col.Inclusive,
-	)
-	ass.Equal(t, 5, int(interval.GetSize()))
-	interval = intervalClass.Interval(
-		col.Inclusive,
-		glyphClass.Glyph(65),
-		glyphClass.Glyph(70),
-		col.Exclusive,
-	)
-	ass.Equal(t, 5, int(interval.GetSize()))
-	interval = intervalClass.Interval(
+	var glyphs = col.IntervalClass[ele.GlyphLike]().Interval(
 		col.Inclusive,
 		glyphClass.Glyph(65),
 		glyphClass.Glyph(70),
 		col.Inclusive,
 	)
-	ass.Equal(t, 6, int(interval.GetSize()))
+	ass.Equal(t, 6, int(glyphs.GetSize()))
+
+	var durationClass = ele.DurationClass()
+	var durations = col.IntervalClass[ele.DurationLike]().Interval(
+		col.Exclusive,
+		durationClass.DurationFromString("~P0W"),
+		durationClass.DurationFromString("~P4W"),
+		col.Inclusive,
+	)
+	ass.Equal(t, 2419200000, int(durations.GetSize()))
+
+	durations = col.IntervalClass[ele.DurationLike]().Interval(
+		col.Inclusive,
+		durationClass.DurationFromString("~P0D"),
+		durationClass.Undefined(),
+		col.Exclusive,
+	)
+	ass.Equal(t, -1, int(durations.GetSize()))
+
+	var momentClass = ele.MomentClass()
+	var moments = col.IntervalClass[ele.MomentLike]().Interval(
+		col.Exclusive,
+		momentClass.MomentFromString("<2001-02-03T04:05:06>"),
+		momentClass.MomentFromString("<2001-02-03T04:05:07>"),
+		col.Exclusive,
+	)
+	ass.Equal(t, 999, int(moments.GetSize()))
 }
 
 func TestListConstructors(t *tes.T) {
@@ -761,35 +765,38 @@ func TestSetsWithEmptySets(t *tes.T) {
 
 func TestSpectrumConstructors(t *tes.T) {
 	var numberClass = ele.NumberClass()
-	var spectrumClass = col.SpectrumClass[ele.NumberLike]()
-	var spectrum = spectrumClass.Spectrum(
+	var numbers = col.SpectrumClass[ele.NumberLike]().Spectrum(
 		col.Exclusive,
 		numberClass.Number(-1.23),
 		numberClass.Number(4.56),
 		col.Exclusive,
 	)
-	ass.Equal(t, "(-1.23..4.56)", fmt.Sprintf("%v", spectrum))
-	spectrum = spectrumClass.Spectrum(
+	ass.Equal(t, "(-1.23..4.56)", fmt.Sprintf("%v", numbers))
+
+	numbers = col.SpectrumClass[ele.NumberLike]().Spectrum(
 		col.Exclusive,
-		numberClass.Number(-1.23),
-		numberClass.Number(4.56),
+		numberClass.Undefined(),
+		numberClass.Zero(),
 		col.Inclusive,
 	)
-	ass.Equal(t, "(-1.23..4.56]", fmt.Sprintf("%v", spectrum))
-	spectrum = spectrumClass.Spectrum(
+	ass.Equal(t, "(..0]", fmt.Sprintf("%v", numbers))
+
+	numbers = col.SpectrumClass[ele.NumberLike]().Spectrum(
 		col.Inclusive,
-		numberClass.Number(-1.23),
-		numberClass.Number(4.56),
+		numberClass.Zero(),
+		numberClass.Infinity(),
+		col.Inclusive,
+	)
+	ass.Equal(t, "[0..∞]", fmt.Sprintf("%v", numbers))
+
+	var angleClass = ele.AngleClass()
+	var angles = col.SpectrumClass[ele.AngleLike]().Spectrum(
+		col.Inclusive,
+		angleClass.Angle(0),
+		angleClass.Tau(),
 		col.Exclusive,
 	)
-	ass.Equal(t, "[-1.23..4.56)", fmt.Sprintf("%v", spectrum))
-	spectrum = spectrumClass.Spectrum(
-		col.Inclusive,
-		numberClass.Number(-1.23),
-		numberClass.Number(4.56),
-		col.Inclusive,
-	)
-	ass.Equal(t, "[-1.23..4.56]", fmt.Sprintf("%v", spectrum))
+	ass.Equal(t, "[~0..~τ)", fmt.Sprintf("%v", angles))
 }
 
 func TestStackConstructors(t *tes.T) {
