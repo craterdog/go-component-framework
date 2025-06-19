@@ -511,13 +511,21 @@ primitive components.
 */
 type Bounded[V any] interface {
 	GetLeft() Bracket
-	SetLeft(Bracket)
+	SetLeft(
+		bracket Bracket,
+	)
 	GetMinimum() V
-	SetMinimum(V)
+	SetMinimum(
+		minimum V,
+	)
 	GetMaximum() V
-	SetMaximum(V)
+	SetMaximum(
+		minimum V,
+	)
 	GetRight() Bracket
-	SetRight(Bracket)
+	SetRight(
+		bracket Bracket,
+	)
 }
 
 /*

@@ -158,6 +158,7 @@ type (
 
 type (
 	Associative[K comparable, V any] = col.Associative[K, V]
+	Bounded[V any]                   = col.Bounded[V]
 	Elastic[V any]                   = col.Elastic[V]
 	Fifo[V any]                      = col.Fifo[V]
 	Lifo[V any]                      = col.Lifo[V]
