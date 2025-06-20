@@ -158,18 +158,6 @@ type BooleanClassLike interface {
 }
 
 /*
-CitationClassLike is a class interface that defines the complete set of
-class constants, constructors and functions that must be supported by each
-citation-like concrete class.
-*/
-type CitationClassLike interface {
-	// Constructor Methods
-	Citation(
-		string_ string,
-	) CitationLike
-}
-
-/*
 DurationClassLike is a class interface that defines the complete set of
 class constants, constructors and functions that must be supported by each
 duration-like concrete class.
@@ -462,20 +450,6 @@ type BooleanLike interface {
 
 	// Aspect Interfaces
 	Discrete
-}
-
-/*
-CitationLike is an instance interface that defines the complete set of
-instance attributes, abstractions and methods that must be supported by each
-instance of a citation-like class.
-*/
-type CitationLike interface {
-	// Principal Methods
-	GetClass() CitationClassLike
-	AsIntrinsic() string
-	AsString() string
-	GetName() string
-	GetVersion() string
 }
 
 /*

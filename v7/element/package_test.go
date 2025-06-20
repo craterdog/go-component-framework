@@ -173,16 +173,6 @@ func TestBooleansLibrary(t *tes.T) {
 	ass.Equal(t, xor, BooleanClass.Xor(F, F))
 }
 
-var CitationClass = ele.CitationClass()
-
-func TestCitation(t *tes.T) {
-	var v1 = CitationClass.Citation("/bali-nebula/types/abstractions/String@v1.2.3")
-	ass.Equal(t, "/bali-nebula/types/abstractions/String@v1.2.3", v1.AsIntrinsic())
-	ass.Equal(t, "/bali-nebula/types/abstractions/String@v1.2.3", v1.AsString())
-	ass.Equal(t, "/bali-nebula/types/abstractions/String", v1.GetName())
-	ass.Equal(t, "v1.2.3", v1.GetVersion())
-}
-
 var DurationClass = ele.DurationClass()
 
 func TestZeroDurations(t *tes.T) {

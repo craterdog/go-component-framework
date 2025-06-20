@@ -55,6 +55,7 @@ func (c *bytecodeClass_) BytecodeFromString(
 	}
 	var base16 = matches[1]                   // Strip off the "'" delimiters.
 	base16 = sts.ReplaceAll(base16, " ", "")  // Remove all spaces.
+	base16 = sts.ReplaceAll(base16, "-", "")  // Remove all dashes.
 	base16 = sts.ReplaceAll(base16, "\n", "") // Remove all newlines.
 	var encoder = age.EncoderClass().Encoder()
 	var bytes = encoder.Base16Decode(base16)
@@ -105,18 +106,19 @@ func (v bytecode_) AsIntrinsic() []Instruction {
 }
 
 func (v bytecode_) AsString() string {
-	var string_ = "'"
+	var string_ = "'>\n"
 	var size = len(v)
-	if size > 0 {
-		var index = 0
-		var instruction = v[index]
-		string_ += instruction.String()
-		for index++; index < size; index++ {
-			instruction = v[index]
-			string_ += " " + instruction.String()
+	var indentation = "    "
+	var count int
+	for count < size {
+		string_ += indentation
+		for index := 0; count < size && index < 12; index++ {
+			string_ += v[count].String()
+			count++
 		}
+		string_ += "\n"
 	}
-	string_ += "'"
+	string_ += "<'"
 	return string_
 }
 
@@ -183,7 +185,7 @@ func (v bytecode_) GetIndex(
 // PROTECTED INTERFACE
 
 func (v Instruction) String() string {
-	return fmt.Sprintf("%04x", uint16(v))
+	return fmt.Sprintf("-%04x", uint16(v))
 }
 
 func (v bytecode_) String() string {
@@ -201,8 +203,7 @@ func (v bytecode_) String() string {
 // class constants in this package.
 const (
 	base16_      = base10_ + "|[a-f]"
-	instruction_ = "(?:" + base16_ + "){4}"
-	space_       = " "
+	instruction_ = "(?:-(?:" + base16_ + "){4})"
 )
 
 // Instance Structure
@@ -225,7 +226,7 @@ func bytecodeClass() *bytecodeClass_ {
 var bytecodeClassReference_ = &bytecodeClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^'(" + instruction_ + "(?:" + space_ +
-			instruction_ + ")*)'",
+		"^'>" + eol_ + "((?:" + space_ + ")*(?:" + instruction_ + "){1,12}" +
+			eol_ + ")+(?:" + space_ + ")*<'",
 	),
 }

@@ -23,7 +23,7 @@ import (
 var BinaryClass = str.BinaryClass()
 
 func TestEmptyBinary(t *tes.T) {
-	var binary = `'> <'`
+	var binary = `'><'`
 	var v = BinaryClass.BinaryFromString(binary)
 	ass.Equal(t, binary, v.AsString())
 	ass.True(t, v.IsEmpty())
@@ -81,14 +81,18 @@ func TestBinaryLibrary(t *tes.T) {
 var BytecodeClass = str.BytecodeClass()
 
 func TestBytecode(t *tes.T) {
-	var bytecode = `'abcd'`
+	var bytecode = `'>
+    -abcd
+<'`
 	var v = BytecodeClass.BytecodeFromString(bytecode)
 	ass.Equal(t, bytecode, v.AsString())
 	ass.False(t, v.IsEmpty())
 	ass.Equal(t, 1, int(v.GetSize()))
 	ass.Equal(t, v.AsArray(), BytecodeClass.Bytecode(v.AsArray()).AsArray())
 
-	bytecode = `'abcd 1234'`
+	bytecode = `'>
+    -abcd-1234
+<'`
 	v = BytecodeClass.BytecodeFromString(bytecode)
 	ass.Equal(t, bytecode, v.AsString())
 	ass.False(t, v.IsEmpty())

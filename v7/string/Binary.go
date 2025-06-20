@@ -213,8 +213,6 @@ func (v binary_) AsString() string {
 			string_ += indentation + encoded[index:index+width] + "\n"
 		}
 		string_ += indentation + encoded[index:] + "\n"
-	} else {
-		string_ += " "
 	}
 	string_ += "<'"
 	return string_
@@ -300,6 +298,7 @@ const (
 	alphanumeric_ = alpha_ + "|" + base10_
 	base10_       = "[0-9]"
 	base64_       = alphanumeric_ + "|[\\+/]"
+	space_        = " "
 )
 
 // Instance Structure
@@ -322,6 +321,7 @@ func binaryClass() *binaryClass_ {
 var binaryClassReference_ = &binaryClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^'>((?:" + base64_ + "|" + space_ + "|" + eol_ + ")*)<'",
+		"^'>(" + eol_ + "((?:" + space_ + ")*(?:" + base64_ + "){2,60}" +
+			eol_ + ")+(?:" + space_ + ")*)?<'",
 	),
 }

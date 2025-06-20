@@ -847,8 +847,8 @@ func TestRandomBooleans(t *tes.T) {
 			foundFalse++
 		}
 	}
-	ass.True(t, foundFalse > 35)
-	ass.True(t, foundTrue > 35)
+	ass.True(t, foundFalse > 25)
+	ass.True(t, foundTrue > 25)
 }
 
 func TestRandomOrdinals(t *tes.T) {

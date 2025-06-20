@@ -72,6 +72,22 @@ func (v symbol_) String() string {
 
 // Private Methods
 
+// NOTE:
+// These private constants are used to define the private regular expression
+// matcher that is used to match legal string patterns for this intrinsic type.
+// Unfortunately there is no way to make them private to this class since they
+// must be TRUE Go constants to be used in this way.  We append an underscore to
+// each name to lessen the chance of a name collision with other private Go
+// class constants in this package.
+const (
+	digit_      = "\\p{Nd}"
+	identifier_ = "(?:" + letter_ + ")(?:" + letter_ + "|" + digit_ + "|-)*"
+	letter_     = lower_ + "|" + upper_
+	lower_      = "\\p{Ll}"
+	upper_      = "\\p{Lu}"
+	version_    = "v" + ordinal_ + "(?:\\." + ordinal_ + ")*"
+)
+
 // Instance Structure
 
 type symbol_ string
