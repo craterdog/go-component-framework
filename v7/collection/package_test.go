@@ -207,6 +207,58 @@ func TestIntervalConstructors(t *tes.T) {
 	ass.Equal(t, 999, int(moments.GetSize()))
 }
 
+func TestIntervalIterators(t *tes.T) {
+	var glyphClass = ele.GlyphClass()
+	var glyphs = col.IntervalClass[ele.GlyphLike]().Interval(
+		col.Exclusive,
+		glyphClass.Glyph(65),
+		glyphClass.Glyph(70),
+		col.Exclusive,
+	)
+	var iterator = glyphs.GetIterator()
+	ass.Equal(t, glyphs.GetSize(), iterator.GetSize())
+	ass.Equal(t, 'B', iterator.GetNext().AsIntrinsic())
+	iterator.ToEnd()
+	ass.Equal(t, 'E', iterator.GetPrevious().AsIntrinsic())
+
+	glyphs = col.IntervalClass[ele.GlyphLike]().Interval(
+		col.Inclusive,
+		glyphClass.Glyph(65),
+		glyphClass.Glyph(70),
+		col.Exclusive,
+	)
+	iterator = glyphs.GetIterator()
+	ass.Equal(t, glyphs.GetSize(), iterator.GetSize())
+	ass.Equal(t, 'A', iterator.GetNext().AsIntrinsic())
+	iterator.ToEnd()
+	ass.Equal(t, 'E', iterator.GetPrevious().AsIntrinsic())
+
+	glyphs = col.IntervalClass[ele.GlyphLike]().Interval(
+		col.Exclusive,
+		glyphClass.Glyph(65),
+		glyphClass.Glyph(70),
+		col.Inclusive,
+	)
+	iterator = glyphs.GetIterator()
+	ass.Equal(t, glyphs.GetSize(), iterator.GetSize())
+	ass.Equal(t, 'B', iterator.GetNext().AsIntrinsic())
+	iterator.ToEnd()
+	ass.Equal(t, 'F', iterator.GetPrevious().AsIntrinsic())
+
+	glyphs = col.IntervalClass[ele.GlyphLike]().Interval(
+		col.Inclusive,
+		glyphClass.Glyph(65),
+		glyphClass.Glyph(70),
+		col.Inclusive,
+	)
+	iterator = glyphs.GetIterator()
+	ass.Equal(t, glyphs.GetSize(), iterator.GetSize())
+	ass.Equal(t, 'A', iterator.GetNext().AsIntrinsic())
+	iterator.ToEnd()
+	ass.Equal(t, 'F', iterator.GetPrevious().AsIntrinsic())
+
+}
+
 func TestListConstructors(t *tes.T) {
 	var listClass = col.ListClass[int64]()
 	listClass.List()

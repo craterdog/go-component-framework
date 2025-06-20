@@ -191,21 +191,18 @@ func (v *interval_[V]) IsEmpty() bool {
 }
 
 func (v *interval_[V]) GetSize() uti.Cardinal {
-	var size = v.maximum_.AsInteger() - v.minimum_.AsInteger() + 1
-	size -= int(v.left_)
-	size -= int(v.right_)
-	return uti.Cardinal(size)
+	return v.effectiveSize()
 }
 
 func (v *interval_[V]) AsArray() []V {
-	var size = int(v.GetSize())
+	var size = int(v.effectiveSize())
 	if size > 256 {
 		// Limit the size to something reasonable.
 		size = 256
 	}
 	var array = make([]V, size)
 	for index := 0; index < size; index++ {
-		var integer = v.minimum_.AsInteger() + index
+		var integer = v.effectiveMinimum() + index
 		var value = v.valueOf(integer)
 		array[index] = value
 	}
@@ -213,8 +210,7 @@ func (v *interval_[V]) AsArray() []V {
 }
 
 func (v *interval_[V]) GetIterator() age.IteratorLike[V] {
-	var array = v.AsArray()
-	var iterator = age.IteratorClass[V]().Iterator(array)
+	var iterator = iteratorClass[V]().IteratorFromInterval(v)
 	return iterator
 }
 
@@ -372,6 +368,152 @@ func intervalClass[V ele.Discrete]() *intervalClass_[V] {
 		intervalMap_[name] = class
 	}
 	intervalMutex_.Unlock()
+
+	// Return a reference to the bound class type.
+	return class
+}
+
+/*
+NOTE:
+The following is a private implementation of the Iterator class that operates
+on an interval directly without requiring the overhead of creating an array.
+This allows iteration over portions of very large intervals with no memory
+overhead.
+*/
+
+// CLASS INTERFACE
+
+// Constructor Methods
+
+func (c *iteratorClass_[V]) Iterator(
+	array []V,
+) age.IteratorLike[V] {
+	panic("Not Implemented")
+}
+
+func (c *iteratorClass_[V]) IteratorFromInterval(
+	interval IntervalLike[V],
+) age.IteratorLike[V] {
+	if uti.IsUndefined(interval) {
+		panic("The \"interval\" attribute is required by this class.")
+	}
+	var instance = &iterator_[V]{
+		// Initialize the instance attributes.
+		interval_: interval,
+	}
+	return instance
+}
+
+// INSTANCE INTERFACE
+
+// Principal Methods
+
+func (v *iterator_[V]) GetClass() age.IteratorClassLike[V] {
+	return iteratorClass[V]()
+}
+
+func (v *iterator_[V]) IsEmpty() bool {
+	return v.interval_.GetSize() == 0
+}
+
+func (v *iterator_[V]) ToStart() {
+	v.slot_ = 0
+}
+
+func (v *iterator_[V]) ToEnd() {
+	var size = age.Slot(v.interval_.GetSize())
+	v.slot_ = size
+}
+
+func (v *iterator_[V]) HasPrevious() bool {
+	return v.slot_ > 0
+}
+
+func (v *iterator_[V]) GetPrevious() V {
+	var result_ V
+	if v.slot_ > 0 {
+		result_ = v.interval_.GetValue(uti.Index(v.slot_))
+		v.slot_--
+	}
+	return result_
+}
+
+func (v *iterator_[V]) HasNext() bool {
+	var size = age.Slot(v.interval_.GetSize())
+	return v.slot_ < size
+}
+
+func (v *iterator_[V]) GetNext() V {
+	var result_ V
+	var size = age.Slot(v.interval_.GetSize())
+	if v.slot_ < size {
+		v.slot_++
+		result_ = v.interval_.GetValue(uti.Index(v.slot_))
+	}
+	return result_
+}
+
+// Attribute Methods
+
+func (v *iterator_[V]) GetSize() uti.Cardinal {
+	return v.interval_.GetSize()
+}
+
+func (v *iterator_[V]) GetSlot() age.Slot {
+	return v.slot_
+}
+
+func (v *iterator_[V]) SetSlot(
+	slot age.Slot,
+) {
+	var size = age.Slot(v.interval_.GetSize())
+	if slot > size {
+		slot = size
+	}
+	v.slot_ = slot
+}
+
+// PROTECTED INTERFACE
+
+// Instance Structure
+
+type iterator_[V ele.Discrete] struct {
+	// Declare the instance attributes.
+	slot_     age.Slot
+	interval_ IntervalLike[V]
+}
+
+// Class Structure
+
+type iteratorClass_[V ele.Discrete] struct {
+	// Declare the class constants.
+}
+
+// Class Reference
+
+var iteratorMap_ = map[string]any{}
+var iteratorMutex_ syn.Mutex
+
+func iteratorClass[V ele.Discrete]() *iteratorClass_[V] {
+	// Generate the name of the bound class type.
+	var class *iteratorClass_[V]
+	var name = fmt.Sprintf("%T", class)
+
+	// Check for an existing bound class type.
+	iteratorMutex_.Lock()
+	var value = iteratorMap_[name]
+	switch actual := value.(type) {
+	case *iteratorClass_[V]:
+		// This bound class type already exists.
+		class = actual
+	default:
+		// Add a new bound class type.
+		class = &iteratorClass_[V]{
+			// Initialize the class constants.
+		}
+		iteratorMap_[name] = class
+	}
+	iteratorMutex_.Unlock()
 
 	// Return a reference to the bound class type.
 	return class
