@@ -135,22 +135,22 @@ const (
 type (
 	AssociationClassLike[K comparable, V any] = col.AssociationClassLike[K, V]
 	CatalogClassLike[K comparable, V any]     = col.CatalogClassLike[K, V]
-	IntervalClassLike[V Discrete]             = col.IntervalClassLike[V]
+	IntervalClassLike[V ele.Discrete]         = col.IntervalClassLike[V]
 	ListClassLike[V any]                      = col.ListClassLike[V]
 	QueueClassLike[V any]                     = col.QueueClassLike[V]
 	SetClassLike[V any]                       = col.SetClassLike[V]
-	SpectrumClassLike[V Continuous]           = col.SpectrumClassLike[V]
+	SpectrumClassLike[V ele.Continuous]       = col.SpectrumClassLike[V]
 	StackClassLike[V any]                     = col.StackClassLike[V]
 )
 
 type (
 	AssociationLike[K comparable, V any] = col.AssociationLike[K, V]
 	CatalogLike[K comparable, V any]     = col.CatalogLike[K, V]
-	IntervalLike[V Discrete]             = col.IntervalLike[V]
+	IntervalLike[V ele.Discrete]         = col.IntervalLike[V]
 	ListLike[V any]                      = col.ListLike[V]
 	QueueLike[V any]                     = col.QueueLike[V]
 	SetLike[V any]                       = col.SetLike[V]
-	SpectrumLike[V Continuous]           = col.SpectrumLike[V]
+	SpectrumLike[V ele.Continuous]       = col.SpectrumLike[V]
 	StackLike[V any]                     = col.StackLike[V]
 )
 
@@ -727,15 +727,15 @@ func CatalogFromSequence[K comparable, V any](
 	)
 }
 
-func IntervalClass[V Discrete]() IntervalClassLike[V] {
+func IntervalClass[V ele.Discrete]() IntervalClassLike[V] {
 	return col.IntervalClass[V]()
 }
 
-func Interval[V Discrete](
-	left Bracket,
+func Interval[V ele.Discrete](
+	left col.Bracket,
 	minimum V,
 	maximum V,
-	right Bracket,
+	right col.Bracket,
 ) IntervalLike[V] {
 	return IntervalClass[V]().Interval(
 		left,
@@ -833,15 +833,15 @@ func SetFromSequence[V any](
 	)
 }
 
-func SpectrumClass[V Continuous]() SpectrumClassLike[V] {
+func SpectrumClass[V ele.Continuous]() SpectrumClassLike[V] {
 	return col.SpectrumClass[V]()
 }
 
-func Spectrum[V Continuous](
-	left Bracket,
+func Spectrum[V ele.Continuous](
+	left col.Bracket,
 	minimum V,
 	maximum V,
-	right Bracket,
+	right col.Bracket,
 ) SpectrumLike[V] {
 	return SpectrumClass[V]().Spectrum(
 		left,
