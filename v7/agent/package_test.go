@@ -876,18 +876,17 @@ func TestRandomProbabilities(t *tes.T) {
 	ass.True(t, total < 5200)
 }
 
-const (
-	invalid age.State = iota
-	state1
-	state2
-	state3
+var (
+	invalid age.State = "$invalid"
+	state1  age.State = "$state1"
+	state2  age.State = "$state2"
+	state3  age.State = "$state3"
 )
 
-const (
-	none age.Event = iota
-	initialized
-	processed
-	finalized
+var (
+	initialized age.Event = "$initialized"
+	processed   age.Event = "$processed"
+	finalized   age.Event = "$finalized"
 )
 
 func TestController(t *tes.T) {
@@ -898,7 +897,7 @@ func TestController(t *tes.T) {
 		state3: age.Transitions{invalid, invalid, invalid},
 	}
 
-	var controller = age.ControllerClass().Controller(events, transitions)
+	var controller = age.ControllerClass().Controller(events, transitions, state1)
 	ass.Equal(t, state1, controller.GetState())
 	ass.Equal(t, state2, controller.ProcessEvent(initialized))
 	ass.Equal(t, state2, controller.ProcessEvent(processed))

@@ -37,8 +37,10 @@ import (
 
 /*
 Event is a constrained type representing an event type in a state machine.
+Using a string type for an event makes it easier to print out in a human
+readable way.
 */
-type Event uint8
+type Event string
 
 /*
 Rank is a constrained type representing the possible rankings for two values.
@@ -57,9 +59,10 @@ Slot is a constrained type representing a slot between values in a sequence.
 type Slot uint
 
 /*
-State is a constrained type representing a state in a state machine.
+State is a constrained type representing a state in a state machine.  Using a
+string type for a state makes it easier to print out in a human readable way.
 */
-type State uint8
+type State string
 
 /*
 Transitions is a constrained type representing a row of states in a state machine.
@@ -131,6 +134,7 @@ type ControllerClassLike interface {
 	Controller(
 		events []Event,
 		transitions map[State]Transitions,
+		initialState State,
 	) ControllerLike
 }
 

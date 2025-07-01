@@ -30,6 +30,7 @@ func ControllerClass() ControllerClassLike {
 func (c *controllerClass_) Controller(
 	events []Event,
 	transitions map[State]Transitions,
+	initialState State,
 ) ControllerLike {
 	// Validate the constructor arguments.
 	if uti.IsUndefined(events) {
@@ -39,17 +40,17 @@ func (c *controllerClass_) Controller(
 		panic("The \"transitions\" attribute is required by this class.")
 	}
 	var height = len(transitions)
-	if height < 3 {
+	if height < 2 {
 		var message = fmt.Sprintf(
-			"The state table must have at least two possible transitions: %v\n",
+			"The state table must have at least two possible transitions: %v",
 			height,
 		)
 		panic(message)
 	}
 	var width = len(events)
-	if width < 2 {
+	if width < 1 {
 		var message = fmt.Sprintf(
-			"The state table must have at least one possible event: %v\n",
+			"The state table must have at least one possible event: %v",
 			width,
 		)
 		panic(message)
@@ -57,17 +58,30 @@ func (c *controllerClass_) Controller(
 	for _, row := range transitions {
 		if len(row) != width {
 			var message = fmt.Sprintf(
-				"Each row in the state table must be the same width: %v\n",
+				"Each row in the state table must be the same width: %v",
 				width,
 			)
 			panic(message)
 		}
 	}
+	var invalidState = true
+	for candidate := range transitions {
+		if candidate == initialState {
+			invalidState = false
+		}
+	}
+	if invalidState {
+		var message = fmt.Sprintf(
+			"The initial state is invalid: %q",
+			initialState,
+		)
+		panic(message)
+	}
 
 	// Create a new instance.
 	var instance = &controller_{
 		// Initialize the instance attributes.
-		state_:       1,
+		state_:       initialState,
 		events_:      events,
 		transitions_: transitions,
 	}
@@ -89,18 +103,13 @@ func (v *controller_) GetClass() ControllerClassLike {
 func (v *controller_) ProcessEvent(
 	event Event,
 ) State {
-	if event < 1 || event > Event(len(v.events_)) {
+	var index = v.eventIndex(event)
+	var next = v.transitions_[v.state_][index]
+	if uti.IsUndefined(next) {
 		var message = fmt.Sprintf(
-			"Received an invalid event: %v",
+			"Attempted to transition from state %q to an invalid state on event %q.",
+			v.state_,
 			event,
-		)
-		panic(message)
-	}
-	var next = v.transitions_[v.state_][event-1]
-	if next < 1 || next > State(len(v.transitions_)) {
-		var message = fmt.Sprintf(
-			"Attempted to transition to an invalid state: %v",
-			next,
 		)
 		panic(message)
 	}
@@ -117,9 +126,9 @@ func (v *controller_) GetState() State {
 func (v *controller_) SetState(
 	state State,
 ) {
-	if state == 0 {
+	if uti.IsUndefined(state) || !v.hasState(state) {
 		var message = fmt.Sprintf(
-			"A valid \"state\" argument is required: %v\n",
+			"A valid \"state\" argument is required: %v",
 			state,
 		)
 		panic(message)
@@ -138,6 +147,28 @@ func (v *controller_) GetTransitions() map[State]Transitions {
 // PROTECTED INTERFACE
 
 // Private Methods
+
+func (v *controller_) eventIndex(
+	event Event,
+) int {
+	for index, candidate := range v.events_ {
+		if candidate == event {
+			return index
+		}
+	}
+	return -1
+}
+
+func (v *controller_) hasState(
+	state State,
+) bool {
+	for candidate := range v.transitions_ {
+		if candidate == state {
+			return true
+		}
+	}
+	return false
+}
 
 // Instance Structure
 
