@@ -39,6 +39,9 @@ func (c *controllerClass_) Controller(
 	if uti.IsUndefined(transitions) {
 		panic("The \"transitions\" attribute is required by this class.")
 	}
+	if uti.IsUndefined(initialState) {
+		panic("The \"initialState\" attribute is required by this class.")
+	}
 	var height = len(transitions)
 	if height < 2 {
 		var message = fmt.Sprintf(
@@ -104,6 +107,13 @@ func (v *controller_) ProcessEvent(
 	event Event,
 ) State {
 	var index = v.eventIndex(event)
+	if index < 0 {
+		var message = fmt.Sprintf(
+			"Attempted to process an invalid event %q.",
+			event,
+		)
+		panic(message)
+	}
 	var next = v.transitions_[v.state_][index]
 	if uti.IsUndefined(next) {
 		var message = fmt.Sprintf(
