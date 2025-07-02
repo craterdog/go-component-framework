@@ -136,6 +136,9 @@ type ControllerClassLike interface {
 		transitions map[State]Transitions,
 		initialState State,
 	) ControllerLike
+
+	// Constant Methods
+	Invalid() State
 }
 
 /*

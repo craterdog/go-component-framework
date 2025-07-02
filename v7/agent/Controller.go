@@ -69,8 +69,9 @@ func (c *controllerClass_) Controller(
 	}
 	var invalidState = true
 	for candidate := range transitions {
-		if candidate == initialState {
+		if candidate == initialState && initialState != c.invalid_ {
 			invalidState = false
+			break
 		}
 	}
 	if invalidState {
@@ -92,6 +93,10 @@ func (c *controllerClass_) Controller(
 }
 
 // Constant Methods
+
+func (c *controllerClass_) Invalid() State {
+	return c.invalid_
+}
 
 // Function Methods
 
@@ -115,7 +120,7 @@ func (v *controller_) ProcessEvent(
 		panic(message)
 	}
 	var next = v.transitions_[v.state_][index]
-	if uti.IsUndefined(next) {
+	if !v.hasState(next) {
 		var message = fmt.Sprintf(
 			"Attempted to transition from state %q to an invalid state on event %q.",
 			v.state_,
@@ -193,6 +198,7 @@ type controller_ struct {
 
 type controllerClass_ struct {
 	// Declare the class constants.
+	invalid_ State
 }
 
 // Class Reference
@@ -203,4 +209,5 @@ func controllerClass() *controllerClass_ {
 
 var controllerClassReference_ = &controllerClass_{
 	// Initialize the class constants.
+	invalid_: "$Invalid",
 }
