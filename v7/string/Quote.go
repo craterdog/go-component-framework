@@ -173,7 +173,7 @@ const (
 
 // Instance Structure
 
-type quote_ string
+type quote_ []Character
 
 // Class Structure
 

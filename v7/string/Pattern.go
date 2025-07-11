@@ -99,7 +99,7 @@ func (v pattern_) AsIntrinsic() []Character {
 
 func (v pattern_) AsString() string {
 	var string_ string
-	switch v {
+	switch string(v) {
 	case `^none$`:
 		string_ = `none`
 	case `.*`:
@@ -210,7 +210,7 @@ const (
 
 // Instance Structure
 
-type pattern_ string
+type pattern_ []Character
 
 // Class Structure
 
