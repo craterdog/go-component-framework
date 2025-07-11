@@ -77,7 +77,7 @@ type BinaryClassLike interface {
 		sequence Sequential[byte],
 	) BinaryLike
 	BinaryFromString(
-		string_ string,
+		source string,
 	) BinaryLike
 
 	// Function Methods
@@ -120,7 +120,7 @@ type BytecodeClassLike interface {
 		sequence Sequential[Instruction],
 	) BytecodeLike
 	BytecodeFromString(
-		string_ string,
+		source string,
 	) BytecodeLike
 
 	// Function Methods
@@ -144,7 +144,7 @@ type NameClassLike interface {
 		sequence Sequential[Identifier],
 	) NameLike
 	NameFromString(
-		string_ string,
+		source string,
 	) NameLike
 
 	// Function Methods
@@ -168,7 +168,7 @@ type NarrativeClassLike interface {
 		sequence Sequential[Line],
 	) NarrativeLike
 	NarrativeFromString(
-		string_ string,
+		source string,
 	) NarrativeLike
 
 	// Function Methods
@@ -192,7 +192,7 @@ type PatternClassLike interface {
 		sequence Sequential[Character],
 	) PatternLike
 	PatternFromString(
-		string_ string,
+		source string,
 	) PatternLike
 
 	// Constant Methods
@@ -220,7 +220,7 @@ type QuoteClassLike interface {
 		sequence Sequential[Character],
 	) QuoteLike
 	QuoteFromString(
-		string_ string,
+		source string,
 	) QuoteLike
 
 	// Function Methods
@@ -247,7 +247,7 @@ type TagClassLike interface {
 		sequence Sequential[byte],
 	) TagLike
 	TagFromString(
-		string_ string,
+		source string,
 	) TagLike
 
 	// Function Methods
@@ -271,7 +271,7 @@ type VersionClassLike interface {
 		sequence Sequential[uti.Ordinal],
 	) VersionLike
 	VersionFromString(
-		string_ string,
+		source string,
 	) VersionLike
 
 	// Function Methods

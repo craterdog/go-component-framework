@@ -43,13 +43,13 @@ func (c *narrativeClass_) NarrativeFromSequence(
 }
 
 func (c *narrativeClass_) NarrativeFromString(
-	string_ string,
+	source string,
 ) NarrativeLike {
-	var matches = c.matcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the narrative constructor method: %s",
-			string_,
+			source,
 		)
 		panic(message)
 	}

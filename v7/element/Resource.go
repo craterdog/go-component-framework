@@ -32,11 +32,17 @@ func ResourceClass() ResourceClassLike {
 func (c *resourceClass_) Resource(
 	string_ string,
 ) ResourceLike {
-	var matches = c.matcher_.FindStringSubmatch(string_)
+	return c.ResourceFromString("<" + string_ + ">")
+}
+
+func (c *resourceClass_) ResourceFromString(
+	source string,
+) ResourceLike {
+	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the resource constructor method: %s",
-			string_,
+			source,
 		)
 		panic(message)
 	}

@@ -44,13 +44,13 @@ func (c *versionClass_) VersionFromSequence(
 }
 
 func (c *versionClass_) VersionFromString(
-	string_ string,
+	source string,
 ) VersionLike {
-	var matches = c.matcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the version constructor method: %s",
-			string_,
+			source,
 		)
 		panic(message)
 	}

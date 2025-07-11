@@ -43,13 +43,13 @@ func (c *binaryClass_) BinaryFromSequence(
 }
 
 func (c *binaryClass_) BinaryFromString(
-	string_ string,
+	source string,
 ) BinaryLike {
-	var matches = c.matcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the binary constructor method: %s",
-			string_,
+			source,
 		)
 		panic(message)
 	}

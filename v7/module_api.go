@@ -224,10 +224,10 @@ func Angle(
 }
 
 func AngleFromString(
-	string_ string,
+	source string,
 ) AngleLike {
 	return AngleClass().AngleFromString(
-		string_,
+		source,
 	)
 }
 
@@ -244,10 +244,10 @@ func Boolean(
 }
 
 func BooleanFromString(
-	string_ string,
+	source string,
 ) BooleanLike {
 	return BooleanClass().BooleanFromString(
-		string_,
+		source,
 	)
 }
 
@@ -264,10 +264,10 @@ func Duration(
 }
 
 func DurationFromString(
-	string_ string,
+	source string,
 ) DurationLike {
 	return DurationClass().DurationFromString(
-		string_,
+		source,
 	)
 }
 
@@ -292,10 +292,10 @@ func GlyphFromInteger(
 }
 
 func GlyphFromString(
-	string_ string,
+	source string,
 ) GlyphLike {
 	return GlyphClass().GlyphFromString(
-		string_,
+		source,
 	)
 }
 
@@ -312,10 +312,10 @@ func Moment(
 }
 
 func MomentFromString(
-	string_ string,
+	source string,
 ) MomentLike {
 	return MomentClass().MomentFromString(
-		string_,
+		source,
 	)
 }
 
@@ -352,10 +352,10 @@ func NumberFromRectangular(
 }
 
 func NumberFromString(
-	string_ string,
+	source string,
 ) NumberLike {
 	return NumberClass().NumberFromString(
-		string_,
+		source,
 	)
 }
 
@@ -380,10 +380,10 @@ func PercentageFromInteger(
 }
 
 func PercentageFromString(
-	string_ string,
+	source string,
 ) PercentageLike {
 	return PercentageClass().PercentageFromString(
-		string_,
+		source,
 	)
 }
 
@@ -408,10 +408,10 @@ func ProbabilityFromBoolean(
 }
 
 func ProbabilityFromString(
-	string_ string,
+	source string,
 ) ProbabilityLike {
 	return ProbabilityClass().ProbabilityFromString(
-		string_,
+		source,
 	)
 }
 
@@ -424,6 +424,14 @@ func Resource(
 ) ResourceLike {
 	return ResourceClass().Resource(
 		string_,
+	)
+}
+
+func ResourceFromString(
+	source string,
+) ResourceLike {
+	return ResourceClass().ResourceFromString(
+		source,
 	)
 }
 
@@ -444,6 +452,14 @@ func Symbol(
 ) SymbolLike {
 	return SymbolClass().Symbol(
 		string_,
+	)
+}
+
+func SymbolFromString(
+	source string,
+) SymbolLike {
+	return SymbolClass().SymbolFromString(
+		source,
 	)
 }
 
@@ -470,10 +486,10 @@ func BinaryFromSequence(
 }
 
 func BinaryFromString(
-	string_ string,
+	source string,
 ) BinaryLike {
 	return BinaryClass().BinaryFromString(
-		string_,
+		source,
 	)
 }
 
@@ -498,10 +514,10 @@ func BytecodeFromSequence(
 }
 
 func BytecodeFromString(
-	string_ string,
+	source string,
 ) BytecodeLike {
 	return BytecodeClass().BytecodeFromString(
-		string_,
+		source,
 	)
 }
 
@@ -526,10 +542,10 @@ func NameFromSequence(
 }
 
 func NameFromString(
-	string_ string,
+	source string,
 ) NameLike {
 	return NameClass().NameFromString(
-		string_,
+		source,
 	)
 }
 
@@ -554,10 +570,10 @@ func NarrativeFromSequence(
 }
 
 func NarrativeFromString(
-	string_ string,
+	source string,
 ) NarrativeLike {
 	return NarrativeClass().NarrativeFromString(
-		string_,
+		source,
 	)
 }
 
@@ -582,10 +598,10 @@ func PatternFromSequence(
 }
 
 func PatternFromString(
-	string_ string,
+	source string,
 ) PatternLike {
 	return PatternClass().PatternFromString(
-		string_,
+		source,
 	)
 }
 
@@ -610,10 +626,10 @@ func QuoteFromSequence(
 }
 
 func QuoteFromString(
-	string_ string,
+	source string,
 ) QuoteLike {
 	return QuoteClass().QuoteFromString(
-		string_,
+		source,
 	)
 }
 
@@ -646,10 +662,10 @@ func TagFromSequence(
 }
 
 func TagFromString(
-	string_ string,
+	source string,
 ) TagLike {
 	return TagClass().TagFromString(
-		string_,
+		source,
 	)
 }
 
@@ -674,10 +690,10 @@ func VersionFromSequence(
 }
 
 func VersionFromString(
-	string_ string,
+	source string,
 ) VersionLike {
 	return VersionClass().VersionFromString(
-		string_,
+		source,
 	)
 }
 

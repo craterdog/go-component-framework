@@ -41,13 +41,13 @@ func (c *durationClass_) Duration(
 }
 
 func (c *durationClass_) DurationFromString(
-	string_ string,
+	source string,
 ) DurationLike {
-	var matches = c.matcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the duration constructor method: %s",
-			string_,
+			source,
 		)
 		panic(message)
 	}

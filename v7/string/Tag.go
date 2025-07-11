@@ -54,13 +54,13 @@ func (c *tagClass_) TagFromSequence(
 }
 
 func (c *tagClass_) TagFromString(
-	string_ string,
+	source string,
 ) TagLike {
-	var matches = c.matcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the tag constructor method: %s",
-			string_,
+			source,
 		)
 		panic(message)
 	}

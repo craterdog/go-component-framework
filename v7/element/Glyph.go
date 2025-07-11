@@ -44,13 +44,13 @@ func (c *glyphClass_) GlyphFromInteger(
 }
 
 func (c *glyphClass_) GlyphFromString(
-	string_ string,
+	source string,
 ) GlyphLike {
-	var matches = c.matcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the glyph constructor method: %s",
-			string_,
+			source,
 		)
 		panic(message)
 	}

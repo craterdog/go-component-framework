@@ -31,11 +31,17 @@ func SymbolClass() SymbolClassLike {
 func (c *symbolClass_) Symbol(
 	string_ string,
 ) SymbolLike {
-	var matches = c.matcher_.FindStringSubmatch(string_)
+	return c.SymbolFromString("$" + string_)
+}
+
+func (c *symbolClass_) SymbolFromString(
+	source string,
+) SymbolLike {
+	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the symbol constructor method: %s",
-			string_,
+			source,
 		)
 		panic(message)
 	}

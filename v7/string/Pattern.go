@@ -44,13 +44,13 @@ func (c *patternClass_) PatternFromSequence(
 }
 
 func (c *patternClass_) PatternFromString(
-	string_ string,
+	source string,
 ) PatternLike {
-	var matches = c.matcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the pattern constructor method: %s",
-			string_,
+			source,
 		)
 		panic(message)
 	}

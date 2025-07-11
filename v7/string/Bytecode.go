@@ -43,13 +43,13 @@ func (c *bytecodeClass_) BytecodeFromSequence(
 }
 
 func (c *bytecodeClass_) BytecodeFromString(
-	string_ string,
+	source string,
 ) BytecodeLike {
-	var matches = c.matcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the bytecode constructor method: %s",
-			string_,
+			source,
 		)
 		panic(message)
 	}

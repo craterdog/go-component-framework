@@ -43,13 +43,13 @@ func (c *nameClass_) NameFromSequence(
 }
 
 func (c *nameClass_) NameFromString(
-	string_ string,
+	source string,
 ) NameLike {
-	var matches = c.matcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the name constructor method: %s",
-			string_,
+			source,
 		)
 		panic(message)
 	}

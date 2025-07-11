@@ -112,13 +112,13 @@ func (c *numberClass_) NumberFromRectangular(
 }
 
 func (c *numberClass_) NumberFromString(
-	string_ string,
+	source string,
 ) NumberLike {
-	var matches = c.matcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the number constructor method: %s",
-			string_,
+			source,
 		)
 		panic(message)
 	}

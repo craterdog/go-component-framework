@@ -36,14 +36,14 @@ func (c *booleanClass_) Boolean(
 }
 
 func (c *booleanClass_) BooleanFromString(
-	string_ string,
+	source string,
 ) BooleanLike {
 	// Our booleans are more restrictive than the Go strconv package.
-	var matches = c.matcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the boolean constructor method: %s",
-			string_,
+			source,
 		)
 		panic(message)
 	}

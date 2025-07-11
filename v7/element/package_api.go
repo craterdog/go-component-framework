@@ -62,7 +62,7 @@ type AngleClassLike interface {
 		radians float64,
 	) AngleLike
 	AngleFromString(
-		string_ string,
+		source string,
 	) AngleLike
 
 	// Constant Methods
@@ -128,7 +128,7 @@ type BooleanClassLike interface {
 		boolean bool,
 	) BooleanLike
 	BooleanFromString(
-		string_ string,
+		source string,
 	) BooleanLike
 
 	// Constant Methods
@@ -168,7 +168,7 @@ type DurationClassLike interface {
 		milliseconds int,
 	) DurationLike
 	DurationFromString(
-		string_ string,
+		source string,
 	) DurationLike
 
 	// Constant Methods
@@ -199,7 +199,7 @@ type GlyphClassLike interface {
 		integer int,
 	) GlyphLike
 	GlyphFromString(
-		string_ string,
+		source string,
 	) GlyphLike
 
 	// Constant Methods
@@ -225,7 +225,7 @@ type MomentClassLike interface {
 		milliseconds int,
 	) MomentLike
 	MomentFromString(
-		string_ string,
+		source string,
 	) MomentLike
 
 	// Constant Methods
@@ -266,7 +266,7 @@ type NumberClassLike interface {
 		imaginary float64,
 	) NumberLike
 	NumberFromString(
-		string_ string,
+		source string,
 	) NumberLike
 
 	// Constant Methods
@@ -338,7 +338,7 @@ type PercentageClassLike interface {
 		integer int,
 	) PercentageLike
 	PercentageFromString(
-		string_ string,
+		source string,
 	) PercentageLike
 
 	// Constant Methods
@@ -359,7 +359,7 @@ type ProbabilityClassLike interface {
 		boolean bool,
 	) ProbabilityLike
 	ProbabilityFromString(
-		string_ string,
+		source string,
 	) ProbabilityLike
 
 	// Constant Methods
@@ -398,6 +398,9 @@ type ResourceClassLike interface {
 	Resource(
 		string_ string,
 	) ResourceLike
+	ResourceFromString(
+		source string,
+	) ResourceLike
 	ResourceFromUri(
 		url *uri.URL,
 	) ResourceLike
@@ -412,6 +415,9 @@ type SymbolClassLike interface {
 	// Constructor Methods
 	Symbol(
 		string_ string,
+	) SymbolLike
+	SymbolFromString(
+		source string,
 	) SymbolLike
 }
 

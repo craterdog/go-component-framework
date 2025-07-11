@@ -2968,8 +2968,18 @@ func TestProbabilitieLibrary(t *tes.T) {
 	ass.Equal(t, xor, class.Xor(F, F))
 }
 
+func TestResource(t *tes.T) {
+	var v = com.Resource("https://craterdog.com/About.html")
+	ass.Equal(t, "https://craterdog.com/About.html", v.AsIntrinsic())
+	ass.Equal(t, "https", v.GetScheme())
+	ass.Equal(t, "craterdog.com", v.GetAuthority())
+	ass.Equal(t, "/About.html", v.GetPath())
+	ass.Equal(t, "", v.GetQuery())
+	ass.Equal(t, "", v.GetFragment())
+}
+
 func TestResourceWithAuthorityAndPath(t *tes.T) {
-	var v = com.Resource("<https://craterdog.com/About.html>")
+	var v = com.ResourceFromString("<https://craterdog.com/About.html>")
 	ass.Equal(t, "<https://craterdog.com/About.html>", v.AsString())
 	ass.Equal(t, "https", v.GetScheme())
 	ass.Equal(t, "craterdog.com", v.GetAuthority())
@@ -2979,7 +2989,7 @@ func TestResourceWithAuthorityAndPath(t *tes.T) {
 }
 
 func TestResourceWithPath(t *tes.T) {
-	var v = com.Resource("<mailto:craterdog@google.com>")
+	var v = com.ResourceFromString("<mailto:craterdog@google.com>")
 	ass.Equal(t, "<mailto:craterdog@google.com>", v.AsString())
 	ass.Equal(t, "mailto", v.GetScheme())
 	ass.Equal(t, "", v.GetAuthority())
@@ -2989,7 +2999,7 @@ func TestResourceWithPath(t *tes.T) {
 }
 
 func TestResourceWithAuthorityAndPathAndQuery(t *tes.T) {
-	var v = com.Resource("<https://craterdog.com/?foo=bar;bar=baz>")
+	var v = com.ResourceFromString("<https://craterdog.com/?foo=bar;bar=baz>")
 	ass.Equal(t, "<https://craterdog.com/?foo=bar;bar=baz>", v.AsString())
 	ass.Equal(t, "https", v.GetScheme())
 	ass.Equal(t, "craterdog.com", v.GetAuthority())
@@ -2999,7 +3009,7 @@ func TestResourceWithAuthorityAndPathAndQuery(t *tes.T) {
 }
 
 func TestResourceWithAuthorityAndPathAndFragment(t *tes.T) {
-	var v = com.Resource("<https://craterdog.com/#Home>")
+	var v = com.ResourceFromString("<https://craterdog.com/#Home>")
 	ass.Equal(t, "<https://craterdog.com/#Home>", v.AsString())
 	ass.Equal(t, "https", v.GetScheme())
 	ass.Equal(t, "craterdog.com", v.GetAuthority())
@@ -3009,7 +3019,7 @@ func TestResourceWithAuthorityAndPathAndFragment(t *tes.T) {
 }
 
 func TestResourceWithAuthorityAndPathAndQueryAndFragment(t *tes.T) {
-	var v = com.Resource("<https://craterdog.com/?foo=bar;bar=baz#Home>")
+	var v = com.ResourceFromString("<https://craterdog.com/?foo=bar;bar=baz#Home>")
 	ass.Equal(t, "<https://craterdog.com/?foo=bar;bar=baz#Home>", v.AsString())
 	ass.Equal(t, "https", v.GetScheme())
 	ass.Equal(t, "craterdog.com", v.GetAuthority())
@@ -3019,10 +3029,15 @@ func TestResourceWithAuthorityAndPathAndQueryAndFragment(t *tes.T) {
 }
 
 func TestSymbol(t *tes.T) {
-	var foobar = "$foo-bar"
+	var foobar = "foo-bar"
 	var v = com.Symbol(foobar)
+	ass.Equal(t, foobar, v.AsIntrinsic())
+}
+
+func TestSymbolFromString(t *tes.T) {
+	var foobar = "$foo-bar"
+	var v = com.SymbolFromString(foobar)
 	ass.Equal(t, foobar, v.AsString())
-	ass.Equal(t, foobar[1:], v.AsIntrinsic())
 }
 
 // STRING
