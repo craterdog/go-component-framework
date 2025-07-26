@@ -164,6 +164,19 @@ func (v version_) AsString() string {
 	return string_
 }
 
+func (v version_) CompareWith(
+	version VersionLike,
+) age.Rank {
+	switch sli.Compare(v.AsIntrinsic(), version.AsIntrinsic()) {
+	case -1:
+		return age.LesserRank
+	case 1:
+		return age.GreaterRank
+	default:
+		return age.EqualRank
+	}
+}
+
 // Attribute Methods
 
 // Searchable[uti.Ordinal] Methods

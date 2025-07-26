@@ -13,8 +13,9 @@
 /*
 Package "ranges" declares a set of classes that maintain a range of primitive
 values of a generic type:
-  - Interval (a discrete range)
-  - Spectrum (a continuous range)
+  - Interval (a finite discrete range)
+  - Spectrum (an infinite discrete range)
+  - Continuum (an infinite continuous range)
 
 For detailed documentation on this package refer to the wiki:
   - https://github.com/craterdog/go-component-framework/wiki
@@ -53,13 +54,32 @@ const (
 // CLASS DECLARATIONS
 
 /*
+ContinuumClassLike[V ele.Continuous] is a class interface that declares the
+complete set of class constructors, constants and functions that must be
+supported by each concrete continuum-like class.
+
+A continuum-like class defines two endpoints for an infinite continuous
+sequence of elements.  The endpoints may be inclusive (denoted by a square
+bracket) or exclusive (denoted by a round bracket).
+*/
+type ContinuumClassLike[V ele.Continuous] interface {
+	// Constructor Methods
+	Continuum(
+		left Bracket,
+		minimum V,
+		maximum V,
+		right Bracket,
+	) ContinuumLike[V]
+}
+
+/*
 IntervalClassLike[V ele.Discrete] is a class interface that declares the
 complete set of class constructors, constants and functions that must be
 supported by each concrete interval-like class.
 
-An interval-like class defines two endpoints for a discrete sequence of
-primitive components.  The endpoints may be inclusive (denoted by a square
-bracket) or exclusive (denoted by a round bracket).
+An interval-like class defines two endpoints for a finite discrete sequence of
+elements.  The endpoints may be inclusive (denoted by a square bracket) or
+exclusive (denoted by a round bracket).
 */
 type IntervalClassLike[V ele.Discrete] interface {
 	// Constructor Methods
@@ -72,15 +92,15 @@ type IntervalClassLike[V ele.Discrete] interface {
 }
 
 /*
-SpectrumClassLike[V ele.Continuous] is a class interface that declares the
-complete set of class constructors, constants and functions that must be
-supported by each concrete spectrum-like class.
+SpectrumClassLike[V str.Spectral] is a class interface that
+declares the complete set of class constructors, constants and functions that
+must be supported by each concrete spectrum-like class.
 
-A spectrum-like class defines two endpoints for a continuous sequence of
-primitive components.  The endpoints may be inclusive (denoted by a square
-bracket) or exclusive (denoted by a round bracket).
+A spectrum-like class defines two endpoints for an infinite discrete sequence
+of elements.  The endpoints may be inclusive (denoted by a square bracket) or
+exclusive (denoted by a round bracket).
 */
-type SpectrumClassLike[V ele.Continuous] interface {
+type SpectrumClassLike[V str.Spectral] interface {
 	// Constructor Methods
 	Spectrum(
 		left Bracket,
@@ -91,6 +111,20 @@ type SpectrumClassLike[V ele.Continuous] interface {
 }
 
 // INSTANCE DECLARATIONS
+
+/*
+ContinuumLike[V ele.Continuous] is an instance interface that declares the
+complete set of principal, attribute and aspect methods that must be supported
+by each instance of a concrete continuum-like class.
+*/
+type ContinuumLike[V ele.Continuous] interface {
+	// Principal Methods
+	GetClass() ContinuumClassLike[V]
+
+	// Aspect Interfaces
+	Bounded[V]
+	str.Searchable[V]
+}
 
 /*
 IntervalLike[V ele.Discrete] is an instance interface that declares the
@@ -109,11 +143,11 @@ type IntervalLike[V ele.Discrete] interface {
 }
 
 /*
-SpectrumLike[V ele.Continuous] is an instance interface that declares the
-complete set of principal, attribute and aspect methods that must be supported
-by each instance of a concrete spectrum-like class.
+SpectrumLike[V str.Spectral] is an instance interface that
+declares the complete set of principal, attribute and aspect methods that must
+be supported by each instance of a concrete spectrum-like class.
 */
-type SpectrumLike[V ele.Continuous] interface {
+type SpectrumLike[V str.Spectral] interface {
 	// Principal Methods
 	GetClass() SpectrumClassLike[V]
 

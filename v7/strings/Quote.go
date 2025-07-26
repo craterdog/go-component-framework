@@ -85,6 +85,19 @@ func (v quote_) AsString() string {
 	return stc.Quote(string(v))
 }
 
+func (v quote_) CompareWith(
+	quote QuoteLike,
+) age.Rank {
+	switch sli.Compare(v.AsIntrinsic(), quote.AsIntrinsic()) {
+	case -1:
+		return age.LesserRank
+	case 1:
+		return age.GreaterRank
+	default:
+		return age.EqualRank
+	}
+}
+
 // Attribute Methods
 
 // Searchable[Character] Methods

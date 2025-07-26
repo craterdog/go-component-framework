@@ -169,13 +169,15 @@ const (
 )
 
 type (
-	IntervalClassLike[V ele.Discrete]   = ran.IntervalClassLike[V]
-	SpectrumClassLike[V ele.Continuous] = ran.SpectrumClassLike[V]
+	ContinuumClassLike[V ele.Continuous] = ran.ContinuumClassLike[V]
+	IntervalClassLike[V ele.Discrete]    = ran.IntervalClassLike[V]
+	SpectrumClassLike[V str.Spectral]    = ran.SpectrumClassLike[V]
 )
 
 type (
-	IntervalLike[V ele.Discrete]   = ran.IntervalLike[V]
-	SpectrumLike[V ele.Continuous] = ran.SpectrumLike[V]
+	ContinuumLike[V ele.Continuous] = ran.ContinuumLike[V]
+	IntervalLike[V ele.Discrete]    = ran.IntervalLike[V]
+	SpectrumLike[V str.Spectral]    = ran.SpectrumLike[V]
 )
 
 type (
@@ -217,6 +219,7 @@ type (
 	Accessible[V any] = str.Accessible[V]
 	Searchable[V any] = str.Searchable[V]
 	Sequential[V any] = str.Sequential[V]
+	Spectral          = str.Spectral
 )
 
 // CLASS ACCESSORS
@@ -723,6 +726,24 @@ func SymbolFromString(
 
 // Ranges
 
+func ContinuumClass[V ele.Continuous]() ContinuumClassLike[V] {
+	return ran.ContinuumClass[V]()
+}
+
+func Continuum[V ele.Continuous](
+	left ran.Bracket,
+	minimum V,
+	maximum V,
+	right ran.Bracket,
+) ContinuumLike[V] {
+	return ContinuumClass[V]().Continuum(
+		left,
+		minimum,
+		maximum,
+		right,
+	)
+}
+
 func IntervalClass[V ele.Discrete]() IntervalClassLike[V] {
 	return ran.IntervalClass[V]()
 }
@@ -741,11 +762,11 @@ func Interval[V ele.Discrete](
 	)
 }
 
-func SpectrumClass[V ele.Continuous]() SpectrumClassLike[V] {
+func SpectrumClass[V str.Spectral]() SpectrumClassLike[V] {
 	return ran.SpectrumClass[V]()
 }
 
-func Spectrum[V ele.Continuous](
+func Spectrum[V str.Spectral](
 	left ran.Bracket,
 	minimum V,
 	maximum V,

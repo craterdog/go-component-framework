@@ -15,6 +15,7 @@ package ranges
 import (
 	fmt "fmt"
 	age "github.com/craterdog/go-component-framework/v7/agents"
+	ele "github.com/craterdog/go-component-framework/v7/elements"
 	str "github.com/craterdog/go-component-framework/v7/strings"
 	syn "sync"
 )
@@ -23,26 +24,26 @@ import (
 
 // Access Function
 
-func SpectrumClass[V str.Spectral]() SpectrumClassLike[V] {
-	return spectrumClass[V]()
+func ContinuumClass[V ele.Continuous]() ContinuumClassLike[V] {
+	return continuumClass[V]()
 }
 
 // Constructor Methods
 
-func (c *spectrumClass_[V]) Spectrum(
+func (c *continuumClass_[V]) Continuum(
 	left Bracket,
 	minimum V,
 	maximum V,
 	right Bracket,
-) SpectrumLike[V] {
-	var instance = &spectrum_[V]{
+) ContinuumLike[V] {
+	var instance = &continuum_[V]{
 		// Initialize the instance attributes.
 		left_:    left,
 		minimum_: minimum,
 		maximum_: maximum,
 		right_:   right,
 	}
-	instance.validateSpectrum()
+	instance.validateContinuum()
 	return instance
 }
 
@@ -54,97 +55,95 @@ func (c *spectrumClass_[V]) Spectrum(
 
 // Principal Methods
 
-func (v *spectrum_[V]) GetClass() SpectrumClassLike[V] {
-	return spectrumClass[V]()
+func (v *continuum_[V]) GetClass() ContinuumClassLike[V] {
+	return continuumClass[V]()
 }
 
 // Bounded[V] Methods
 
-func (v *spectrum_[V]) GetLeft() Bracket {
+func (v *continuum_[V]) GetLeft() Bracket {
 	return v.left_
 }
 
-func (v *spectrum_[V]) SetLeft(left Bracket) {
+func (v *continuum_[V]) SetLeft(left Bracket) {
 	v.left_ = left
-	v.validateSpectrum()
+	v.validateContinuum()
 }
 
-func (v *spectrum_[V]) GetMinimum() V {
+func (v *continuum_[V]) GetMinimum() V {
 	return v.minimum_
 }
 
-func (v *spectrum_[V]) SetMinimum(minimum V) {
+func (v *continuum_[V]) SetMinimum(minimum V) {
 	v.minimum_ = minimum
-	v.validateSpectrum()
+	v.validateContinuum()
 }
 
-func (v *spectrum_[V]) GetMaximum() V {
+func (v *continuum_[V]) GetMaximum() V {
 	return v.maximum_
 }
 
-func (v *spectrum_[V]) SetMaximum(maximum V) {
+func (v *continuum_[V]) SetMaximum(maximum V) {
 	v.maximum_ = maximum
-	v.validateSpectrum()
+	v.validateContinuum()
 }
 
-func (v *spectrum_[V]) GetRight() Bracket {
+func (v *continuum_[V]) GetRight() Bracket {
 	return v.right_
 }
 
-func (v *spectrum_[V]) SetRight(right Bracket) {
+func (v *continuum_[V]) SetRight(right Bracket) {
 	v.right_ = right
-	v.validateSpectrum()
+	v.validateContinuum()
 }
 
-// str.Searchable[V] Methods
+// Searchable[V] Methods
 
-func (v *spectrum_[V]) ContainsValue(
+func (v *continuum_[V]) ContainsValue(
 	value V,
 ) bool {
-	if value.AsString() < v.minimum_.AsString() {
+	if v.minimum_.IsDefined() && value.AsFloat() < v.minimum_.AsFloat() {
 		return false
 	}
-	if value.AsString() > v.maximum_.AsString() {
+	if v.maximum_.IsDefined() && value.AsFloat() > v.maximum_.AsFloat() {
 		return false
 	}
 	return true
 }
 
-func (v *spectrum_[V]) ContainsAny(
+func (v *continuum_[V]) ContainsAny(
 	values str.Sequential[V],
 ) bool {
 	var iterator = values.GetIterator()
 	for iterator.HasNext() {
 		var value = iterator.GetNext()
 		if v.ContainsValue(value) {
-			// This spectrum contains at least one of the values.
+			// This continuum contains at least one of the values.
 			return true
 		}
 	}
-	// This spectrum does not contain any of the values.
+	// This continuum does not contain any of the values.
 	return false
 }
 
-func (v *spectrum_[V]) ContainsAll(
+func (v *continuum_[V]) ContainsAll(
 	values str.Sequential[V],
 ) bool {
 	var iterator = values.GetIterator()
 	for iterator.HasNext() {
 		var value = iterator.GetNext()
 		if !v.ContainsValue(value) {
-			// This spectrum is missing at least one of the values.
+			// This continuum is missing at least one of the values.
 			return false
 		}
 	}
-	// This spectrum does contains all of the values.
+	// This continuum does contains all of the values.
 	return true
 }
 
-// str.Spectral Methods
-
 // PROTECTED INTERFACE
 
-func (v *spectrum_[V]) String() string {
+func (v *continuum_[V]) String() string {
 	var string_ string
 	switch v.left_ {
 	case Inclusive:
@@ -152,9 +151,13 @@ func (v *spectrum_[V]) String() string {
 	case Exclusive:
 		string_ += "("
 	}
-	string_ += v.minimum_.AsString()
+	if v.minimum_.IsDefined() {
+		string_ += v.minimum_.AsString()
+	}
 	string_ += ".."
-	string_ += v.maximum_.AsString()
+	if v.maximum_.IsDefined() {
+		string_ += v.maximum_.AsString()
+	}
 	switch v.right_ {
 	case Inclusive:
 		string_ += "]"
@@ -167,14 +170,14 @@ func (v *spectrum_[V]) String() string {
 // Private Methods
 
 // This method ensures that the endpoints are valid.
-func (v *spectrum_[V]) validateSpectrum() {
+func (v *continuum_[V]) validateContinuum() {
 	// Validate the left bracket.
 	switch v.left_ {
 	case Inclusive:
 	case Exclusive:
 	default:
 		var message = fmt.Sprintf(
-			"Received an invalid left bracket for a spectrum: %v",
+			"Received an invalid left bracket for a continuum: %v",
 			v.left_,
 		)
 		panic(message)
@@ -186,27 +189,37 @@ func (v *spectrum_[V]) validateSpectrum() {
 	case Exclusive:
 	default:
 		var message = fmt.Sprintf(
-			"Received an invalid right bracket for a spectrum: %v",
+			"Received an invalid right bracket for a continuum: %v",
 			v.right_,
 		)
 		panic(message)
 	}
 
 	// Validate the endpoints.
-	var collator = age.CollatorClass[V]().Collator()
-	if collator.RankValues(v.minimum_, v.maximum_) != age.LesserRank {
-		var message = fmt.Sprintf(
-			"The minimum %v in a spectrum must be less than the maximum %v.",
-			v.minimum_,
-			v.maximum_,
-		)
-		panic(message)
+	if v.minimum_.IsDefined() && v.maximum_.IsDefined() {
+		var collator = age.CollatorClass[V]().Collator()
+		if collator.RankValues(v.minimum_, v.maximum_) != age.LesserRank {
+			var message = fmt.Sprintf(
+				"The minimum %v in a continuum must be less than the maximum %v.",
+				v.minimum_,
+				v.maximum_,
+			)
+			panic(message)
+		}
+		var size = v.maximum_.AsFloat() - v.minimum_.AsFloat()
+		if size <= 0 {
+			var message = fmt.Sprintf(
+				"The size of a continuum must be greater than zero: %v.",
+				size,
+			)
+			panic(message)
+		}
 	}
 }
 
 // Instance Structure
 
-type spectrum_[V str.Spectral] struct {
+type continuum_[V ele.Continuous] struct {
 	// Declare the instance attributes.
 	left_    Bracket
 	minimum_ V
@@ -216,35 +229,35 @@ type spectrum_[V str.Spectral] struct {
 
 // Class Structure
 
-type spectrumClass_[V str.Spectral] struct {
+type continuumClass_[V ele.Continuous] struct {
 	// Declare the class constants.
 }
 
 // Class Reference
 
-var spectrumMap_ = map[string]any{}
-var spectrumMutex_ syn.Mutex
+var continuumMap_ = map[string]any{}
+var continuumMutex_ syn.Mutex
 
-func spectrumClass[V str.Spectral]() *spectrumClass_[V] {
+func continuumClass[V ele.Continuous]() *continuumClass_[V] {
 	// Generate the name of the bound class type.
-	var class *spectrumClass_[V]
+	var class *continuumClass_[V]
 	var name = fmt.Sprintf("%T", class)
 
 	// Check for an existing bound class type.
-	spectrumMutex_.Lock()
-	var value = spectrumMap_[name]
+	continuumMutex_.Lock()
+	var value = continuumMap_[name]
 	switch actual := value.(type) {
-	case *spectrumClass_[V]:
+	case *continuumClass_[V]:
 		// This bound class type already exists.
 		class = actual
 	default:
 		// Add a new bound class type.
-		class = &spectrumClass_[V]{
+		class = &continuumClass_[V]{
 			// Initialize the class constants.
 		}
-		spectrumMap_[name] = class
+		continuumMap_[name] = class
 	}
-	spectrumMutex_.Unlock()
+	continuumMutex_.Unlock()
 
 	// Return a reference to the bound class type.
 	return class
