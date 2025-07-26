@@ -335,14 +335,12 @@ type NameLike interface {
 	GetClass() NameClassLike
 	AsIntrinsic() []Identifier
 	AsString() string
-	CompareWith(
-		name NameLike,
-	) age.Rank
 
 	// Aspect Interfaces
 	Accessible[Identifier]
 	Searchable[Identifier]
 	Sequential[Identifier]
+	Spectral[NameLike]
 }
 
 /*
@@ -396,14 +394,12 @@ type QuoteLike interface {
 	GetClass() QuoteClassLike
 	AsIntrinsic() []Character
 	AsString() string
-	CompareWith(
-		quote QuoteLike,
-	) age.Rank
 
 	// Aspect Interfaces
 	Accessible[Character]
 	Searchable[Character]
 	Sequential[Character]
+	Spectral[QuoteLike]
 }
 
 /*
@@ -434,14 +430,12 @@ type VersionLike interface {
 	GetClass() VersionClassLike
 	AsIntrinsic() []uti.Ordinal
 	AsString() string
-	CompareWith(
-		version VersionLike,
-	) age.Rank
 
 	// Aspect Interfaces
 	Accessible[uti.Ordinal]
 	Searchable[uti.Ordinal]
 	Sequential[uti.Ordinal]
+	Spectral[VersionLike]
 }
 
 // ASPECT DECLARATIONS
@@ -509,9 +503,12 @@ type Sequential[V any] interface {
 }
 
 /*
-Spectral is an aspect interface that declares a set of method signatures that
-must be supported by each instance of a spectral concrete class.
+Spectral[V any] is an aspect interface that declares a set of method signatures
+that must be supported by each instance of a spectral concrete class.
 */
-type Spectral interface {
+type Spectral[V any] interface {
 	AsString() string
+	CompareWith(
+		value V,
+	) age.Rank
 }

@@ -102,10 +102,14 @@ func (v name_) AsString() string {
 	return string_
 }
 
+// Attribute Methods
+
+// Spectral[Name] Methods
+
 func (v name_) CompareWith(
-	name NameLike,
+	value NameLike,
 ) age.Rank {
-	switch sli.Compare(v.AsIntrinsic(), name.AsIntrinsic()) {
+	switch sli.Compare(v.AsIntrinsic(), value.AsIntrinsic()) {
 	case -1:
 		return age.LesserRank
 	case 1:
@@ -114,8 +118,6 @@ func (v name_) CompareWith(
 		return age.EqualRank
 	}
 }
-
-// Attribute Methods
 
 // Searchable[Identifier] Methods
 

@@ -92,7 +92,7 @@ type IntervalClassLike[V ele.Discrete] interface {
 }
 
 /*
-SpectrumClassLike[V str.Spectral] is a class interface that
+SpectrumClassLike[V str.Spectral[V]] is a class interface that
 declares the complete set of class constructors, constants and functions that
 must be supported by each concrete spectrum-like class.
 
@@ -100,7 +100,7 @@ A spectrum-like class defines two endpoints for an infinite discrete sequence
 of elements.  The endpoints may be inclusive (denoted by a square bracket) or
 exclusive (denoted by a round bracket).
 */
-type SpectrumClassLike[V str.Spectral] interface {
+type SpectrumClassLike[V str.Spectral[V]] interface {
 	// Constructor Methods
 	Spectrum(
 		left Bracket,
@@ -143,11 +143,11 @@ type IntervalLike[V ele.Discrete] interface {
 }
 
 /*
-SpectrumLike[V str.Spectral] is an instance interface that
+SpectrumLike[V str.Spectral[V]] is an instance interface that
 declares the complete set of principal, attribute and aspect methods that must
 be supported by each instance of a concrete spectrum-like class.
 */
-type SpectrumLike[V str.Spectral] interface {
+type SpectrumLike[V str.Spectral[V]] interface {
 	// Principal Methods
 	GetClass() SpectrumClassLike[V]
 

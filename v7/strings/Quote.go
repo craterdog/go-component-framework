@@ -85,10 +85,14 @@ func (v quote_) AsString() string {
 	return stc.Quote(string(v))
 }
 
+// Attribute Methods
+
+// Spectral[Quote] Methods
+
 func (v quote_) CompareWith(
-	quote QuoteLike,
+	value QuoteLike,
 ) age.Rank {
-	switch sli.Compare(v.AsIntrinsic(), quote.AsIntrinsic()) {
+	switch sli.Compare(v.AsIntrinsic(), value.AsIntrinsic()) {
 	case -1:
 		return age.LesserRank
 	case 1:
@@ -97,8 +101,6 @@ func (v quote_) CompareWith(
 		return age.EqualRank
 	}
 }
-
-// Attribute Methods
 
 // Searchable[Character] Methods
 

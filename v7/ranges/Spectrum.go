@@ -23,7 +23,7 @@ import (
 
 // Access Function
 
-func SpectrumClass[V str.Spectral]() SpectrumClassLike[V] {
+func SpectrumClass[V str.Spectral[V]]() SpectrumClassLike[V] {
 	return spectrumClass[V]()
 }
 
@@ -101,10 +101,10 @@ func (v *spectrum_[V]) SetRight(right Bracket) {
 func (v *spectrum_[V]) ContainsValue(
 	value V,
 ) bool {
-	if value.AsString() < v.minimum_.AsString() {
+	if v.minimum_.CompareWith(value) == age.GreaterRank {
 		return false
 	}
-	if value.AsString() > v.maximum_.AsString() {
+	if v.maximum_.CompareWith(value) == age.LesserRank {
 		return false
 	}
 	return true
@@ -139,8 +139,6 @@ func (v *spectrum_[V]) ContainsAll(
 	// This spectrum does contains all of the values.
 	return true
 }
-
-// str.Spectral Methods
 
 // PROTECTED INTERFACE
 
@@ -206,7 +204,7 @@ func (v *spectrum_[V]) validateSpectrum() {
 
 // Instance Structure
 
-type spectrum_[V str.Spectral] struct {
+type spectrum_[V str.Spectral[V]] struct {
 	// Declare the instance attributes.
 	left_    Bracket
 	minimum_ V
@@ -216,7 +214,7 @@ type spectrum_[V str.Spectral] struct {
 
 // Class Structure
 
-type spectrumClass_[V str.Spectral] struct {
+type spectrumClass_[V str.Spectral[V]] struct {
 	// Declare the class constants.
 }
 
@@ -225,7 +223,7 @@ type spectrumClass_[V str.Spectral] struct {
 var spectrumMap_ = map[string]any{}
 var spectrumMutex_ syn.Mutex
 
-func spectrumClass[V str.Spectral]() *spectrumClass_[V] {
+func spectrumClass[V str.Spectral[V]]() *spectrumClass_[V] {
 	// Generate the name of the bound class type.
 	var class *spectrumClass_[V]
 	var name = fmt.Sprintf("%T", class)
