@@ -187,9 +187,9 @@ type (
 // Strings
 
 type (
-	Identifier  = str.Identifier
-	Line        = str.Line
-	Character   = str.Character
+	Identifier = str.Identifier
+	Line       = str.Line
+	Character  = str.Character
 )
 
 type (
