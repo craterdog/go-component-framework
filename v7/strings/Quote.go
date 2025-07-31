@@ -219,6 +219,7 @@ func (v quote_) String() string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
+	base16_    = base10_ + "|[a-f]"
 	character_ = escape_ + "|\\\\\"|[^\"" + control_ + "]"
 	control_   = "\\p{Cc}"
 	escape_    = "\\\\(?:" + unicode_ + "|[abfnrtv\\\\])"

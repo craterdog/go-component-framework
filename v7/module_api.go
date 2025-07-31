@@ -188,14 +188,12 @@ type (
 
 type (
 	Identifier  = str.Identifier
-	Instruction = str.Instruction
 	Line        = str.Line
 	Character   = str.Character
 )
 
 type (
 	BinaryClassLike    = str.BinaryClassLike
-	BytecodeClassLike  = str.BytecodeClassLike
 	NameClassLike      = str.NameClassLike
 	NarrativeClassLike = str.NarrativeClassLike
 	PatternClassLike   = str.PatternClassLike
@@ -206,7 +204,6 @@ type (
 
 type (
 	BinaryLike    = str.BinaryLike
-	BytecodeLike  = str.BytecodeLike
 	NameLike      = str.NameLike
 	NarrativeLike = str.NarrativeLike
 	PatternLike   = str.PatternLike
@@ -806,34 +803,6 @@ func BinaryFromString(
 	source string,
 ) BinaryLike {
 	return BinaryClass().BinaryFromString(
-		source,
-	)
-}
-
-func BytecodeClass() BytecodeClassLike {
-	return str.BytecodeClass()
-}
-
-func Bytecode(
-	instructions []str.Instruction,
-) BytecodeLike {
-	return BytecodeClass().Bytecode(
-		instructions,
-	)
-}
-
-func BytecodeFromSequence(
-	sequence str.Sequential[str.Instruction],
-) BytecodeLike {
-	return BytecodeClass().BytecodeFromSequence(
-		sequence,
-	)
-}
-
-func BytecodeFromString(
-	source string,
-) BytecodeLike {
-	return BytecodeClass().BytecodeFromString(
 		source,
 	)
 }

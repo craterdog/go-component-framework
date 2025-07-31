@@ -45,11 +45,6 @@ Identifier is a constrained type representing a string of the form:
 type Identifier string
 
 /*
-Instruction is a constrained type representing a single bytecode instruction.
-*/
-type Instruction uint16
-
-/*
 Line is a constrained type representing a single line of a narrative.
 */
 type Line string
@@ -104,30 +99,6 @@ type BinaryClassLike interface {
 		first BinaryLike,
 		second BinaryLike,
 	) BinaryLike
-}
-
-/*
-BytecodeClassLike is a class interface that defines the complete set of
-class constants, constructors and functions that must be supported by each
-bytecode-like concrete class.
-*/
-type BytecodeClassLike interface {
-	// Constructor Methods
-	Bytecode(
-		instructions []Instruction,
-	) BytecodeLike
-	BytecodeFromSequence(
-		sequence Sequential[Instruction],
-	) BytecodeLike
-	BytecodeFromString(
-		source string,
-	) BytecodeLike
-
-	// Function Methods
-	Concatenate(
-		first BytecodeLike,
-		second BytecodeLike,
-	) BytecodeLike
 }
 
 /*
@@ -306,23 +277,6 @@ type BinaryLike interface {
 	Accessible[byte]
 	Searchable[byte]
 	Sequential[byte]
-}
-
-/*
-BytecodeLike is an instance interface that declares the complete set of principal,
-attribute and aspect methods that must be supported by each instance of a
-concrete bytecode-like class.
-*/
-type BytecodeLike interface {
-	// Principal Methods
-	GetClass() BytecodeClassLike
-	AsIntrinsic() []Instruction
-	AsString() string
-
-	// Aspect Interfaces
-	Accessible[Instruction]
-	Searchable[Instruction]
-	Sequential[Instruction]
 }
 
 /*

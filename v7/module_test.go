@@ -3032,26 +3032,6 @@ func TestBinaryLibrary(t *tes.T) {
 	ass.Equal(t, sans2, class.San(v2, v1))
 }
 
-func TestBytecode(t *tes.T) {
-	var bytecode = `'>
-    -abcd
-<'`
-	var v = fra.BytecodeFromString(bytecode)
-	ass.Equal(t, bytecode, v.AsString())
-	ass.False(t, v.IsEmpty())
-	ass.Equal(t, 1, int(v.GetSize()))
-	ass.Equal(t, v.AsArray(), fra.Bytecode(v.AsArray()).AsArray())
-
-	bytecode = `'>
-    -abcd-1234
-<'`
-	v = fra.BytecodeFromString(bytecode)
-	ass.Equal(t, bytecode, v.AsString())
-	ass.False(t, v.IsEmpty())
-	ass.Equal(t, 2, int(v.GetSize()))
-	ass.Equal(t, v.AsArray(), fra.Bytecode(v.AsArray()).AsArray())
-}
-
 func TestName(t *tes.T) {
 	var v1 = fra.NameFromString("/bali-nebula/types/abstractions/String")
 	ass.Equal(t, "/bali-nebula/types/abstractions/String", v1.AsString())
