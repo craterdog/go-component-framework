@@ -465,6 +465,7 @@ type Lifo[V any] interface {
 	AddValue(
 		value V,
 	)
+	GetLast() V
 	RemoveLast() V
 	RemoveAll()
 }

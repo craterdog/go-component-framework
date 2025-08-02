@@ -2112,9 +2112,10 @@ func TestStacksWithStrings(t *tes.T) {
 	stack.AddValue("bar")
 	stack.AddValue("baz")
 	ass.True(t, stack.GetSize() == 3)
-	ass.Equal(t, "baz", string(stack.RemoveLast()))
+	var last = stack.GetLast()
+	ass.Equal(t, last, stack.RemoveLast())
 	ass.True(t, stack.GetSize() == 2)
-	ass.Equal(t, "bar", string(stack.RemoveLast()))
+	ass.Equal(t, "bar", stack.RemoveLast())
 	ass.True(t, stack.GetSize() == 1)
 	stack.RemoveAll()
 }

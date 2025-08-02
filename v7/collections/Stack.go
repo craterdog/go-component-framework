@@ -112,6 +112,14 @@ func (v *stack_[V]) AddValue(
 	v.values_.InsertValue(0, value)
 }
 
+func (v *stack_[V]) GetLast() V {
+	if v.values_.IsEmpty() {
+		panic("Attempted to get a value from an empty stack!")
+	}
+	var last = v.values_.GetValue(1)
+	return last
+}
+
 func (v *stack_[V]) RemoveLast() V {
 	if v.values_.IsEmpty() {
 		panic("Attempted to remove a value from an empty stack!")
