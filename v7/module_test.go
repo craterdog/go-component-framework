@@ -3065,11 +3065,17 @@ const n1 = `">
 
 const n2 = `">
     1234
+	\">
+        This is an embedded narrative.
+    <\"
 <"`
 
 const n3 = `">
     abcd本
     1234
+	\">
+        This is an embedded narrative.
+    <\"
 <"`
 
 func TestEmptyNarrative(t *tes.T) {
@@ -3089,10 +3095,10 @@ func TestNarrative(t *tes.T) {
 	var v3 = fra.NarrativeFromString(n3)
 	ass.Equal(t, n3, v3.AsString())
 	ass.False(t, v3.IsEmpty())
-	ass.Equal(t, 2, int(v3.GetSize()))
+	ass.Equal(t, 5, int(v3.GetSize()))
 
 	ass.Equal(t, n3, fra.Narrative(v3.AsArray()).AsString())
-	ass.Equal(t, 2, len(v3.AsArray()))
+	ass.Equal(t, 5, len(v3.AsArray()))
 }
 
 func TestNarrativesLibrary(t *tes.T) {

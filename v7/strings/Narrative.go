@@ -40,7 +40,8 @@ func (c *narrativeClass_) Narrative(
 func (c *narrativeClass_) NarrativeFromSequence(
 	sequence Sequential[Line],
 ) NarrativeLike {
-	return narrative_(sequence.AsArray())
+	var lines = sequence.AsArray()
+	return narrative_(lines)
 }
 
 func (c *narrativeClass_) NarrativeFromString(
@@ -54,9 +55,10 @@ func (c *narrativeClass_) NarrativeFromString(
 		)
 		panic(message)
 	}
-	var narrative = matches[1]               // Strip off the delimiters.
-	var strings = sts.Split(narrative, "\n") // Extract the lines.
-	strings = strings[1:]                    // Ignore the first empty line.
+	var decoded = sts.ReplaceAll(matches[1], `\">`, `">`)
+	decoded = sts.ReplaceAll(decoded, `<\"`, `<"`)
+	var strings = sts.Split(decoded, "\n")
+	strings = strings[1:] // Ignore the first empty line.
 	var size = len(strings)
 	if size > 0 {
 		size--
@@ -104,7 +106,9 @@ func (v narrative_) AsString() string {
 	var string_ = "\">"
 	if len(v) > 0 {
 		for _, line := range v {
-			string_ += "\n" + string(line)
+			var encoded = sts.ReplaceAll(string(line), `">`, `\">`)
+			encoded = sts.ReplaceAll(encoded, `<"`, `<\"`)
+			string_ += "\n" + encoded
 		}
 		string_ += "\n"
 	}
