@@ -35,13 +35,18 @@ func VersionClass() VersionClassLike {
 func (c *versionClass_) Version(
 	ordinals []uti.Ordinal,
 ) VersionLike {
-	return version_(ordinals)
+	var index = 0
+	var source = "v" + stc.Itoa(int(ordinals[index]))
+	for index++; index < len(ordinals); index++ {
+		source += "." + stc.Itoa(int(ordinals[index]))
+	}
+	return version_(source)
 }
 
 func (c *versionClass_) VersionFromSequence(
 	sequence Sequential[uti.Ordinal],
 ) VersionLike {
-	return version_(sequence.AsArray())
+	return c.Version(sequence.AsArray())
 }
 
 func (c *versionClass_) VersionFromString(
@@ -55,14 +60,7 @@ func (c *versionClass_) VersionFromString(
 		)
 		panic(message)
 	}
-	var match = matches[1] // Strip off the leading "v".
-	var levels = sts.Split(match, ".")
-	var ordinals = make([]uti.Ordinal, len(levels))
-	for index, level := range levels {
-		var ordinal, _ = stc.ParseUint(level, 10, 64)
-		ordinals[index] = uti.Ordinal(ordinal)
-	}
-	return version_(ordinals)
+	return version_(source)
 }
 
 // Constant Methods
@@ -152,16 +150,18 @@ func (v version_) GetClass() VersionClassLike {
 }
 
 func (v version_) AsIntrinsic() []uti.Ordinal {
-	return []uti.Ordinal(v)
+	var version = string(v[1:]) // Strip off the leading "v".
+	var levels = sts.Split(version, ".")
+	var ordinals = make([]uti.Ordinal, len(levels))
+	for index, level := range levels {
+		var ordinal, _ = stc.ParseUint(level, 10, 64)
+		ordinals[index] = uti.Ordinal(ordinal)
+	}
+	return []uti.Ordinal(ordinals)
 }
 
 func (v version_) AsString() string {
-	var index = 0
-	var string_ = "v" + stc.Itoa(int(v[index]))
-	for index++; index < len(v); index++ {
-		string_ += "." + stc.Itoa(int(v[index]))
-	}
-	return string_
+	return string(v)
 }
 
 // Attribute Methods
@@ -186,7 +186,7 @@ func (v version_) CompareWith(
 func (v version_) ContainsValue(
 	value uti.Ordinal,
 ) bool {
-	return sli.Index(v, value) > -1
+	return sli.Index(v.AsIntrinsic(), value) > -1
 }
 
 func (v version_) ContainsAny(
@@ -222,22 +222,19 @@ func (v version_) ContainsAll(
 // Sequential[uti.Ordinal] Methods
 
 func (v version_) IsEmpty() bool {
-	return len(v) == 0
+	return len(v.AsIntrinsic()) == 0
 }
 
 func (v version_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v))
+	return uti.Cardinal(len(v.AsIntrinsic()))
 }
 
 func (v version_) AsArray() []uti.Ordinal {
-	return uti.CopyArray(v)
+	return v.AsIntrinsic()
 }
 
 func (v version_) GetIterator() age.IteratorLike[uti.Ordinal] {
-	var array = uti.CopyArray(v)
-	var class = age.IteratorClass[uti.Ordinal]()
-	var iterator = class.Iterator(array)
-	return iterator
+	return age.IteratorClass[uti.Ordinal]().Iterator(v.AsIntrinsic())
 }
 
 // Accessible[uti.Ordinal] Methods
@@ -245,19 +242,21 @@ func (v version_) GetIterator() age.IteratorLike[uti.Ordinal] {
 func (v version_) GetValue(
 	index uti.Index,
 ) uti.Ordinal {
-	var size = v.GetSize()
+	var ordinals = v.AsIntrinsic()
+	var size = uti.Cardinal(len(ordinals))
 	var goIndex = uti.RelativeToZeroBased(index, size)
-	return v[goIndex]
+	return ordinals[goIndex]
 }
 
 func (v version_) GetValues(
 	first uti.Index,
 	last uti.Index,
 ) Sequential[uti.Ordinal] {
-	var size = v.GetSize()
+	var ordinals = v.AsIntrinsic()
+	var size = uti.Cardinal(len(ordinals))
 	var goFirst = uti.RelativeToZeroBased(first, size)
 	var goLast = uti.RelativeToZeroBased(last, size)
-	return version_(v[goFirst : goLast+1])
+	return versionClass().Version(ordinals[goFirst : goLast+1])
 }
 
 func (v version_) GetIndex(
@@ -298,7 +297,7 @@ const (
 
 // Instance Structure
 
-type version_ []uti.Ordinal
+type version_ string // This type must support the "comparable" type contraint.
 
 // Class Structure
 

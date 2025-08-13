@@ -34,14 +34,23 @@ func NarrativeClass() NarrativeClassLike {
 func (c *narrativeClass_) Narrative(
 	lines []Line,
 ) NarrativeLike {
-	return narrative_(lines)
+	var source = "\">"
+	if len(lines) > 0 {
+		for _, line := range lines {
+			var encoded = sts.ReplaceAll(string(line), `">`, `\">`)
+			encoded = sts.ReplaceAll(encoded, `<"`, `<\"`)
+			source += "\n" + encoded
+		}
+		source += "\n"
+	}
+	source += "<\""
+	return narrative_(source)
 }
 
 func (c *narrativeClass_) NarrativeFromSequence(
 	sequence Sequential[Line],
 ) NarrativeLike {
-	var lines = sequence.AsArray()
-	return narrative_(lines)
+	return c.Narrative(sequence.AsArray())
 }
 
 func (c *narrativeClass_) NarrativeFromString(
@@ -55,20 +64,7 @@ func (c *narrativeClass_) NarrativeFromString(
 		)
 		panic(message)
 	}
-	var decoded = sts.ReplaceAll(matches[1], `\">`, `">`)
-	decoded = sts.ReplaceAll(decoded, `<\"`, `<"`)
-	var strings = sts.Split(decoded, "\n")
-	strings = strings[1:] // Ignore the first empty line.
-	var size = len(strings)
-	if size > 0 {
-		size--
-		strings = strings[:size] // Ignore the last empty line.
-	}
-	var lines = make([]Line, size)
-	for index, line := range strings {
-		lines[index] = Line(line)
-	}
-	return narrative_(lines)
+	return narrative_(source)
 }
 
 // Constant Methods
@@ -99,21 +95,25 @@ func (v narrative_) GetClass() NarrativeClassLike {
 }
 
 func (v narrative_) AsIntrinsic() []Line {
-	return []Line(v)
+	var narrative = string(v)
+	var decoded = sts.ReplaceAll(narrative[2:len(v)-2], `\">`, `">`)
+	decoded = sts.ReplaceAll(decoded, `<\"`, `<"`)
+	var strings = sts.Split(decoded, "\n")
+	strings = strings[1:] // Ignore the first empty line.
+	var size = len(strings)
+	if size > 0 {
+		size--
+		strings = strings[:size] // Ignore the last empty line.
+	}
+	var lines = make([]Line, size)
+	for index, line := range strings {
+		lines[index] = Line(line)
+	}
+	return []Line(lines)
 }
 
 func (v narrative_) AsString() string {
-	var string_ = "\">"
-	if len(v) > 0 {
-		for _, line := range v {
-			var encoded = sts.ReplaceAll(string(line), `">`, `\">`)
-			encoded = sts.ReplaceAll(encoded, `<"`, `<\"`)
-			string_ += "\n" + encoded
-		}
-		string_ += "\n"
-	}
-	string_ += "<\""
-	return string_
+	return string(v)
 }
 
 // Attribute Methods
@@ -123,7 +123,7 @@ func (v narrative_) AsString() string {
 func (v narrative_) ContainsValue(
 	value Line,
 ) bool {
-	return sli.Index(v, value) > -1
+	return sli.Index(v.AsIntrinsic(), value) > -1
 }
 
 func (v narrative_) ContainsAny(
@@ -159,22 +159,19 @@ func (v narrative_) ContainsAll(
 // Sequential[Line] Methods
 
 func (v narrative_) IsEmpty() bool {
-	return len(v) == 0
+	return len(v.AsIntrinsic()) == 0
 }
 
 func (v narrative_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v))
+	return uti.Cardinal(len(v.AsIntrinsic()))
 }
 
 func (v narrative_) AsArray() []Line {
-	return uti.CopyArray(v)
+	return v.AsIntrinsic()
 }
 
 func (v narrative_) GetIterator() age.IteratorLike[Line] {
-	var array = uti.CopyArray(v)
-	var class = age.IteratorClass[Line]()
-	var iterator = class.Iterator(array)
-	return iterator
+	return age.IteratorClass[Line]().Iterator(v.AsIntrinsic())
 }
 
 // Accessible[Line] Methods
@@ -182,19 +179,21 @@ func (v narrative_) GetIterator() age.IteratorLike[Line] {
 func (v narrative_) GetValue(
 	index uti.Index,
 ) Line {
-	var size = v.GetSize()
+	var lines = v.AsIntrinsic()
+	var size = uti.Cardinal(len(lines))
 	var goIndex = uti.RelativeToZeroBased(index, size)
-	return v[goIndex]
+	return lines[goIndex]
 }
 
 func (v narrative_) GetValues(
 	first uti.Index,
 	last uti.Index,
 ) Sequential[Line] {
-	var size = v.GetSize()
+	var lines = v.AsIntrinsic()
+	var size = uti.Cardinal(len(lines))
 	var goFirst = uti.RelativeToZeroBased(first, size)
 	var goLast = uti.RelativeToZeroBased(last, size)
-	return narrative_(v[goFirst : goLast+1])
+	return narrativeClass().Narrative(lines[goFirst : goLast+1])
 }
 
 func (v narrative_) GetIndex(
@@ -236,7 +235,7 @@ const (
 
 // Instance Structure
 
-type narrative_ []Line
+type narrative_ string // This type must support the "comparable" type contraint.
 
 // Class Structure
 

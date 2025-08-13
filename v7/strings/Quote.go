@@ -34,13 +34,13 @@ func QuoteClass() QuoteClassLike {
 func (c *quoteClass_) Quote(
 	characters []Character,
 ) QuoteLike {
-	return quote_(characters)
+	return quote_(stc.Quote(string(characters)))
 }
 
 func (c *quoteClass_) QuoteFromSequence(
 	sequence Sequential[Character],
 ) QuoteLike {
-	return quote_(sequence.AsArray())
+	return c.Quote(sequence.AsArray())
 }
 
 func (c *quoteClass_) QuoteFromString(
@@ -54,8 +54,7 @@ func (c *quoteClass_) QuoteFromString(
 		)
 		panic(message)
 	}
-	var unquoted, _ = stc.Unquote(matches[0]) // Strip off the double quotes.
-	return quote_(unquoted)
+	return quote_(source)
 }
 
 // Constant Methods
@@ -78,11 +77,12 @@ func (v quote_) GetClass() QuoteClassLike {
 }
 
 func (v quote_) AsIntrinsic() []Character {
-	return []Character(v)
+	var unquoted, _ = stc.Unquote(string(v)) // Strip off the double quotes.
+	return []Character(unquoted)
 }
 
 func (v quote_) AsString() string {
-	return stc.Quote(string(v))
+	return string(v)
 }
 
 // Attribute Methods
@@ -107,7 +107,7 @@ func (v quote_) CompareWith(
 func (v quote_) ContainsValue(
 	value Character,
 ) bool {
-	return sli.Index(v, value) > -1
+	return sli.Index(v.AsIntrinsic(), value) > -1
 }
 
 func (v quote_) ContainsAny(
@@ -143,21 +143,19 @@ func (v quote_) ContainsAll(
 // Sequential[Character] Methods
 
 func (v quote_) IsEmpty() bool {
-	return len(v) == 0
+	return len(v.AsIntrinsic()) == 0
 }
 
 func (v quote_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v.AsArray()))
+	return uti.Cardinal(len(v.AsIntrinsic()))
 }
 
 func (v quote_) AsArray() []Character {
-	return []Character(v)
+	return v.AsIntrinsic()
 }
 
 func (v quote_) GetIterator() age.IteratorLike[Character] {
-	var class = age.IteratorClass[Character]()
-	var iterator = class.Iterator(v.AsArray())
-	return iterator
+	return age.IteratorClass[Character]().Iterator(v.AsIntrinsic())
 }
 
 // Accessible[Character] Methods
@@ -165,9 +163,9 @@ func (v quote_) GetIterator() age.IteratorLike[Character] {
 func (v quote_) GetValue(
 	index uti.Index,
 ) Character {
-	var size = v.GetSize()
+	var characters = v.AsIntrinsic()
+	var size = uti.Cardinal(len(characters))
 	var goIndex = uti.RelativeToZeroBased(index, size)
-	var characters = []Character(v)
 	return characters[goIndex]
 }
 
@@ -175,11 +173,11 @@ func (v quote_) GetValues(
 	first uti.Index,
 	last uti.Index,
 ) Sequential[Character] {
-	var size = v.GetSize()
+	var characters = v.AsIntrinsic()
+	var size = uti.Cardinal(len(characters))
 	var goFirst = uti.RelativeToZeroBased(first, size)
 	var goLast = uti.RelativeToZeroBased(last, size)
-	var characters = []Character(v)
-	return quote_(characters[goFirst : goLast+1])
+	return quoteClass().Quote(characters[goFirst : goLast+1])
 }
 
 func (v quote_) GetIndex(
@@ -228,7 +226,7 @@ const (
 
 // Instance Structure
 
-type quote_ []Character
+type quote_ string // This type must support the "comparable" type contraint.
 
 // Class Structure
 

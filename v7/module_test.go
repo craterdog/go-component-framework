@@ -1367,6 +1367,49 @@ func TestCatalogConstructors(t *tes.T) {
 	ass.Equal(t, sequence.AsArray(), catalog.AsArray())
 }
 
+func TestCatalogsWithPrimitivesAndStrings(t *tes.T) {
+	var catalog = fra.Catalog[any, string]()
+
+	var binaryString = `'>
+    0123456789abcdefghijk
+<'`
+	var binary = fra.BinaryFromString(binaryString)
+	catalog.SetValue(binary, binaryString)
+	ass.Equal(t, catalog.GetValue(binary), binary.AsString())
+
+	var nameString = "/foo/bar"
+	var name = fra.NameFromString(nameString)
+	catalog.SetValue(name, nameString)
+	ass.Equal(t, catalog.GetValue(name), name.AsString())
+
+	var narrativeString = `">
+    This is a narrative.
+<"`
+	var narrative = fra.NarrativeFromString(narrativeString)
+	catalog.SetValue(narrative, narrativeString)
+	ass.Equal(t, catalog.GetValue(narrative), narrative.AsString())
+
+	var patternString = `"b[aeiou]g"?`
+	var pattern = fra.PatternFromString(patternString)
+	catalog.SetValue(pattern, patternString)
+	ass.Equal(t, catalog.GetValue(pattern), pattern.AsString())
+
+	var quoteString = `"To be or not to be..."`
+	var quote = fra.QuoteFromString(quoteString)
+	catalog.SetValue(quote, quoteString)
+	ass.Equal(t, catalog.GetValue(quote), quote.AsString())
+
+	var tag = fra.TagWithSize(16)
+	var tagString = tag.AsString()
+	catalog.SetValue(tag, tagString)
+	ass.Equal(t, catalog.GetValue(tag), tag.AsString())
+
+	var versionString = "v1.2.3"
+	var version = fra.VersionFromString(versionString)
+	catalog.SetValue(version, versionString)
+	ass.Equal(t, catalog.GetValue(version), version.AsString())
+}
+
 func TestCatalogsWithStringsAndIntegers(t *tes.T) {
 	var catalogCollator = fra.Collator[fra.CatalogLike[string, int]]()
 	var keys = fra.ListClass[string]().ListFromArray([]string{"foo", "bar"})

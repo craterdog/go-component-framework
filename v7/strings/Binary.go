@@ -34,13 +34,28 @@ func BinaryClass() BinaryClassLike {
 func (c *binaryClass_) Binary(
 	bytes []byte,
 ) BinaryLike {
-	return binary_(bytes)
+	var encoder = age.EncoderClass().Encoder()
+	var encoded = encoder.Base64Encode(bytes)
+	var length = len(encoded)
+	var source = "'>"
+	if length > 0 {
+		source += "\n"
+		var width = 60
+		var indentation = "    "
+		var index int
+		for index = 0; index+width < length; index += width {
+			source += indentation + encoded[index:index+width] + "\n"
+		}
+		source += indentation + encoded[index:] + "\n"
+	}
+	source += "<'"
+	return binary_(source)
 }
 
 func (c *binaryClass_) BinaryFromSequence(
 	sequence Sequential[byte],
 ) BinaryLike {
-	return binary_(sequence.AsArray())
+	return c.Binary(sequence.AsArray())
 }
 
 func (c *binaryClass_) BinaryFromString(
@@ -54,12 +69,7 @@ func (c *binaryClass_) BinaryFromString(
 		)
 		panic(message)
 	}
-	var base64 = matches[1]                   // Strip off the delimiters.
-	base64 = sts.ReplaceAll(base64, " ", "")  // Remove all spaces.
-	base64 = sts.ReplaceAll(base64, "\n", "") // Remove all newlines.
-	var encoder = age.EncoderClass().Encoder()
-	var bytes = encoder.Base64Decode(base64)
-	return binary_(bytes)
+	return binary_(source)
 }
 
 // Constant Methods
@@ -69,7 +79,7 @@ func (c *binaryClass_) BinaryFromString(
 func (c *binaryClass_) Not(
 	binary BinaryLike,
 ) BinaryLike {
-	var bytes = binary.AsArray()
+	var bytes = binary.AsIntrinsic()
 	var size = len(bytes)
 	for i := 0; i < size; i++ {
 		bytes[i] = ^bytes[i]
@@ -82,8 +92,8 @@ func (c *binaryClass_) And(
 	second BinaryLike,
 ) BinaryLike {
 	var result []byte
-	var firstBytes = first.AsArray()
-	var secondBytes = second.AsArray()
+	var firstBytes = first.AsIntrinsic()
+	var secondBytes = second.AsIntrinsic()
 	var size = len(firstBytes)
 	if size < len(secondBytes) {
 		size = len(secondBytes)
@@ -106,8 +116,8 @@ func (c *binaryClass_) San(
 	second BinaryLike,
 ) BinaryLike {
 	var result []byte
-	var firstBytes = first.AsArray()
-	var secondBytes = second.AsArray()
+	var firstBytes = first.AsIntrinsic()
+	var secondBytes = second.AsIntrinsic()
 	var size = len(firstBytes)
 	if size < len(secondBytes) {
 		size = len(secondBytes)
@@ -130,8 +140,8 @@ func (c *binaryClass_) Ior(
 	second BinaryLike,
 ) BinaryLike {
 	var result []byte
-	var firstBytes = first.AsArray()
-	var secondBytes = second.AsArray()
+	var firstBytes = first.AsIntrinsic()
+	var secondBytes = second.AsIntrinsic()
 	var size = len(firstBytes)
 	if size < len(secondBytes) {
 		size = len(secondBytes)
@@ -154,8 +164,8 @@ func (c *binaryClass_) Xor(
 	second BinaryLike,
 ) BinaryLike {
 	var result []byte
-	var firstBytes = first.AsArray()
-	var secondBytes = second.AsArray()
+	var firstBytes = first.AsIntrinsic()
+	var secondBytes = second.AsIntrinsic()
 	var size = len(firstBytes)
 	if size < len(secondBytes) {
 		size = len(secondBytes)
@@ -177,8 +187,8 @@ func (c *binaryClass_) Concatenate(
 	first BinaryLike,
 	second BinaryLike,
 ) BinaryLike {
-	var firstBytes = first.AsArray()
-	var secondBytes = second.AsArray()
+	var firstBytes = first.AsIntrinsic()
+	var secondBytes = second.AsIntrinsic()
 	var allBytes = make(
 		[]byte,
 		len(firstBytes)+len(secondBytes),
@@ -197,26 +207,17 @@ func (v binary_) GetClass() BinaryClassLike {
 }
 
 func (v binary_) AsIntrinsic() []byte {
-	return []byte(v)
+	var binary = string(v)
+	var base64 = binary[2 : len(v)-2]         // Strip off the delimiters.
+	base64 = sts.ReplaceAll(base64, " ", "")  // Remove all spaces.
+	base64 = sts.ReplaceAll(base64, "\n", "") // Remove all newlines.
+	var encoder = age.EncoderClass().Encoder()
+	var bytes = encoder.Base64Decode(base64)
+	return bytes
 }
 
 func (v binary_) AsString() string {
-	var encoder = age.EncoderClass().Encoder()
-	var encoded = encoder.Base64Encode(v)
-	var length = len(encoded)
-	var string_ = "'>"
-	if length > 0 {
-		string_ += "\n"
-		var width = 60
-		var indentation = "    "
-		var index int
-		for index = 0; index+width < length; index += width {
-			string_ += indentation + encoded[index:index+width] + "\n"
-		}
-		string_ += indentation + encoded[index:] + "\n"
-	}
-	string_ += "<'"
-	return string_
+	return string(v)
 }
 
 // Attribute Methods
@@ -226,7 +227,7 @@ func (v binary_) AsString() string {
 func (v binary_) ContainsValue(
 	value byte,
 ) bool {
-	return sli.Index(v, value) > -1
+	return sli.Index(v.AsIntrinsic(), value) > -1
 }
 
 func (v binary_) ContainsAny(
@@ -262,22 +263,19 @@ func (v binary_) ContainsAll(
 // Sequential[byte] Methods
 
 func (v binary_) IsEmpty() bool {
-	return len(v) == 0
+	return len(v.AsIntrinsic()) == 0
 }
 
 func (v binary_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v))
+	return uti.Cardinal(len(v.AsIntrinsic()))
 }
 
 func (v binary_) AsArray() []byte {
-	return uti.CopyArray(v)
+	return v.AsIntrinsic()
 }
 
 func (v binary_) GetIterator() age.IteratorLike[byte] {
-	var array = uti.CopyArray(v)
-	var class = age.IteratorClass[byte]()
-	var iterator = class.Iterator(array)
-	return iterator
+	return age.IteratorClass[byte]().Iterator(v.AsIntrinsic())
 }
 
 // Accessible[byte] Methods
@@ -285,19 +283,21 @@ func (v binary_) GetIterator() age.IteratorLike[byte] {
 func (v binary_) GetValue(
 	index uti.Index,
 ) byte {
-	var size = v.GetSize()
+	var bytes = v.AsIntrinsic()
+	var size = uti.Cardinal(len(bytes))
 	var goIndex = uti.RelativeToZeroBased(index, size)
-	return v[goIndex]
+	return bytes[goIndex]
 }
 
 func (v binary_) GetValues(
 	first uti.Index,
 	last uti.Index,
 ) Sequential[byte] {
-	var size = v.GetSize()
+	var bytes = v.AsIntrinsic()
+	var size = uti.Cardinal(len(bytes))
 	var goFirst = uti.RelativeToZeroBased(first, size)
 	var goLast = uti.RelativeToZeroBased(last, size)
-	return binary_(v[goFirst : goLast+1])
+	return binaryClass().Binary(bytes[goFirst : goLast+1])
 }
 
 func (v binary_) GetIndex(
@@ -342,7 +342,7 @@ const (
 
 // Instance Structure
 
-type binary_ []byte
+type binary_ string // This type must support the "comparable" type contraint.
 
 // Class Structure
 

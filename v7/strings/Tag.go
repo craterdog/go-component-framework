@@ -35,7 +35,9 @@ func (c *tagClass_) Tag(
 	bytes []byte,
 ) TagLike {
 	c.validateSize(uti.Cardinal(len(bytes)))
-	return tag_(bytes)
+	var encoder = age.EncoderClass().Encoder()
+	var encoded = encoder.Base32Encode(bytes)
+	return tag_("#" + encoded)
 }
 
 func (c *tagClass_) TagWithSize(
@@ -44,14 +46,15 @@ func (c *tagClass_) TagWithSize(
 	c.validateSize(size)
 	var generator = age.GeneratorClass().Generator()
 	var bytes = generator.RandomBytes(size)
-	return tag_(bytes)
+	return c.Tag(bytes)
 }
 
 func (c *tagClass_) TagFromSequence(
 	sequence Sequential[byte],
 ) TagLike {
-	c.validateSize(sequence.GetSize())
-	return tag_(sequence.AsArray())
+	var bytes = sequence.AsArray()
+	c.validateSize(uti.Cardinal(len(bytes)))
+	return c.Tag(bytes)
 }
 
 func (c *tagClass_) TagFromString(
@@ -65,10 +68,7 @@ func (c *tagClass_) TagFromString(
 		)
 		panic(message)
 	}
-	var base32 = matches[1] // Strip off the leading "#".
-	var encoder = age.EncoderClass().Encoder()
-	var bytes = encoder.Base32Decode(base32)
-	return tag_(bytes)
+	return tag_(source)
 }
 
 // Constant Methods
@@ -99,16 +99,18 @@ func (v tag_) GetClass() TagClassLike {
 }
 
 func (v tag_) AsIntrinsic() []byte {
-	return []byte(v)
+	var base32 = string(v[1:]) // Strip off the leading "#".
+	var encoder = age.EncoderClass().Encoder()
+	var bytes = encoder.Base32Decode(base32)
+	return bytes
 }
 
 func (v tag_) AsString() string {
-	var encoder = age.EncoderClass().Encoder()
-	return "#" + encoder.Base32Encode(v)
+	return string(v)
 }
 
 func (v tag_) GetHash() uint64 {
-	return bin.BigEndian.Uint64(v)
+	return bin.BigEndian.Uint64(v.AsIntrinsic())
 }
 
 // Attribute Methods
@@ -118,7 +120,7 @@ func (v tag_) GetHash() uint64 {
 func (v tag_) ContainsValue(
 	value byte,
 ) bool {
-	return sli.Index(v, value) > -1
+	return sli.Index(v.AsIntrinsic(), value) > -1
 }
 
 func (v tag_) ContainsAny(
@@ -154,22 +156,19 @@ func (v tag_) ContainsAll(
 // Sequential[byte] Methods
 
 func (v tag_) IsEmpty() bool {
-	return len(v) == 0
+	return len(v.AsIntrinsic()) == 0
 }
 
 func (v tag_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v))
+	return uti.Cardinal(len(v.AsIntrinsic()))
 }
 
 func (v tag_) AsArray() []byte {
-	return uti.CopyArray(v)
+	return v.AsIntrinsic()
 }
 
 func (v tag_) GetIterator() age.IteratorLike[byte] {
-	var array = uti.CopyArray(v)
-	var class = age.IteratorClass[byte]()
-	var iterator = class.Iterator(array)
-	return iterator
+	return age.IteratorClass[byte]().Iterator(v.AsIntrinsic())
 }
 
 // Accessible[byte] Methods
@@ -177,19 +176,21 @@ func (v tag_) GetIterator() age.IteratorLike[byte] {
 func (v tag_) GetValue(
 	index uti.Index,
 ) byte {
-	var size = v.GetSize()
+	var bytes = v.AsIntrinsic()
+	var size = uti.Cardinal(len(bytes))
 	var goIndex = uti.RelativeToZeroBased(index, size)
-	return v[goIndex]
+	return bytes[goIndex]
 }
 
 func (v tag_) GetValues(
 	first uti.Index,
 	last uti.Index,
 ) Sequential[byte] {
-	var size = v.GetSize()
+	var bytes = v.AsIntrinsic()
+	var size = uti.Cardinal(len(bytes))
 	var goFirst = uti.RelativeToZeroBased(first, size)
 	var goLast = uti.RelativeToZeroBased(last, size)
-	return tag_(v[goFirst : goLast+1])
+	return tagClass().Tag(bytes[goFirst : goLast+1])
 }
 
 func (v tag_) GetIndex(
@@ -242,7 +243,7 @@ const (
 
 // Instance Structure
 
-type tag_ []byte
+type tag_ string // This type must support the "comparable" type contraint.
 
 // Class Structure
 

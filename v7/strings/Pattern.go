@@ -34,19 +34,30 @@ func PatternClass() PatternClassLike {
 func (c *patternClass_) Pattern(
 	characters []Character,
 ) PatternLike {
-	reg.MustCompile(string(characters))
-	return pattern_(characters)
+	var pattern = string(characters)
+	reg.MustCompile(pattern)
+	var source string
+	switch pattern {
+	case `^none$`:
+		source = `none`
+	case `.*`:
+		source = `any`
+	default:
+		source = stc.Quote(pattern) + "?"
+	}
+	return pattern_(source)
 }
 
 func (c *patternClass_) PatternFromSequence(
 	sequence Sequential[Character],
 ) PatternLike {
-	return pattern_(sequence.AsArray())
+	return c.Pattern(sequence.AsArray())
 }
 
 func (c *patternClass_) PatternFromString(
 	source string,
 ) PatternLike {
+
 	var matches = c.matcher_.FindStringSubmatch(source)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
@@ -55,16 +66,7 @@ func (c *patternClass_) PatternFromString(
 		)
 		panic(message)
 	}
-	switch matches[0] {
-	case "none":
-		return c.none_
-	case "any":
-		return c.any_
-	default:
-		var unquoted, _ = stc.Unquote(matches[0]) // Strip off the double quotes.
-		reg.MustCompile(unquoted)
-		return pattern_(unquoted)
-	}
+	return pattern_(source)
 }
 
 // Constant Methods
@@ -95,37 +97,41 @@ func (v pattern_) GetClass() PatternClassLike {
 }
 
 func (v pattern_) AsIntrinsic() []Character {
-	return []Character(v)
+	var pattern = string(v)
+	switch pattern {
+	case "none":
+		return []Character(`^none$`)
+	case "any":
+		return []Character(`.*`)
+	default:
+		pattern = pattern[:len(pattern)-1]     // Strip off the trailing "?".
+		var unquoted, _ = stc.Unquote(pattern) // Strip off the double quotes.
+		return []Character(unquoted)
+	}
 }
 
 func (v pattern_) AsString() string {
-	var string_ string
-	switch string(v) {
-	case `^none$`:
-		string_ = `none`
-	case `.*`:
-		string_ = `any`
-	default:
-		string_ = stc.Quote(string(v)) + "?"
-	}
-	return string_
+	return string(v)
 }
 
 func (v pattern_) AsRegexp() *reg.Regexp {
-	return reg.MustCompile(string(v))
+	var regexp = string(v.AsIntrinsic())
+	return reg.MustCompile(regexp)
 }
 
 func (v pattern_) MatchesText(
 	text string,
 ) bool {
-	var matcher = reg.MustCompile(string(v))
+	var regexp = string(v.AsIntrinsic())
+	var matcher = reg.MustCompile(regexp)
 	return matcher.MatchString(text)
 }
 
 func (v pattern_) GetMatches(
 	text string,
 ) []string {
-	var matcher = reg.MustCompile(string(v))
+	var regexp = string(v.AsIntrinsic())
+	var matcher = reg.MustCompile(regexp)
 	return matcher.FindStringSubmatch(text)
 }
 
@@ -136,7 +142,7 @@ func (v pattern_) GetMatches(
 func (v pattern_) ContainsValue(
 	value Character,
 ) bool {
-	return sli.Index(v, value) > -1
+	return sli.Index(v.AsIntrinsic(), value) > -1
 }
 
 func (v pattern_) ContainsAny(
@@ -172,21 +178,19 @@ func (v pattern_) ContainsAll(
 // Sequential[Character] Methods
 
 func (v pattern_) IsEmpty() bool {
-	return len(v) == 0
+	return len(v.AsIntrinsic()) == 0
 }
 
 func (v pattern_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v.AsArray()))
+	return uti.Cardinal(len(v.AsIntrinsic()))
 }
 
 func (v pattern_) AsArray() []Character {
-	return []Character(v)
+	return v.AsIntrinsic()
 }
 
 func (v pattern_) GetIterator() age.IteratorLike[Character] {
-	var class = age.IteratorClass[Character]()
-	var iterator = class.Iterator(v.AsArray())
-	return iterator
+	return age.IteratorClass[Character]().Iterator(v.AsIntrinsic())
 }
 
 // Accessible[Character] Methods
@@ -194,9 +198,9 @@ func (v pattern_) GetIterator() age.IteratorLike[Character] {
 func (v pattern_) GetValue(
 	index uti.Index,
 ) Character {
-	var size = v.GetSize()
+	var characters = v.AsIntrinsic()
+	var size = uti.Cardinal(len(characters))
 	var goIndex = uti.RelativeToZeroBased(index, size)
-	var characters = []Character(v)
 	return characters[goIndex]
 }
 
@@ -204,11 +208,11 @@ func (v pattern_) GetValues(
 	first uti.Index,
 	last uti.Index,
 ) Sequential[Character] {
-	var size = v.GetSize()
+	var characters = v.AsIntrinsic()
+	var size = uti.Cardinal(len(characters))
 	var goFirst = uti.RelativeToZeroBased(first, size)
 	var goLast = uti.RelativeToZeroBased(last, size)
-	var characters = []Character(v)
-	return pattern_(characters[goFirst : goLast+1])
+	return patternClass().Pattern(characters[goFirst : goLast+1])
 }
 
 func (v pattern_) GetIndex(
@@ -249,7 +253,7 @@ const (
 
 // Instance Structure
 
-type pattern_ []Character
+type pattern_ string // This type must support the "comparable" type contraint.
 
 // Class Structure
 

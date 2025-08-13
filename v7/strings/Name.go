@@ -34,13 +34,17 @@ func NameClass() NameClassLike {
 func (c *nameClass_) Name(
 	identifiers []Identifier,
 ) NameLike {
-	return name_(identifiers)
+	var source string
+	for _, identifier := range identifiers {
+		source += "/" + string(identifier)
+	}
+	return name_(source)
 }
 
 func (c *nameClass_) NameFromSequence(
 	sequence Sequential[Identifier],
 ) NameLike {
-	return name_(sequence.AsArray())
+	return c.Name(sequence.AsArray())
 }
 
 func (c *nameClass_) NameFromString(
@@ -54,13 +58,7 @@ func (c *nameClass_) NameFromString(
 		)
 		panic(message)
 	}
-	var name = matches[0]
-	var strings = sts.Split(name, "/")[1:] // Extract the identifiers.
-	var identifiers = make([]Identifier, len(strings))
-	for index, identifier := range strings {
-		identifiers[index] = Identifier(identifier)
-	}
-	return name_(identifiers)
+	return name_(source)
 }
 
 // Constant Methods
@@ -71,8 +69,8 @@ func (c *nameClass_) Concatenate(
 	first NameLike,
 	second NameLike,
 ) NameLike {
-	var firstIdentifiers = first.AsArray()
-	var secondIdentifiers = second.AsArray()
+	var firstIdentifiers = first.AsIntrinsic()
+	var secondIdentifiers = second.AsIntrinsic()
 	var allIdentifiers = make(
 		[]Identifier,
 		len(firstIdentifiers)+len(secondIdentifiers),
@@ -91,15 +89,17 @@ func (v name_) GetClass() NameClassLike {
 }
 
 func (v name_) AsIntrinsic() []Identifier {
-	return []Identifier(v)
+	var name = string(v)
+	var strings = sts.Split(name, "/")[1:] // Extract the identifiers.
+	var identifiers = make([]Identifier, len(strings))
+	for index, identifier := range strings {
+		identifiers[index] = Identifier(identifier)
+	}
+	return identifiers
 }
 
 func (v name_) AsString() string {
-	var string_ string
-	for _, identifier := range v {
-		string_ += "/" + string(identifier)
-	}
-	return string_
+	return string(v)
 }
 
 // Attribute Methods
@@ -124,7 +124,7 @@ func (v name_) CompareWith(
 func (v name_) ContainsValue(
 	value Identifier,
 ) bool {
-	return sli.Index(v, value) > -1
+	return sli.Index(v.AsIntrinsic(), value) > -1
 }
 
 func (v name_) ContainsAny(
@@ -160,22 +160,19 @@ func (v name_) ContainsAll(
 // Sequential[Identifier] Methods
 
 func (v name_) IsEmpty() bool {
-	return len(v) == 0
+	return len(v.AsIntrinsic()) == 0
 }
 
 func (v name_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v))
+	return uti.Cardinal(len(v.AsIntrinsic()))
 }
 
 func (v name_) AsArray() []Identifier {
-	return uti.CopyArray(v)
+	return v.AsIntrinsic()
 }
 
 func (v name_) GetIterator() age.IteratorLike[Identifier] {
-	var array = uti.CopyArray(v)
-	var class = age.IteratorClass[Identifier]()
-	var iterator = class.Iterator(array)
-	return iterator
+	return age.IteratorClass[Identifier]().Iterator(v.AsIntrinsic())
 }
 
 // Accessible[Identifier] Methods
@@ -183,19 +180,21 @@ func (v name_) GetIterator() age.IteratorLike[Identifier] {
 func (v name_) GetValue(
 	index uti.Index,
 ) Identifier {
-	var size = v.GetSize()
+	var identifiers = v.AsIntrinsic()
+	var size = uti.Cardinal(len(identifiers))
 	var goIndex = uti.RelativeToZeroBased(index, size)
-	return v[goIndex]
+	return identifiers[goIndex]
 }
 
 func (v name_) GetValues(
 	first uti.Index,
 	last uti.Index,
 ) Sequential[Identifier] {
-	var size = v.GetSize()
+	var identifiers = v.AsIntrinsic()
+	var size = uti.Cardinal(len(identifiers))
 	var goFirst = uti.RelativeToZeroBased(first, size)
 	var goLast = uti.RelativeToZeroBased(last, size)
-	return name_(v[goFirst : goLast+1])
+	return nameClass().Name(identifiers[goFirst : goLast+1])
 }
 
 func (v name_) GetIndex(
@@ -240,7 +239,7 @@ const (
 
 // Instance Structure
 
-type name_ []Identifier
+type name_ string // This type must support the "comparable" type contraint.
 
 // Class Structure
 
