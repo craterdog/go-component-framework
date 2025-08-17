@@ -160,6 +160,14 @@ func (c *numberClass_) Tau() NumberLike {
 	return c.tau_
 }
 
+func (c *numberClass_) Minimum() NumberLike {
+	return c.minimum_
+}
+
+func (c *numberClass_) Maximum() NumberLike {
+	return c.maximum_
+}
+
 func (c *numberClass_) Infinity() NumberLike {
 	return c.infinity_
 }
@@ -287,7 +295,7 @@ func (c *numberClass_) Remainder(
 	var p1 = cmp.Phase(first.AsIntrinsic())
 	var m2 = cmp.Abs(second.AsIntrinsic())
 	var p2 = cmp.Phase(second.AsIntrinsic())
-	var magnitude = c.lockMagnitude(mat.Remainder(m1, m2))
+	var magnitude = c.lockFloat(mat.Remainder(m1, m2))
 	var phase = c.lockPhase(p2 - p1)
 	var number = c.NumberFromPolar(magnitude, phase)
 	return number
@@ -355,31 +363,15 @@ func (v number_) AsIntrinsic() complex128 {
 	return complex128(v)
 }
 
-func (v number_) GetReal() float64 {
-	return real(v)
-}
-
-func (v number_) GetImaginary() float64 {
-	return imag(v)
-}
-
-func (v number_) GetMagnitude() float64 {
-	return numberClass().lockMagnitude(cmp.Abs(complex128(v)))
-}
-
-func (v number_) GetPhase() float64 {
-	return cmp.Phase(complex128(v))
-}
-
-// Attribute Methods
-
-// Continuous Methods
-
-func (v number_) AsString() string {
+func (v number_) AsRectangular() string {
 	var string_ string
 	switch {
 	case v.IsZero():
 		string_ = "0"
+	case v.IsMinimum():
+		string_ = "-∞"
+	case v.IsMaximum():
+		string_ = "+∞"
 	case v.IsInfinite():
 		string_ = "∞"
 	case !v.IsDefined():
@@ -403,16 +395,65 @@ func (v number_) AsString() string {
 	return string_
 }
 
+func (v number_) AsPolar() string {
+	var string_ string
+	switch {
+	case v.IsZero():
+		string_ = "0"
+	case v.IsMinimum():
+		string_ = "-∞"
+	case v.IsMaximum():
+		string_ = "+∞"
+	case v.IsInfinite():
+		string_ = "∞"
+	case !v.IsDefined():
+		string_ = "undefined"
+	default:
+		var magnitude = v.GetMagnitude()
+		var phase = v.GetPhase()
+		string_ = numberClass().stringFromFloat(magnitude)
+		if phase > 0 {
+			string_ += "e^~" + numberClass().stringFromFloat(phase) + "i"
+		}
+	}
+	return string_
+}
+
+func (v number_) GetReal() float64 {
+	return real(v)
+}
+
+func (v number_) GetImaginary() float64 {
+	return imag(v)
+}
+
+func (v number_) GetMagnitude() float64 {
+	return numberClass().lockFloat(cmp.Abs(complex128(v)))
+}
+
+func (v number_) GetPhase() float64 {
+	return cmp.Phase(complex128(v))
+}
+
+// Attribute Methods
+
+// Continuous Methods
+
+func (v number_) AsString() string {
+	return v.AsRectangular()
+}
+
 func (v number_) AsFloat() float64 {
 	return real(v)
 }
 
 func (v number_) HasMagnitude() bool {
-	return v.IsDefined() && !v.IsZero() && !v.IsInfinite()
+	return v.IsDefined() && !v.IsZero() && !v.IsMinimum() &&
+		!v.IsMaximum() && !v.IsInfinite()
 }
 
 func (v number_) IsInfinite() bool {
-	return mat.IsInf(real(v), 0) || mat.IsInf(imag(v), 0)
+	return v == numberClass().infinity_
 }
 
 func (v number_) IsDefined() bool {
@@ -420,15 +461,15 @@ func (v number_) IsDefined() bool {
 }
 
 func (v number_) IsMinimum() bool {
-	return v.GetMagnitude() == -mat.MaxFloat64
+	return v == numberClass().minimum_
 }
 
 func (v number_) IsZero() bool {
-	return real(v) == 0 && imag(v) == 0
+	return v == numberClass().zero_
 }
 
 func (v number_) IsMaximum() bool {
-	return v.GetMagnitude() == mat.MaxFloat64
+	return v == numberClass().maximum_
 }
 
 // Polarized Methods
@@ -460,16 +501,21 @@ func (c *numberClass_) complexFromMatches(matches []string) complex128 {
 		var realPart = c.floatFromString(matches[5])
 		var imaginaryPart = c.floatFromString(matches[6])
 		complex_ = complex(realPart, imaginaryPart)
-	case len(matches[8]) > 0:
-		// This is a pure real number.
-		var realPart = c.floatFromString(matches[8])
-		var imaginaryPart = 0.0
-		complex_ = complex(realPart, imaginaryPart)
 	case len(matches[7]) > 0:
 		// This is a pure imaginary number.
 		var realPart = 0.0
-		var imaginaryPart = c.floatFromString(matches[7])
+		var imaginaryPart = c.floatFromString(matches[7][:len(matches[7])-1])
 		complex_ = complex(realPart, imaginaryPart)
+	case len(matches[8]) > 0:
+		// This is a pure real number.
+		switch matches[8] {
+		case "∞", "infinity":
+			complex_ = complex(mat.Inf(0), mat.Inf(0))
+		default:
+			var realPart = c.floatFromString(matches[8])
+			var imaginaryPart = 0.0
+			complex_ = complex(realPart, imaginaryPart)
+		}
 	}
 	return complex_
 }
@@ -509,33 +555,35 @@ func (c *numberClass_) floatFromString(string_ string) float64 {
 
 // NOTE:
 // This private function uses the single precision floating point range to lock
-// a double precision magnitude onto 0, 1, -1, or ∞ if the magnitude falls
-// outside the single precision range for these values. Otherwise, the magnitude
-// is returned unchanged.
-func (c *numberClass_) lockMagnitude(magnitude float64) float64 {
-	var magnitude32 = float32(magnitude)
+// a double precision floating point value onto 0, 1, -1, or ∞ when the
+// floating point value falls outside the single precision range for these
+// values. Otherwise, the floating point value is returned unchanged.
+func (c *numberClass_) lockFloat(float float64) float64 {
+	var limited = float32(float)
 	switch {
-	case mat.Abs(magnitude) <= 1.2246467991473515e-16:
-		magnitude = 0
-	case magnitude32 == -1:
-		magnitude = -1
-	case magnitude32 == 1:
-		magnitude = 1
-	case mat.IsInf(magnitude, 0):
-		magnitude = mat.Inf(1)
+	case mat.Abs(float) <= 1.2246467991473515e-16:
+		// We must handle round-off errors for some trigonometric functions.
+		float = 0
+	case limited == -1:
+		float = -1
+	case limited == 1:
+		float = 1
+	case mat.IsInf(float, 0):
+		float = mat.Inf(1)
 	}
-	return magnitude
+	return float
 }
 
 // NOTE:
 // This private function uses the single precision floating point range to lock
-// a double precision phase onto 0, π/2, π, or 3π/2 if the phase falls outside
-// the single precision range for these values. Otherwise, the phase is returned
-// unchanged.
+// a double precision floating point phase onto 0, π/2, π, or 3π/2 when the
+// phase falls outside of the single precision range for these values.
+// Otherwise, the phase is returned unchanged.
 func (c *numberClass_) lockPhase(phase float64) float64 {
 	var phase32 = float32(phase)
 	switch {
 	case mat.Abs(phase) <= 1.2246467991473515e-16:
+		// We must handle round-off errors for some trigonometric functions.
 		phase = 0
 	case phase32 == float32(0.5*mat.Pi):
 		phase = 0.5 * mat.Pi
@@ -551,50 +599,61 @@ func (c *numberClass_) normalize(complex_ complex128) NumberLike {
 	var number NumberLike
 	switch {
 	case cmp.Abs(complex_) == 0:
-		// Normalize all versions of zero.
+		// Normalize any versions of zero.
 		number = c.zero_
+	case imag(complex_) == 0 && mat.IsInf(real(complex_), -1):
+		// Normalize any real negative infinity.
+		number = c.minimum_
+	case imag(complex_) == 0 && mat.IsInf(real(complex_), 1):
+		// Normalize any real positive infinity.
+		number = c.maximum_
 	case cmp.IsInf(complex_):
-		// Normalize any negative infinities or infinite i's.
+		// Normalize any complex infinities.
 		number = c.infinity_
 	case cmp.IsNaN(complex_):
-		// Normalize any NaN's mixed with valid numbers.
+		// Normalize any complex NaN's.
 		number = c.undefined_
 	default:
 		// Lock onto 0, -1, 1, -i, i, and ∞ if necessary.
-		var realPart = c.lockMagnitude(real(complex_))
-		var imaginaryPart = c.lockMagnitude(imag(complex_))
+		var realPart = c.lockFloat(real(complex_))
+		var imaginaryPart = c.lockFloat(imag(complex_))
 		number = number_(complex(realPart, imaginaryPart))
 	}
 	return number
 }
 
 func (c *numberClass_) stringFromFloat(float float64) string {
+	var float63 = mat.Float64frombits(mat.Float64bits(float) &^ 1)
+	var e = mat.Float64frombits(mat.Float64bits(mat.E) &^ 1)
+	var pi = mat.Float64frombits(mat.Float64bits(mat.Pi) &^ 1)
+	var phi = mat.Float64frombits(mat.Float64bits(mat.Phi) &^ 1)
+	var tau = mat.Float64frombits(mat.Float64bits(2.0*mat.Phi) &^ 1)
 	var string_ string
 	switch {
-	case float == mat.E:
+	case float63 == e:
 		string_ = "e"
-	case float == -mat.E:
+	case float63 == -e:
 		string_ = "-e"
-	case float == mat.Pi:
+	case float63 == pi:
 		string_ = "π"
-	case float == -mat.Pi:
+	case float63 == -pi:
 		string_ = "-π"
-	case float == mat.Phi:
+	case float63 == phi:
 		string_ = "φ"
-	case float == -mat.Phi:
+	case float63 == -phi:
 		string_ = "-φ"
-	case float == mat.Pi*2.0:
+	case float63 == tau:
 		string_ = "τ"
-	case float == -mat.Pi*2.0:
+	case float63 == -tau:
 		string_ = "-τ"
-	case float == mat.Inf(1):
+	case mat.IsInf(float, 1):
 		string_ = "∞"
-	case float == mat.Inf(-1):
+	case mat.IsInf(float, -1):
 		string_ = "-∞"
 	case mat.IsNaN(float):
 		string_ = "undefined"
 	default:
-		string_ = stc.FormatFloat(float, 'G', -1, 64)
+		string_ = stc.FormatFloat(float63, 'G', 15, 64)
 	}
 	return string_
 }
@@ -608,8 +667,7 @@ func (c *numberClass_) stringFromFloat(float float64) string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	amplitude_ = "(?:0" + fraction_ + "|" + ordinal_ + "(?:" + fraction_ +
-		")?|" + transcendental_ + "(?:" + exponent_ + ")?)"
+	amplitude_      = "(?:0" + fraction_ + "|" + ordinal_ + "(?:" + fraction_ + ")?(?:" + exponent_ + ")?|" + transcendental_ + ")"
 	base10_         = "[0-9]"
 	exponent_       = "E(?:" + sign_ + ")?" + ordinal_
 	float_          = "(?:" + sign_ + ")?" + amplitude_
@@ -640,8 +698,10 @@ type numberClass_ struct {
 	i_         NumberLike
 	e_         NumberLike
 	pi_        NumberLike
-	phi_       NumberLike
 	tau_       NumberLike
+	phi_       NumberLike
+	minimum_   NumberLike
+	maximum_   NumberLike
 	infinity_  NumberLike
 }
 
@@ -654,8 +714,7 @@ func numberClass() *numberClass_ {
 var numberClassReference_ = &numberClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^(" + polar_ + ")|(" + rectangular_ + ")|(" + float_ +
-			")i|(" + real_ + ")",
+		"^(" + polar_ + ")|(" + rectangular_ + ")|(" + imaginary_ + ")|(" + real_ + ")",
 	),
 	undefined_: number_(complex(mat.NaN(), mat.NaN())),
 	zero_:      number_(0),
@@ -665,5 +724,7 @@ var numberClassReference_ = &numberClass_{
 	pi_:        number_(mat.Pi),
 	tau_:       number_(2.0 * mat.Pi),
 	phi_:       number_(mat.Phi),
+	minimum_:   number_(complex(mat.Inf(-1), 0)),
+	maximum_:   number_(complex(mat.Inf(1), 0)),
 	infinity_:  number_(complex(mat.Inf(0), mat.Inf(0))),
 }

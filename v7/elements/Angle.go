@@ -47,17 +47,16 @@ func (c *angleClass_) AngleFromString(
 		)
 		panic(message)
 	}
-	var float float64
 	var match = matches[1] // Strip off the leading '~' character.
 	switch match {
 	case "pi", "π":
-		float = mat.Pi
+		return c.pi_
 	case "tau", "τ":
-		float = mat.Pi * 2.0
+		return c.tau_
 	default:
-		float, _ = stc.ParseFloat(match, 64)
+		var float, _ = stc.ParseFloat(match, 64)
+		return c.angleFromFloat(float)
 	}
-	return c.angleFromFloat(float)
 }
 
 // Constant Methods
@@ -382,7 +381,7 @@ func (c *angleClass_) stringFromAngle(angle angle_) string {
 	case c.tau_:
 		string_ = "~τ"
 	default:
-		string_ = "~" + stc.FormatFloat(float64(angle), 'G', -1, 64)
+		string_ = "~" + stc.FormatFloat(float64(angle), 'G', 15, 64)
 	}
 	return string_
 }

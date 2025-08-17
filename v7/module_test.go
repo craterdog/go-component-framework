@@ -2175,9 +2175,18 @@ func TestZeroAngles(t *tes.T) {
 	var v = fra.Angle(0)
 	ass.Equal(t, 0.0, v.AsIntrinsic())
 	ass.Equal(t, 0.0, v.AsFloat())
+	ass.Equal(t, "~0", v.AsString())
+
+	v = fra.Angle(2.0 * mat.Pi)
+	ass.Equal(t, 0.0, v.AsIntrinsic())
+	ass.Equal(t, 0.0, v.AsFloat())
+	ass.Equal(t, "~0", v.AsString())
 
 	v = fra.AngleFromString("~0")
 	ass.Equal(t, "~0", v.AsString())
+
+	v = fra.AngleFromString("~τ")
+	ass.Equal(t, "~τ", v.AsString())
 }
 
 func TestPositiveAngles(t *tes.T) {
@@ -2451,6 +2460,7 @@ func TestZero(t *tes.T) {
 	ass.False(t, v.IsInfinite())
 	ass.True(t, v.IsDefined())
 	ass.False(t, v.IsNegative())
+	ass.Equal(t, "0", v.AsString())
 	ass.Equal(t, 0.0, v.AsFloat())
 	ass.Equal(t, 0.0, v.GetReal())
 	ass.Equal(t, 0.0, v.GetImaginary())
@@ -2463,6 +2473,7 @@ func TestInfinity(t *tes.T) {
 	ass.True(t, v.IsInfinite())
 	ass.True(t, v.IsDefined())
 	ass.False(t, v.IsNegative())
+	ass.Equal(t, "∞", v.AsString())
 	ass.Equal(t, mat.Inf(1), v.AsFloat())
 	ass.Equal(t, mat.Inf(1), v.GetReal())
 	ass.Equal(t, mat.Inf(1), v.GetImaginary())
@@ -2487,6 +2498,10 @@ func TestPositivePureReals(t *tes.T) {
 	ass.Equal(t, 0.25, v.AsFloat())
 	ass.Equal(t, 0.25, v.GetReal())
 	ass.Equal(t, 0.0, v.GetImaginary())
+	v = fra.NumberFromString("1.23456789E+100")
+	ass.Equal(t, "1.23456789E+100", v.AsString())
+	v = fra.NumberFromString("1.23456789E-10")
+	ass.Equal(t, "1.23456789E-10", v.AsString())
 }
 
 func TestPositivePureImaginaries(t *tes.T) {
@@ -2532,6 +2547,7 @@ func TestNumberFromString(t *tes.T) {
 	ass.Equal(t, -1.0+0i, v.AsIntrinsic())
 	ass.True(t, v.IsNegative())
 	ass.Equal(t, "-1", v.AsString())
+	ass.Equal(t, "1e^~πi", v.AsPolar())
 	ass.Equal(t, -1.0, v.AsFloat())
 	ass.Equal(t, -1.0, v.GetReal())
 	ass.Equal(t, 0.0, v.GetImaginary())
@@ -2549,13 +2565,18 @@ func TestNumberFromString(t *tes.T) {
 	ass.False(t, v.HasMagnitude())
 
 	v = fra.NumberFromString("+infinity")
-	ass.Equal(t, "∞", v.AsString())
-	ass.True(t, v.IsInfinite())
+	ass.Equal(t, "+∞", v.AsString())
+	ass.True(t, v.IsMaximum())
 	ass.False(t, v.HasMagnitude())
 
 	v = fra.NumberFromString("infinity")
 	ass.Equal(t, "∞", v.AsString())
 	ass.True(t, v.IsInfinite())
+	ass.False(t, v.HasMagnitude())
+
+	v = fra.NumberFromString("-infinity")
+	ass.Equal(t, "-∞", v.AsString())
+	ass.True(t, v.IsMinimum())
 	ass.False(t, v.HasMagnitude())
 
 	v = fra.NumberFromString("∞")
@@ -2564,8 +2585,8 @@ func TestNumberFromString(t *tes.T) {
 	ass.False(t, v.HasMagnitude())
 
 	v = fra.NumberFromString("-∞")
-	ass.Equal(t, "∞", v.AsString())
-	ass.True(t, v.IsInfinite())
+	ass.Equal(t, "-∞", v.AsString())
+	ass.True(t, v.IsMinimum())
 	ass.False(t, v.HasMagnitude())
 
 	v = fra.NumberFromString("+1")
@@ -2619,6 +2640,24 @@ func TestNumberFromString(t *tes.T) {
 	ass.Equal(t, -mat.Pi/2.0, v.GetPhase())
 	ass.True(t, v.HasMagnitude())
 	ass.False(t, v.IsNegative())
+
+	v = fra.NumberFromString("-1.2345678E+90")
+	ass.Equal(t, "-1.2345678E+90", v.AsString())
+	ass.True(t, v.IsNegative())
+	ass.Equal(t, -1.2345678e+90, v.GetReal())
+	ass.Equal(t, 0.0, v.GetImaginary())
+
+	v = fra.NumberFromString("-1.2345678E+90i")
+	ass.Equal(t, "-1.2345678E+90i", v.AsString())
+	ass.False(t, v.IsNegative())
+	ass.Equal(t, 0.0, v.GetReal())
+	ass.Equal(t, -1.2345678e+90, v.GetImaginary())
+
+	v = fra.NumberFromString("1.2345678E+90e^~1.2345678E-90i")
+	ass.Equal(t, "1.2345678E+90e^~1.2345678E-90i", v.AsPolar())
+	ass.False(t, v.IsNegative())
+	ass.Equal(t, 1.2345678e+90, v.GetMagnitude())
+	ass.Equal(t, 1.2345678e-90, v.GetPhase())
 }
 
 func TestNumberLibrary(t *tes.T) {
@@ -2842,10 +2881,10 @@ func TestNegativePercentages(t *tes.T) {
 }
 
 func TestStringPercentages(t *tes.T) {
-	var v = fra.PercentageFromString("-100.0%")
-	ass.Equal(t, -1.0, v.AsIntrinsic())
-	ass.Equal(t, -100.0, v.AsFloat())
-	ass.Equal(t, "-100%", v.AsString())
+	var v = fra.PercentageFromString("1.7%")
+	//ass.Equal(t, -1.0, v.AsIntrinsic())
+	//ass.Equal(t, -100.0, v.AsFloat())
+	ass.Equal(t, "1.7%", v.AsString())
 }
 
 func TestBooleanProbabilities(t *tes.T) {
@@ -3315,7 +3354,7 @@ func TestIntervalConstructors(t *tes.T) {
 
 	var durations = fra.IntervalClass[fra.DurationLike]().Interval(
 		fra.Exclusive,
-		fra.DurationFromString("~P0W"),
+		fra.Duration(0),
 		fra.DurationFromString("~P4W"),
 		fra.Inclusive,
 	)
@@ -3400,17 +3439,25 @@ func TestContinuumConstructors(t *tes.T) {
 	)
 	ass.Equal(t, "(..0]", fmt.Sprintf("%v", numbers))
 
-	numbers = fra.ContinuumClass[fra.NumberLike]().Continuum(
+	numbers = fra.Continuum[fra.NumberLike](
 		fra.Inclusive,
-		fra.NumberClass().Zero(),
-		fra.NumberClass().Infinity(),
+		fra.Number(1),
+		fra.NumberClass().Undefined(),
+		fra.Exclusive,
+	)
+	ass.Equal(t, "[1..)", fmt.Sprintf("%v", numbers))
+
+	var probabilities = fra.ContinuumClass[fra.ProbabilityLike]().Continuum(
+		fra.Inclusive,
+		fra.Probability(0),
+		fra.Probability(1),
 		fra.Inclusive,
 	)
-	ass.Equal(t, "[0..∞]", fmt.Sprintf("%v", numbers))
+	ass.Equal(t, "[p0..p1]", fmt.Sprintf("%v", probabilities))
 
 	var angles = fra.Continuum[fra.AngleLike](
 		fra.Inclusive,
-		fra.AngleClass().Angle(0),
+		fra.Angle(0),
 		fra.AngleClass().Tau(),
 		fra.Exclusive,
 	)

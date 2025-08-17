@@ -278,6 +278,8 @@ type NumberClassLike interface {
 	Pi() NumberLike
 	Phi() NumberLike
 	Tau() NumberLike
+	Minimum() NumberLike
+	Maximum() NumberLike
 	Infinity() NumberLike
 
 	// Function Methods
@@ -519,6 +521,8 @@ type NumberLike interface {
 	// Principal Methods
 	GetClass() NumberClassLike
 	AsIntrinsic() complex128
+	AsRectangular() string
+	AsPolar() string
 	AsString() string
 	GetReal() float64
 	GetImaginary() float64
