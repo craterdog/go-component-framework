@@ -2540,6 +2540,11 @@ func TestNumberFromPolar(t *tes.T) {
 	ass.Equal(t, 0.0, v.GetImaginary())
 	ass.Equal(t, 1.0, v.GetMagnitude())
 	ass.Equal(t, mat.Pi, v.GetPhase())
+
+	v = fra.NumberFromString("5e^~1i")
+	ass.Equal(t, 5.0, v.GetMagnitude())
+	ass.Equal(t, 1.0, v.GetPhase())
+	ass.Equal(t, "5e^~1i", v.AsPolar())
 }
 
 func TestNumberFromString(t *tes.T) {
@@ -2558,6 +2563,11 @@ func TestNumberFromString(t *tes.T) {
 	ass.Equal(t, "-1.2-3.4i", v.AsString())
 	ass.Equal(t, -1.2, v.GetReal())
 	ass.Equal(t, -3.4, v.GetImaginary())
+
+	v = fra.NumberFromString("-π+τi")
+	ass.Equal(t, "-π+τi", v.AsString())
+	ass.Equal(t, -3.141592653589793, v.GetReal())
+	ass.Equal(t, 6.283185307179586, v.GetImaginary())
 
 	v = fra.NumberFromString("undefined")
 	ass.Equal(t, "undefined", v.AsString())

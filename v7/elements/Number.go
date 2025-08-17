@@ -385,7 +385,7 @@ func (v number_) AsRectangular() string {
 		case realPart == 0:
 			string_ = numberClass().stringFromFloat(imagPart) + "i"
 		default:
-			string_ += numberClass().stringFromFloat(realPart)
+			string_ = numberClass().stringFromFloat(realPart)
 			if imagPart > 0 {
 				string_ += "+"
 			}
@@ -626,8 +626,8 @@ func (c *numberClass_) stringFromFloat(float float64) string {
 	var float63 = mat.Float64frombits(mat.Float64bits(float) &^ 1)
 	var e = mat.Float64frombits(mat.Float64bits(mat.E) &^ 1)
 	var pi = mat.Float64frombits(mat.Float64bits(mat.Pi) &^ 1)
+	var tau = mat.Float64frombits(mat.Float64bits(2.0*mat.Pi) &^ 1)
 	var phi = mat.Float64frombits(mat.Float64bits(mat.Phi) &^ 1)
-	var tau = mat.Float64frombits(mat.Float64bits(2.0*mat.Phi) &^ 1)
 	var string_ string
 	switch {
 	case float63 == e:
@@ -675,7 +675,7 @@ const (
 	imaginary_      = float_ + "i"
 	infinity_       = "(?:" + sign_ + ")?(?:infinity|∞)"
 	ordinal_        = "[1-9](?:" + base10_ + ")*"
-	polar_          = "(" + amplitude_ + ")e\\^(?:~(0|" + amplitude_ + "))?i"
+	polar_          = "(" + amplitude_ + ")e\\^~(" + amplitude_ + ")i"
 	real_           = float_ + "|0|" + infinity_ + "|" + undefined_
 	rectangular_    = "((?:" + sign_ + ")?" + amplitude_ + ")((?:" + sign_ + ")" + amplitude_ + ")i"
 	sign_           = "\\+|-"
