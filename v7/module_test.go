@@ -2176,30 +2176,37 @@ func TestZeroAngles(t *tes.T) {
 	ass.Equal(t, 0.0, v.AsIntrinsic())
 	ass.Equal(t, 0.0, v.AsFloat())
 	ass.Equal(t, "~0", v.AsString())
+	ass.Equal(t, v, fra.AngleClass().Zero())
 
 	v = fra.Angle(2.0 * mat.Pi)
 	ass.Equal(t, 0.0, v.AsIntrinsic())
 	ass.Equal(t, 0.0, v.AsFloat())
 	ass.Equal(t, "~0", v.AsString())
+	ass.Equal(t, v, fra.AngleClass().Zero())
 
 	v = fra.AngleFromString("~0")
 	ass.Equal(t, "~0", v.AsString())
+	ass.Equal(t, v, fra.AngleClass().Zero())
 
 	v = fra.AngleFromString("~τ")
 	ass.Equal(t, "~τ", v.AsString())
+	ass.Equal(t, v, fra.AngleClass().Tau())
 }
 
 func TestPositiveAngles(t *tes.T) {
 	var v = fra.Angle(mat.Pi)
 	ass.Equal(t, mat.Pi, v.AsFloat())
+	ass.Equal(t, v, fra.AngleClass().Pi())
 
 	v = fra.AngleFromString("~π")
 	ass.Equal(t, "~π", v.AsString())
+	ass.Equal(t, v, fra.AngleClass().Pi())
 }
 
 func TestNegativeAngles(t *tes.T) {
 	var v = fra.Angle(-mat.Pi)
 	ass.Equal(t, mat.Pi, v.AsFloat())
+	ass.Equal(t, v, fra.AngleClass().Pi())
 
 	v = fra.Angle(-mat.Pi / 2.0)
 	ass.Equal(t, 1.5*mat.Pi, v.AsFloat())
@@ -2269,6 +2276,7 @@ func TestFalseBooleans(t *tes.T) {
 	ass.False(t, v.AsIntrinsic())
 	v = fra.BooleanFromString("false")
 	ass.Equal(t, "false", v.AsString())
+	ass.Equal(t, v, fra.BooleanClass().False())
 }
 
 func TestTrueBooleans(t *tes.T) {
@@ -2277,6 +2285,7 @@ func TestTrueBooleans(t *tes.T) {
 	ass.True(t, v.AsIntrinsic())
 	v = fra.BooleanFromString("true")
 	ass.Equal(t, "true", v.AsString())
+	ass.Equal(t, v, fra.BooleanClass().True())
 }
 
 func TestBooleansLibrary(t *tes.T) {
@@ -2464,6 +2473,7 @@ func TestZero(t *tes.T) {
 	ass.Equal(t, 0.0, v.AsFloat())
 	ass.Equal(t, 0.0, v.GetReal())
 	ass.Equal(t, 0.0, v.GetImaginary())
+	ass.Equal(t, v, fra.NumberClass().Zero())
 }
 
 func TestInfinity(t *tes.T) {
@@ -2477,6 +2487,7 @@ func TestInfinity(t *tes.T) {
 	ass.Equal(t, mat.Inf(1), v.AsFloat())
 	ass.Equal(t, mat.Inf(1), v.GetReal())
 	ass.Equal(t, mat.Inf(1), v.GetImaginary())
+	ass.Equal(t, v, fra.NumberClass().Infinity())
 }
 
 func TestUndefined(t *tes.T) {
@@ -3203,8 +3214,12 @@ func TestNarrativesLibrary(t *tes.T) {
 }
 
 func TestNonePattern(t *tes.T) {
-	var v = fra.PatternFromString(`none`)
+	var v = fra.PatternClass().None()
 	ass.Equal(t, `none`, v.AsString())
+
+	v = fra.PatternFromString(`none`)
+	ass.Equal(t, `none`, v.AsString())
+	ass.Equal(t, v, fra.PatternClass().None())
 
 	var text = ""
 	ass.False(t, v.MatchesText(text))
@@ -3220,8 +3235,12 @@ func TestNonePattern(t *tes.T) {
 }
 
 func TestAnyPattern(t *tes.T) {
-	var v = fra.PatternFromString(`any`)
+	var v = fra.PatternClass().Any()
 	ass.Equal(t, `any`, v.AsString())
+
+	v = fra.PatternFromString(`any`)
+	ass.Equal(t, `any`, v.AsString())
+	ass.Equal(t, v, fra.PatternClass().Any())
 
 	var text = ""
 	ass.True(t, v.MatchesText(text))

@@ -273,6 +273,6 @@ func patternClass() *patternClass_ {
 var patternClassReference_ = &patternClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile("^" + regex_ + "|any|none"),
-	none_:    pattern_(`^none$`),
-	any_:     pattern_(`.*`),
+	none_:    pattern_(`none`),
+	any_:     pattern_(`any`),
 }
