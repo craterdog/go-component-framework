@@ -252,7 +252,7 @@ type VersionClassLike interface {
 	) bool
 	GetNextVersion(
 		current VersionLike,
-		level uti.Ordinal,
+		level uti.Cardinal,
 	) VersionLike
 	Concatenate(
 		first VersionLike,

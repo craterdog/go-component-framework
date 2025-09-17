@@ -100,11 +100,11 @@ func (c *versionClass_) IsValidNextVersion(
 
 func (c *versionClass_) GetNextVersion(
 	current VersionLike,
-	level uti.Ordinal,
+	level uti.Cardinal,
 ) VersionLike {
 	// Adjust the size of the ordinals as needed.
 	var ordinals = current.AsArray()
-	var size = uti.Ordinal(len(ordinals))
+	var size = uti.Cardinal(len(ordinals))
 	switch {
 	case level == 0:
 		level = size // Normalize the level to the current size.
