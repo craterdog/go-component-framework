@@ -1377,7 +1377,7 @@ func TestCatalogsWithPrimitivesAndStrings(t *tes.T) {
 	catalog.SetValue(binary, binaryString)
 	ass.Equal(t, catalog.GetValue(binary), binary.AsString())
 
-	var nameString = "/foo/bar"
+	var nameString = "/foo/5bar"
 	var name = fra.NameFromString(nameString)
 	catalog.SetValue(name, nameString)
 	ass.Equal(t, catalog.GetValue(name), name.AsString())
@@ -3137,12 +3137,12 @@ func TestBinaryLibrary(t *tes.T) {
 }
 
 func TestName(t *tes.T) {
-	var v1 = fra.NameFromString("/bali-nebula/types/abstractions/String")
-	ass.Equal(t, "/bali-nebula/types/abstractions/String", v1.AsString())
+	var v1 = fra.NameFromString("/bali-nebula/types/abstractions/5String")
+	ass.Equal(t, "/bali-nebula/types/abstractions/5String", v1.AsString())
 	ass.False(t, v1.IsEmpty())
 	ass.Equal(t, 4, int(v1.GetSize()))
 	ass.Equal(t, fra.Identifier("bali-nebula"), v1.GetValue(1))
-	ass.Equal(t, fra.Identifier("String"), v1.GetValue(-1))
+	ass.Equal(t, fra.Identifier("5String"), v1.GetValue(-1))
 	var v2 = fra.Name(v1.AsArray())
 	ass.Equal(t, v1.AsString(), v2.AsString())
 	var v3 = fra.NameFromSequence(v1.GetValues(1, 2))
