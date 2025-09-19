@@ -111,6 +111,20 @@ func (c *numberClass_) NumberFromRectangular(
 	return c.normalize(complex_)
 }
 
+func (c *numberClass_) NumberFromInteger(
+	integer int,
+) NumberLike {
+	var complex_ = complex(float64(integer), 0)
+	return c.normalize(complex_)
+}
+
+func (c *numberClass_) NumberFromFloat(
+	float float64,
+) NumberLike {
+	var complex_ = complex(float, 0)
+	return c.normalize(complex_)
+}
+
 func (c *numberClass_) NumberFromString(
 	source string,
 ) NumberLike {

@@ -609,6 +609,22 @@ func NumberFromRectangular(
 	)
 }
 
+func NumberFromInteger(
+	integer int,
+) NumberLike {
+	return NumberClass().NumberFromInteger(
+		integer,
+	)
+}
+
+func NumberFromFloat(
+	float float64,
+) NumberLike {
+	return NumberClass().NumberFromFloat(
+		float,
+	)
+}
+
 func NumberFromString(
 	source string,
 ) NumberLike {

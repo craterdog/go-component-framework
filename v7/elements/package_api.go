@@ -265,6 +265,12 @@ type NumberClassLike interface {
 		real_ float64,
 		imaginary float64,
 	) NumberLike
+	NumberFromInteger(
+		integer int,
+	) NumberLike
+	NumberFromFloat(
+		float float64,
+	) NumberLike
 	NumberFromString(
 		source string,
 	) NumberLike
@@ -638,6 +644,16 @@ type Factored interface {
 	GetWeeks() int
 	GetMonths() int
 	GetYears() int
+}
+
+/*
+Numeric is an aspect interface that defines a set of method signatures
+that must be supported by each instance of a numeric class.
+*/
+type Numeric interface {
+	uint | uint8 | uint16 | uint32 | uint64 |
+		int | int8 | int16 | int32 | int64 |
+		float32 | float64
 }
 
 /*

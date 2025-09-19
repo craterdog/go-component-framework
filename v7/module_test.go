@@ -2509,6 +2509,12 @@ func TestPositivePureReals(t *tes.T) {
 	ass.Equal(t, 0.25, v.AsFloat())
 	ass.Equal(t, 0.25, v.GetReal())
 	ass.Equal(t, 0.0, v.GetImaginary())
+	var integer = 5
+	v = fra.NumberFromInteger(integer)
+	ass.Equal(t, 5.0, v.AsFloat())
+	var float = 5.0
+	v = fra.NumberFromFloat(float)
+	ass.Equal(t, 5.0, v.AsFloat())
 	v = fra.NumberFromString("1.23456789E+100")
 	ass.Equal(t, "1.23456789E+100", v.AsString())
 	v = fra.NumberFromString("1.23456789E-10")
