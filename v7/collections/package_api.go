@@ -36,7 +36,6 @@ package collections
 import (
 	age "github.com/craterdog/go-component-framework/v7/agents"
 	str "github.com/craterdog/go-component-framework/v7/strings"
-	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
 // TYPE DECLARATIONS
@@ -179,7 +178,7 @@ type QueueClassLike[V any] interface {
 	// Constructor Methods
 	Queue() QueueLike[V]
 	QueueWithCapacity(
-		capacity uti.Cardinal,
+		capacity uint,
 	) QueueLike[V]
 	QueueFromArray(
 		values []V,
@@ -192,12 +191,12 @@ type QueueClassLike[V any] interface {
 	Fork(
 		group Synchronized,
 		input QueueLike[V],
-		size uti.Cardinal,
+		size uint,
 	) str.Sequential[QueueLike[V]]
 	Split(
 		group Synchronized,
 		input QueueLike[V],
-		size uti.Cardinal,
+		size uint,
 	) str.Sequential[QueueLike[V]]
 	Join(
 		group Synchronized,
@@ -273,7 +272,7 @@ type StackClassLike[V any] interface {
 	// Constructor Methods
 	Stack() StackLike[V]
 	StackWithCapacity(
-		capacity uti.Cardinal,
+		capacity uint,
 	) StackLike[V]
 	StackFromArray(
 		values []V,
@@ -345,7 +344,7 @@ type QueueLike[V any] interface {
 	GetClass() QueueClassLike[V]
 
 	// Attribute Methods
-	GetCapacity() uti.Cardinal
+	GetCapacity() uint
 
 	// Aspect Interfaces
 	Fifo[V]
@@ -381,7 +380,7 @@ type StackLike[V any] interface {
 	GetClass() StackClassLike[V]
 
 	// Attribute Methods
-	GetCapacity() uti.Cardinal
+	GetCapacity() uint
 
 	// Aspect Interfaces
 	Lifo[V]
@@ -477,11 +476,11 @@ class.
 */
 type Malleable[V any] interface {
 	InsertValue(
-		slot age.Slot,
+		slot uint,
 		value V,
 	)
 	InsertValues(
-		slot age.Slot,
+		slot uint,
 		values str.Sequential[V],
 	)
 	AppendValue(
@@ -491,11 +490,11 @@ type Malleable[V any] interface {
 		values str.Sequential[V],
 	)
 	RemoveValue(
-		index uti.Index,
+		index int,
 	) V
 	RemoveValues(
-		first uti.Index,
-		last uti.Index,
+		first int,
+		last int,
 	) str.Sequential[V]
 	RemoveAll()
 }
@@ -536,11 +535,11 @@ class.
 */
 type Updatable[V any] interface {
 	SetValue(
-		index uti.Index,
+		index int,
 		value V,
 	)
 	SetValues(
-		index uti.Index,
+		index int,
 		values str.Sequential[V],
 	)
 }

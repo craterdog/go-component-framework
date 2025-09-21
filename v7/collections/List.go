@@ -81,29 +81,29 @@ func (v *list_[V]) GetClass() ListClassLike[V] {
 // Accessible[V] Methods
 
 func (v *list_[V]) GetValue(
-	index uti.Index,
+	index int,
 ) V {
 	var size = v.GetSize()
-	var goIndex = uti.RelativeToZeroBased(index, size)
+	var goIndex = uti.RelativeToCardinal(index, size)
 	var value = v.array_[goIndex]
 	return value
 }
 
 func (v *list_[V]) GetValues(
-	first uti.Index,
-	last uti.Index,
+	first int,
+	last int,
 ) str.Sequential[V] {
 	var size = v.GetSize()
-	var goFirst = uti.RelativeToZeroBased(first, size)
-	var goLast = uti.RelativeToZeroBased(last, size) + 1
+	var goFirst = uti.RelativeToCardinal(first, size)
+	var goLast = uti.RelativeToCardinal(last, size) + 1
 	var values = listClass[V]().ListFromArray(v.array_[goFirst:goLast])
 	return values
 }
 
 func (v *list_[V]) GetIndex(
 	value V,
-) uti.Index {
-	var index uti.Index
+) uint {
+	var index uint
 	var collatorClass = age.CollatorClass[V]()
 	var compare = collatorClass.Collator().CompareValues
 	var iterator = v.GetIterator()
@@ -122,7 +122,7 @@ func (v *list_[V]) GetIndex(
 // Malleable[V] Methods
 
 func (v *list_[V]) InsertValue(
-	slot age.Slot,
+	slot uint,
 	value V,
 ) {
 	// Create a new larger array.
@@ -140,7 +140,7 @@ func (v *list_[V]) InsertValue(
 }
 
 func (v *list_[V]) InsertValues(
-	slot age.Slot,
+	slot uint,
 	values str.Sequential[V],
 ) {
 	// Create a new larger array.
@@ -191,11 +191,11 @@ func (v *list_[V]) AppendValues(
 }
 
 func (v *list_[V]) RemoveValue(
-	index uti.Index,
+	index int,
 ) V {
 	// Convert to zero-based index.
 	var size = v.GetSize()
-	var goIndex = uti.RelativeToZeroBased(index, size)
+	var goIndex = uti.RelativeToCardinal(index, size)
 
 	// Create a new smaller array.
 	size--
@@ -212,14 +212,14 @@ func (v *list_[V]) RemoveValue(
 }
 
 func (v *list_[V]) RemoveValues(
-	first uti.Index,
-	last uti.Index,
+	first int,
+	last int,
 ) str.Sequential[V] {
 	// Create two smaller arrays.
 	var size = v.GetSize()
-	var goFirst = uti.RelativeToZeroBased(first, size)
-	var goLast = uti.RelativeToZeroBased(last, size) + 1
-	var delta = uti.Cardinal(goLast - goFirst)
+	var goFirst = uti.RelativeToCardinal(first, size)
+	var goLast = uti.RelativeToCardinal(last, size) + 1
+	var delta = uint(goLast - goFirst)
 	size -= delta
 	var array = make([]V, size)
 	var removed = make([]V, delta)
@@ -285,8 +285,8 @@ func (v *list_[V]) IsEmpty() bool {
 	return len(v.array_) == 0
 }
 
-func (v *list_[V]) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v.array_))
+func (v *list_[V]) GetSize() uint {
+	return uint(len(v.array_))
 }
 
 func (v *list_[V]) AsArray() []V {
@@ -332,20 +332,20 @@ func (v *list_[V]) ShuffleValues() {
 // Updatable[V] Methods
 
 func (v *list_[V]) SetValue(
-	index uti.Index,
+	index int,
 	value V,
 ) {
 	var size = v.GetSize()
-	var goIndex = uti.RelativeToZeroBased(index, size)
+	var goIndex = uti.RelativeToCardinal(index, size)
 	v.array_[goIndex] = value
 }
 
 func (v *list_[V]) SetValues(
-	index uti.Index,
+	index int,
 	values str.Sequential[V],
 ) {
 	var size = v.GetSize()
-	var goIndex = uti.RelativeToZeroBased(index, size)
+	var goIndex = uti.RelativeToCardinal(index, size)
 	var newValues = values.AsArray()
 	copy(v.array_[goIndex:], newValues)
 }

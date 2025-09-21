@@ -36,7 +36,6 @@ import (
 	ele "github.com/craterdog/go-component-framework/v7/elements"
 	ran "github.com/craterdog/go-component-framework/v7/ranges"
 	str "github.com/craterdog/go-component-framework/v7/strings"
-	uti "github.com/craterdog/go-missing-utilities/v7"
 	uri "net/url"
 )
 
@@ -47,7 +46,6 @@ import (
 type (
 	Event       = age.Event
 	Rank        = age.Rank
-	Slot        = age.Slot
 	State       = age.State
 	Transitions = age.Transitions
 )
@@ -232,7 +230,7 @@ func Collator[V any]() CollatorLike[V] {
 }
 
 func CollatorWithMaximumDepth[V any](
-	maximumDepth uti.Cardinal,
+	maximumDepth uint,
 ) CollatorLike[V] {
 	return CollatorClass[V]().CollatorWithMaximumDepth(
 		maximumDepth,
@@ -380,7 +378,7 @@ func Queue[V any]() QueueLike[V] {
 }
 
 func QueueWithCapacity[V any](
-	capacity uti.Cardinal,
+	capacity uint,
 ) QueueLike[V] {
 	return QueueClass[V]().QueueWithCapacity(
 		capacity,
@@ -444,7 +442,7 @@ func Stack[V any]() StackLike[V] {
 }
 
 func StackWithCapacity[V any](
-	capacity uti.Cardinal,
+	capacity uint,
 ) StackLike[V] {
 	return StackClass[V]().StackWithCapacity(
 		capacity,
@@ -948,7 +946,7 @@ func Tag(
 }
 
 func TagWithSize(
-	size uti.Cardinal,
+	size uint,
 ) TagLike {
 	return TagClass().TagWithSize(
 		size,
@@ -976,7 +974,7 @@ func VersionClass() VersionClassLike {
 }
 
 func Version(
-	ordinals []uti.Ordinal,
+	ordinals []uint,
 ) VersionLike {
 	return VersionClass().Version(
 		ordinals,
@@ -984,7 +982,7 @@ func Version(
 }
 
 func VersionFromSequence(
-	sequence str.Sequential[uti.Ordinal],
+	sequence str.Sequential[uint],
 ) VersionLike {
 	return VersionClass().VersionFromSequence(
 		sequence,

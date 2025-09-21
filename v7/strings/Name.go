@@ -163,8 +163,8 @@ func (v name_) IsEmpty() bool {
 	return len(v.AsIntrinsic()) == 0
 }
 
-func (v name_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v.AsIntrinsic()))
+func (v name_) GetSize() uint {
+	return uint(len(v.AsIntrinsic()))
 }
 
 func (v name_) AsArray() []Identifier {
@@ -178,29 +178,29 @@ func (v name_) GetIterator() age.IteratorLike[Identifier] {
 // Accessible[Identifier] Methods
 
 func (v name_) GetValue(
-	index uti.Index,
+	index int,
 ) Identifier {
 	var identifiers = v.AsIntrinsic()
-	var size = uti.Cardinal(len(identifiers))
-	var goIndex = uti.RelativeToZeroBased(index, size)
+	var size = uint(len(identifiers))
+	var goIndex = uti.RelativeToCardinal(index, size)
 	return identifiers[goIndex]
 }
 
 func (v name_) GetValues(
-	first uti.Index,
-	last uti.Index,
+	first int,
+	last int,
 ) Sequential[Identifier] {
 	var identifiers = v.AsIntrinsic()
-	var size = uti.Cardinal(len(identifiers))
-	var goFirst = uti.RelativeToZeroBased(first, size)
-	var goLast = uti.RelativeToZeroBased(last, size)
+	var size = uint(len(identifiers))
+	var goFirst = uti.RelativeToCardinal(first, size)
+	var goLast = uti.RelativeToCardinal(last, size)
 	return nameClass().Name(identifiers[goFirst : goLast+1])
 }
 
 func (v name_) GetIndex(
 	value Identifier,
-) uti.Index {
-	var index uti.Index
+) uint {
+	var index uint
 	var iterator = v.GetIterator()
 	for iterator.HasNext() {
 		index++

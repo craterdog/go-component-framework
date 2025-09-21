@@ -34,14 +34,14 @@ func TagClass() TagClassLike {
 func (c *tagClass_) Tag(
 	bytes []byte,
 ) TagLike {
-	c.validateSize(uti.Cardinal(len(bytes)))
+	c.validateSize(uint(len(bytes)))
 	var encoder = age.EncoderClass().Encoder()
 	var encoded = encoder.Base32Encode(bytes)
 	return tag_("#" + encoded)
 }
 
 func (c *tagClass_) TagWithSize(
-	size uti.Cardinal,
+	size uint,
 ) TagLike {
 	c.validateSize(size)
 	var generator = age.GeneratorClass().Generator()
@@ -53,7 +53,7 @@ func (c *tagClass_) TagFromSequence(
 	sequence Sequential[byte],
 ) TagLike {
 	var bytes = sequence.AsArray()
-	c.validateSize(uti.Cardinal(len(bytes)))
+	c.validateSize(uint(len(bytes)))
 	return c.Tag(bytes)
 }
 
@@ -159,8 +159,8 @@ func (v tag_) IsEmpty() bool {
 	return len(v.AsIntrinsic()) == 0
 }
 
-func (v tag_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v.AsIntrinsic()))
+func (v tag_) GetSize() uint {
+	return uint(len(v.AsIntrinsic()))
 }
 
 func (v tag_) AsArray() []byte {
@@ -174,29 +174,29 @@ func (v tag_) GetIterator() age.IteratorLike[byte] {
 // Accessible[byte] Methods
 
 func (v tag_) GetValue(
-	index uti.Index,
+	index int,
 ) byte {
 	var bytes = v.AsIntrinsic()
-	var size = uti.Cardinal(len(bytes))
-	var goIndex = uti.RelativeToZeroBased(index, size)
+	var size = uint(len(bytes))
+	var goIndex = uti.RelativeToCardinal(index, size)
 	return bytes[goIndex]
 }
 
 func (v tag_) GetValues(
-	first uti.Index,
-	last uti.Index,
+	first int,
+	last int,
 ) Sequential[byte] {
 	var bytes = v.AsIntrinsic()
-	var size = uti.Cardinal(len(bytes))
-	var goFirst = uti.RelativeToZeroBased(first, size)
-	var goLast = uti.RelativeToZeroBased(last, size)
+	var size = uint(len(bytes))
+	var goFirst = uti.RelativeToCardinal(first, size)
+	var goLast = uti.RelativeToCardinal(last, size)
 	return tagClass().Tag(bytes[goFirst : goLast+1])
 }
 
 func (v tag_) GetIndex(
 	value byte,
-) uti.Index {
-	var index uti.Index
+) uint {
+	var index uint
 	var iterator = v.GetIterator()
 	for iterator.HasNext() {
 		index++
@@ -219,7 +219,7 @@ func (v tag_) String() string {
 // Private Methods
 
 func (c *tagClass_) validateSize(
-	size uti.Cardinal,
+	size uint,
 ) {
 	if size < 8 {
 		var message = fmt.Sprintf(

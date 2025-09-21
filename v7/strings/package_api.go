@@ -32,7 +32,6 @@ package strings
 
 import (
 	age "github.com/craterdog/go-component-framework/v7/agents"
-	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
 )
 
@@ -212,7 +211,7 @@ type TagClassLike interface {
 		bytes []byte,
 	) TagLike
 	TagWithSize(
-		size uti.Cardinal,
+		size uint,
 	) TagLike
 	TagFromSequence(
 		sequence Sequential[byte],
@@ -236,10 +235,10 @@ version-like concrete class.
 type VersionClassLike interface {
 	// Constructor Methods
 	Version(
-		ordinals []uti.Ordinal,
+		ordinals []uint,
 	) VersionLike
 	VersionFromSequence(
-		sequence Sequential[uti.Ordinal],
+		sequence Sequential[uint],
 	) VersionLike
 	VersionFromString(
 		source string,
@@ -252,7 +251,7 @@ type VersionClassLike interface {
 	) bool
 	GetNextVersion(
 		current VersionLike,
-		level uti.Cardinal,
+		level uint,
 	) VersionLike
 	Concatenate(
 		first VersionLike,
@@ -382,13 +381,13 @@ concrete version-like class.
 type VersionLike interface {
 	// Principal Methods
 	GetClass() VersionClassLike
-	AsIntrinsic() []uti.Ordinal
+	AsIntrinsic() []uint
 	AsString() string
 
 	// Aspect Interfaces
-	Accessible[uti.Ordinal]
-	Searchable[uti.Ordinal]
-	Sequential[uti.Ordinal]
+	Accessible[uint]
+	Searchable[uint]
+	Sequential[uint]
 	Spectral[VersionLike]
 }
 
@@ -416,15 +415,15 @@ indices are symmetrical.
 */
 type Accessible[V any] interface {
 	GetValue(
-		index uti.Index,
+		index int,
 	) V
 	GetValues(
-		first uti.Index,
-		last uti.Index,
+		first int,
+		last int,
 	) Sequential[V]
 	GetIndex(
 		value V,
-	) uti.Index
+	) uint
 }
 
 /*
@@ -451,7 +450,7 @@ class.
 */
 type Sequential[V any] interface {
 	IsEmpty() bool
-	GetSize() uti.Cardinal
+	GetSize() uint
 	AsArray() []V
 	GetIterator() age.IteratorLike[V]
 }

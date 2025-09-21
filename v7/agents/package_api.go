@@ -29,9 +29,7 @@ on interfaces, not on each other.
 */
 package agents
 
-import (
-	uti "github.com/craterdog/go-missing-utilities/v7"
-)
+import ()
 
 // TYPE DECLARATIONS
 
@@ -52,11 +50,6 @@ const (
 	EqualRank
 	GreaterRank
 )
-
-/*
-Slot is a constrained type representing a slot between values in a sequence.
-*/
-type Slot uint
 
 /*
 State is a constrained type representing a state in a state machine.  Using a
@@ -97,7 +90,7 @@ type CollatorClassLike[V any] interface {
 	// Constructor Methods
 	Collator() CollatorLike[V]
 	CollatorWithMaximumDepth(
-		maximumDepth uti.Cardinal,
+		maximumDepth uint,
 	) CollatorLike[V]
 }
 
@@ -237,7 +230,7 @@ type CollatorLike[V any] interface {
 	) Rank
 
 	// Attribute Methods
-	GetMaximumDepth() uti.Cardinal
+	GetMaximumDepth() uint
 }
 
 /*
@@ -299,11 +292,11 @@ type GeneratorLike interface {
 	GetClass() GeneratorClassLike
 	RandomBoolean() bool
 	RandomOrdinal(
-		maximum uti.Ordinal,
-	) uti.Ordinal
+		maximum uint,
+	) uint
 	RandomProbability() float64
 	RandomBytes(
-		size uti.Cardinal,
+		size uint,
 	) []byte
 }
 
@@ -324,10 +317,10 @@ type IteratorLike[V any] interface {
 	GetNext() V
 
 	// Attribute Methods
-	GetSize() uti.Cardinal
-	GetSlot() Slot
+	GetSize() uint
+	GetSlot() uint
 	SetSlot(
-		slot Slot,
+		slot uint,
 	)
 }
 

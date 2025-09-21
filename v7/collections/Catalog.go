@@ -201,7 +201,7 @@ func (v *catalog_[K, V]) RemoveValue(
 	var association, exists = v.keys_[key]
 	if exists {
 		var index = v.associations_.GetIndex(association)
-		v.associations_.RemoveValue(index)
+		v.associations_.RemoveValue(int(index))
 		old = association.GetValue()
 		delete(v.keys_, key)
 	}
@@ -232,7 +232,7 @@ func (v *catalog_[K, V]) IsEmpty() bool {
 	return v.associations_.IsEmpty()
 }
 
-func (v *catalog_[K, V]) GetSize() uti.Cardinal {
+func (v *catalog_[K, V]) GetSize() uint {
 	var size = v.associations_.GetSize()
 	return size
 }

@@ -141,15 +141,15 @@ func (v *set_[V]) GetCollator() age.CollatorLike[V] {
 // Accessible[V] Methods
 
 func (v *set_[V]) GetValue(
-	index uti.Index,
+	index int,
 ) V {
 	var value = v.values_.GetValue(index)
 	return value
 }
 
 func (v *set_[V]) GetValues(
-	first uti.Index,
-	last uti.Index,
+	first int,
+	last int,
 ) str.Sequential[V] {
 	var values = v.values_.GetValues(first, last)
 	return values
@@ -157,7 +157,7 @@ func (v *set_[V]) GetValues(
 
 func (v *set_[V]) GetIndex(
 	value V,
-) uti.Index {
+) uint {
 	var index, found = v.findIndex(value)
 	if !found {
 		return 0
@@ -170,10 +170,9 @@ func (v *set_[V]) GetIndex(
 func (v *set_[V]) AddValue(
 	value V,
 ) {
-	var index, found = v.findIndex(value)
+	var slot, found = v.findIndex(value)
 	if !found {
 		// The value is not already a member, so add it.
-		var slot = age.Slot(index)
 		v.values_.InsertValue(slot, value)
 	}
 }
@@ -194,7 +193,7 @@ func (v *set_[V]) RemoveValue(
 	var index, found = v.findIndex(value)
 	if found {
 		// The value is a member, so remove it.
-		v.values_.RemoveValue(index)
+		v.values_.RemoveValue(int(index))
 	}
 }
 
@@ -257,7 +256,7 @@ func (v *set_[V]) IsEmpty() bool {
 	return v.values_.IsEmpty()
 }
 
-func (v *set_[V]) GetSize() uti.Cardinal {
+func (v *set_[V]) GetSize() uint {
 	var size = v.values_.GetSize()
 	return size
 }
@@ -287,18 +286,18 @@ func (v *set_[V]) String() string {
 //   - found: A boolean stating whether or not the value was found.
 //
 // The algorithm performs a true O[log(n)] worst case search.
-func (v *set_[V]) findIndex(value V) (index uti.Index, found bool) {
+func (v *set_[V]) findIndex(value V) (index uint, found bool) {
 	// We use iteration instead of recursion for better performance.
 	//    start        first      middle       last          end
 	//    |-------------||----------||----------||-------------|
 	//                  |<-- size -------------->|
 	//
-	var first uti.Index = 1           // Start at the beginning.
-	var last = uti.Index(v.GetSize()) // End at the end.
-	var size = last                   // Initially all values are candidates.
+	var first uint = 1     // Start at the beginning.
+	var last = v.GetSize() // End at the end.
+	var size = last        // Initially all values are candidates.
 	for size > 0 {
 		var middle = first + size/2 // Rounds down to the nearest integer.
-		var candidate = v.GetValue(middle)
+		var candidate = v.GetValue(int(middle))
 		switch v.collator_.RankValues(value, candidate) {
 		case age.LesserRank:
 			// The index of the value is less than the middle

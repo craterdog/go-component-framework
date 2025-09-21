@@ -42,7 +42,7 @@ func (c *stackClass_[V]) Stack() StackLike[V] {
 }
 
 func (c *stackClass_[V]) StackWithCapacity(
-	capacity uti.Cardinal,
+	capacity uint,
 ) StackLike[V] {
 	if capacity < 1 {
 		capacity = c.defaultCapacity_
@@ -97,7 +97,7 @@ func (v *stack_[V]) GetClass() StackClassLike[V] {
 
 // Attribute Methods
 
-func (v *stack_[V]) GetCapacity() uti.Cardinal {
+func (v *stack_[V]) GetCapacity() uint {
 	return v.capacity_
 }
 
@@ -138,7 +138,7 @@ func (v *stack_[V]) IsEmpty() bool {
 	return v.values_.IsEmpty()
 }
 
-func (v *stack_[V]) GetSize() uti.Cardinal {
+func (v *stack_[V]) GetSize() uint {
 	var size = v.values_.GetSize()
 	return size
 }
@@ -165,7 +165,7 @@ func (v *stack_[V]) String() string {
 
 type stack_[V any] struct {
 	// Declare the instance attributes.
-	capacity_ uti.Cardinal
+	capacity_ uint
 	values_   ListLike[V]
 }
 
@@ -173,7 +173,7 @@ type stack_[V any] struct {
 
 type stackClass_[V any] struct {
 	// Declare the class constants.
-	defaultCapacity_ uti.Cardinal
+	defaultCapacity_ uint
 }
 
 // Class Reference

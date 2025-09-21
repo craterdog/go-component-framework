@@ -36,7 +36,7 @@ func (c *queueClass_[V]) Queue() QueueLike[V] {
 }
 
 func (c *queueClass_[V]) QueueWithCapacity(
-	capacity uti.Cardinal,
+	capacity uint,
 ) QueueLike[V] {
 	if capacity < 1 {
 		capacity = 16 // This is the default capacity.
@@ -84,7 +84,7 @@ func (c *queueClass_[V]) QueueFromSequence(
 func (c *queueClass_[V]) Fork(
 	group Synchronized,
 	input QueueLike[V],
-	size uti.Cardinal,
+	size uint,
 ) str.Sequential[QueueLike[V]] {
 	// Validate the arguments.
 	if size < 2 {
@@ -95,8 +95,8 @@ func (c *queueClass_[V]) Fork(
 	var capacity = input.GetCapacity()
 	var listClass = ListClass[QueueLike[V]]()
 	var outputs = listClass.List()
-	var i uti.Cardinal
-	for ; i < size; i++ {
+	var counter uint
+	for ; counter < size; counter++ {
 		outputs.AppendValue(c.QueueWithCapacity(capacity))
 	}
 
@@ -137,7 +137,7 @@ func (c *queueClass_[V]) Fork(
 func (c *queueClass_[V]) Split(
 	group Synchronized,
 	input QueueLike[V],
-	size uti.Cardinal,
+	size uint,
 ) str.Sequential[QueueLike[V]] {
 	// Validate the arguments.
 	if size < 2 {
@@ -148,8 +148,8 @@ func (c *queueClass_[V]) Split(
 	var capacity = input.GetCapacity()
 	var listClass = ListClass[QueueLike[V]]()
 	var outputs = listClass.List()
-	var i uti.Cardinal
-	for ; i < size; i++ {
+	var counter uint
+	for ; counter < size; counter++ {
 		outputs.AppendValue(c.QueueWithCapacity(capacity))
 	}
 
@@ -238,7 +238,7 @@ func (v *queue_[V]) GetClass() QueueClassLike[V] {
 
 // Attribute Methods
 
-func (v *queue_[V]) GetCapacity() uti.Cardinal {
+func (v *queue_[V]) GetCapacity() uint {
 	return v.capacity_
 }
 
@@ -291,9 +291,9 @@ func (v *queue_[V]) IsEmpty() bool {
 	return result
 }
 
-func (v *queue_[V]) GetSize() uti.Cardinal {
+func (v *queue_[V]) GetSize() uint {
 	v.mutex_.Lock()
-	var size = uti.Cardinal(len(v.available_))
+	var size = uint(len(v.available_))
 	v.mutex_.Unlock()
 	return size
 }
@@ -330,7 +330,7 @@ func (v *queue_[V]) String() string {
 type queue_[V any] struct {
 	// Declare the instance attributes.
 	available_ chan bool
-	capacity_  uti.Cardinal
+	capacity_  uint
 	mutex_     syn.Mutex
 	values_    ListLike[V]
 }

@@ -1,10 +1,10 @@
 module github.com/craterdog/go-component-framework/v7
 
-go 1.24
+go 1.25
 
 require (
-	github.com/craterdog/go-missing-utilities/v7 v7.13.0
-	github.com/stretchr/testify v1.10.0
+	github.com/craterdog/go-missing-utilities/v7 v7.15.0
+	github.com/stretchr/testify v1.11.1
 )
 
 require (

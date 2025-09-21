@@ -181,8 +181,8 @@ func (v pattern_) IsEmpty() bool {
 	return len(v.AsIntrinsic()) == 0
 }
 
-func (v pattern_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v.AsIntrinsic()))
+func (v pattern_) GetSize() uint {
+	return uint(len(v.AsIntrinsic()))
 }
 
 func (v pattern_) AsArray() []Character {
@@ -196,29 +196,29 @@ func (v pattern_) GetIterator() age.IteratorLike[Character] {
 // Accessible[Character] Methods
 
 func (v pattern_) GetValue(
-	index uti.Index,
+	index int,
 ) Character {
 	var characters = v.AsIntrinsic()
-	var size = uti.Cardinal(len(characters))
-	var goIndex = uti.RelativeToZeroBased(index, size)
+	var size = uint(len(characters))
+	var goIndex = uti.RelativeToCardinal(index, size)
 	return characters[goIndex]
 }
 
 func (v pattern_) GetValues(
-	first uti.Index,
-	last uti.Index,
+	first int,
+	last int,
 ) Sequential[Character] {
 	var characters = v.AsIntrinsic()
-	var size = uti.Cardinal(len(characters))
-	var goFirst = uti.RelativeToZeroBased(first, size)
-	var goLast = uti.RelativeToZeroBased(last, size)
+	var size = uint(len(characters))
+	var goFirst = uti.RelativeToCardinal(first, size)
+	var goLast = uti.RelativeToCardinal(last, size)
 	return patternClass().Pattern(characters[goFirst : goLast+1])
 }
 
 func (v pattern_) GetIndex(
 	value Character,
-) uti.Index {
-	var index uti.Index
+) uint {
+	var index uint
 	var iterator = v.GetIterator()
 	for iterator.HasNext() {
 		index++

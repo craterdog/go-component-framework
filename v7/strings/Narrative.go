@@ -162,8 +162,8 @@ func (v narrative_) IsEmpty() bool {
 	return len(v.AsIntrinsic()) == 0
 }
 
-func (v narrative_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v.AsIntrinsic()))
+func (v narrative_) GetSize() uint {
+	return uint(len(v.AsIntrinsic()))
 }
 
 func (v narrative_) AsArray() []Line {
@@ -177,29 +177,29 @@ func (v narrative_) GetIterator() age.IteratorLike[Line] {
 // Accessible[Line] Methods
 
 func (v narrative_) GetValue(
-	index uti.Index,
+	index int,
 ) Line {
 	var lines = v.AsIntrinsic()
-	var size = uti.Cardinal(len(lines))
-	var goIndex = uti.RelativeToZeroBased(index, size)
+	var size = uint(len(lines))
+	var goIndex = uti.RelativeToCardinal(index, size)
 	return lines[goIndex]
 }
 
 func (v narrative_) GetValues(
-	first uti.Index,
-	last uti.Index,
+	first int,
+	last int,
 ) Sequential[Line] {
 	var lines = v.AsIntrinsic()
-	var size = uti.Cardinal(len(lines))
-	var goFirst = uti.RelativeToZeroBased(first, size)
-	var goLast = uti.RelativeToZeroBased(last, size)
+	var size = uint(len(lines))
+	var goFirst = uti.RelativeToCardinal(first, size)
+	var goLast = uti.RelativeToCardinal(last, size)
 	return narrativeClass().Narrative(lines[goFirst : goLast+1])
 }
 
 func (v narrative_) GetIndex(
 	value Line,
-) uti.Index {
-	var index uti.Index
+) uint {
+	var index uint
 	var iterator = v.GetIterator()
 	for iterator.HasNext() {
 		index++

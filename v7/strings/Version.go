@@ -33,7 +33,7 @@ func VersionClass() VersionClassLike {
 // Constructor Methods
 
 func (c *versionClass_) Version(
-	ordinals []uti.Ordinal,
+	ordinals []uint,
 ) VersionLike {
 	var index = 0
 	var source = "v" + stc.Itoa(int(ordinals[index]))
@@ -44,7 +44,7 @@ func (c *versionClass_) Version(
 }
 
 func (c *versionClass_) VersionFromSequence(
-	sequence Sequential[uti.Ordinal],
+	sequence Sequential[uint],
 ) VersionLike {
 	return c.Version(sequence.AsArray())
 }
@@ -81,7 +81,7 @@ func (c *versionClass_) IsValidNextVersion(
 	}
 
 	// Iterate through the versions comparing level values.
-	var class = age.IteratorClass[uti.Ordinal]()
+	var class = age.IteratorClass[uint]()
 	var currentIterator = class.Iterator(current.AsArray())
 	var nextIterator = class.Iterator(next.AsArray())
 	for currentIterator.HasNext() && nextIterator.HasNext() {
@@ -100,11 +100,11 @@ func (c *versionClass_) IsValidNextVersion(
 
 func (c *versionClass_) GetNextVersion(
 	current VersionLike,
-	level uti.Cardinal,
+	level uint,
 ) VersionLike {
 	// Adjust the size of the ordinals as needed.
 	var ordinals = current.AsArray()
-	var size = uti.Cardinal(len(ordinals))
+	var size = uint(len(ordinals))
 	switch {
 	case level == 0:
 		level = size // Normalize the level to the current size.
@@ -133,7 +133,7 @@ func (c *versionClass_) Concatenate(
 	var firstOrdinals = first.AsArray()
 	var secondOrdinals = second.AsArray()
 	var allOrdinals = make(
-		[]uti.Ordinal,
+		[]uint,
 		len(firstOrdinals)+len(secondOrdinals),
 	)
 	copy(allOrdinals, firstOrdinals)
@@ -149,15 +149,15 @@ func (v version_) GetClass() VersionClassLike {
 	return versionClass()
 }
 
-func (v version_) AsIntrinsic() []uti.Ordinal {
+func (v version_) AsIntrinsic() []uint {
 	var version = string(v[1:]) // Strip off the leading "v".
 	var levels = sts.Split(version, ".")
-	var ordinals = make([]uti.Ordinal, len(levels))
+	var ordinals = make([]uint, len(levels))
 	for index, level := range levels {
 		var ordinal, _ = stc.ParseUint(level, 10, 64)
-		ordinals[index] = uti.Ordinal(ordinal)
+		ordinals[index] = uint(ordinal)
 	}
-	return []uti.Ordinal(ordinals)
+	return []uint(ordinals)
 }
 
 func (v version_) AsString() string {
@@ -181,16 +181,16 @@ func (v version_) CompareWith(
 	}
 }
 
-// Searchable[uti.Ordinal] Methods
+// Searchable[uint] Methods
 
 func (v version_) ContainsValue(
-	value uti.Ordinal,
+	value uint,
 ) bool {
 	return sli.Index(v.AsIntrinsic(), value) > -1
 }
 
 func (v version_) ContainsAny(
-	values Sequential[uti.Ordinal],
+	values Sequential[uint],
 ) bool {
 	var iterator = values.GetIterator()
 	for iterator.HasNext() {
@@ -205,7 +205,7 @@ func (v version_) ContainsAny(
 }
 
 func (v version_) ContainsAll(
-	values Sequential[uti.Ordinal],
+	values Sequential[uint],
 ) bool {
 	var iterator = values.GetIterator()
 	for iterator.HasNext() {
@@ -219,50 +219,50 @@ func (v version_) ContainsAll(
 	return true
 }
 
-// Sequential[uti.Ordinal] Methods
+// Sequential[uint] Methods
 
 func (v version_) IsEmpty() bool {
 	return len(v.AsIntrinsic()) == 0
 }
 
-func (v version_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v.AsIntrinsic()))
+func (v version_) GetSize() uint {
+	return uint(len(v.AsIntrinsic()))
 }
 
-func (v version_) AsArray() []uti.Ordinal {
+func (v version_) AsArray() []uint {
 	return v.AsIntrinsic()
 }
 
-func (v version_) GetIterator() age.IteratorLike[uti.Ordinal] {
-	return age.IteratorClass[uti.Ordinal]().Iterator(v.AsIntrinsic())
+func (v version_) GetIterator() age.IteratorLike[uint] {
+	return age.IteratorClass[uint]().Iterator(v.AsIntrinsic())
 }
 
-// Accessible[uti.Ordinal] Methods
+// Accessible[uint] Methods
 
 func (v version_) GetValue(
-	index uti.Index,
-) uti.Ordinal {
+	index int,
+) uint {
 	var ordinals = v.AsIntrinsic()
-	var size = uti.Cardinal(len(ordinals))
-	var goIndex = uti.RelativeToZeroBased(index, size)
+	var size = uint(len(ordinals))
+	var goIndex = uti.RelativeToCardinal(index, size)
 	return ordinals[goIndex]
 }
 
 func (v version_) GetValues(
-	first uti.Index,
-	last uti.Index,
-) Sequential[uti.Ordinal] {
+	first int,
+	last int,
+) Sequential[uint] {
 	var ordinals = v.AsIntrinsic()
-	var size = uti.Cardinal(len(ordinals))
-	var goFirst = uti.RelativeToZeroBased(first, size)
-	var goLast = uti.RelativeToZeroBased(last, size)
+	var size = uint(len(ordinals))
+	var goFirst = uti.RelativeToCardinal(first, size)
+	var goLast = uti.RelativeToCardinal(last, size)
 	return versionClass().Version(ordinals[goFirst : goLast+1])
 }
 
 func (v version_) GetIndex(
-	value uti.Ordinal,
-) uti.Index {
-	var index uti.Index
+	value uint,
+) uint {
+	var index uint
 	var iterator = v.GetIterator()
 	for iterator.HasNext() {
 		index++

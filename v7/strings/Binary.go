@@ -266,8 +266,8 @@ func (v binary_) IsEmpty() bool {
 	return len(v.AsIntrinsic()) == 0
 }
 
-func (v binary_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v.AsIntrinsic()))
+func (v binary_) GetSize() uint {
+	return uint(len(v.AsIntrinsic()))
 }
 
 func (v binary_) AsArray() []byte {
@@ -281,29 +281,29 @@ func (v binary_) GetIterator() age.IteratorLike[byte] {
 // Accessible[byte] Methods
 
 func (v binary_) GetValue(
-	index uti.Index,
+	index int,
 ) byte {
 	var bytes = v.AsIntrinsic()
-	var size = uti.Cardinal(len(bytes))
-	var goIndex = uti.RelativeToZeroBased(index, size)
+	var size = uint(len(bytes))
+	var goIndex = uti.RelativeToCardinal(index, size)
 	return bytes[goIndex]
 }
 
 func (v binary_) GetValues(
-	first uti.Index,
-	last uti.Index,
+	first int,
+	last int,
 ) Sequential[byte] {
 	var bytes = v.AsIntrinsic()
-	var size = uti.Cardinal(len(bytes))
-	var goFirst = uti.RelativeToZeroBased(first, size)
-	var goLast = uti.RelativeToZeroBased(last, size)
+	var size = uint(len(bytes))
+	var goFirst = uti.RelativeToCardinal(first, size)
+	var goLast = uti.RelativeToCardinal(last, size)
 	return binaryClass().Binary(bytes[goFirst : goLast+1])
 }
 
 func (v binary_) GetIndex(
 	value byte,
-) uti.Index {
-	var index uti.Index
+) uint {
+	var index uint
 	var iterator = v.GetIterator()
 	for iterator.HasNext() {
 		index++

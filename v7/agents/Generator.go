@@ -14,7 +14,6 @@ package agents
 
 import (
 	ran "crypto/rand"
-	uti "github.com/craterdog/go-missing-utilities/v7"
 	big "math/big"
 )
 
@@ -54,24 +53,24 @@ func (v *generator_) RandomBoolean() bool {
 }
 
 func (v *generator_) RandomOrdinal(
-	maximum uti.Ordinal,
-) uti.Ordinal {
+	maximum uint,
+) uint {
 	// A random integer is in the range [0..maximum).
 	var random, _ = ran.Int(ran.Reader, big.NewInt(int64(maximum)))
 	// Convert [0..maximum) to [1..maximum].
-	return uti.Ordinal(random.Uint64() + 1)
+	return uint(random.Uint64() + 1)
 }
 
 func (v *generator_) RandomProbability() float64 {
 	// Use 53 bits for the sign and mantissa only.
-	var maximum = uti.Ordinal(1 << 53)
+	var maximum = uint(1 << 53)
 	// A random probability is in the range (0.0..1.0] since something with
 	// zero probability will never occur so we use [1..maximum]/maximum.
 	return float64(v.RandomOrdinal(maximum)) / float64(maximum)
 }
 
 func (v *generator_) RandomBytes(
-	size uti.Cardinal,
+	size uint,
 ) []byte {
 	var bytes = make([]byte, size)
 	_, _ = ran.Read(bytes) // This call should never fail.
