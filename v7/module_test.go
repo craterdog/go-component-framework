@@ -1457,7 +1457,7 @@ func TestCatalogsWithStringsAndIntegers(t *tes.T) {
 	ass.Equal(t, association3, iterator.GetPrevious())
 	ass.True(t, iterator.HasNext())
 	ass.Equal(t, []string{"foo", "bar", "baz"}, catalog.GetKeys().AsArray())
-	ass.Equal(t, 3, int(catalog.GetValue("baz")))
+	ass.Equal(t, 3, catalog.GetValue("baz"))
 	catalog.SetValue("bar", 5)
 	ass.Equal(t, []int{1, 5}, catalog.GetValues(keys).AsArray())
 	catalog.SortValues()
@@ -1467,7 +1467,7 @@ func TestCatalogsWithStringsAndIntegers(t *tes.T) {
 	catalog.ReverseValues()
 	ass.Equal(t, []int{1, 5}, catalog.RemoveValues(keys).AsArray())
 	ass.True(t, catalog.GetSize() == 1)
-	ass.Equal(t, 3, int(catalog.RemoveValue("baz")))
+	ass.Equal(t, 3, catalog.RemoveValue("baz"))
 	ass.True(t, catalog.IsEmpty())
 	ass.True(t, catalog.GetSize() == 0)
 	catalog.RemoveAll()
@@ -2335,11 +2335,13 @@ func TestBooleansLibrary(t *tes.T) {
 
 var DurationClass = fra.DurationClass()
 
+var zero uint = 0
+var one uint = 1
+
 func TestZeroDurations(t *tes.T) {
 	var v = fra.Duration(0)
 	ass.Equal(t, 0, v.AsInteger())
-	ass.False(t, v.IsNegative())
-	ass.Equal(t, 0, v.AsIntrinsic())
+	ass.Equal(t, zero, v.AsIntrinsic())
 	ass.Equal(t, 0.0, v.AsMilliseconds())
 	ass.Equal(t, 0.0, v.AsSeconds())
 	ass.Equal(t, 0.0, v.AsMinutes())
@@ -2348,14 +2350,14 @@ func TestZeroDurations(t *tes.T) {
 	ass.Equal(t, 0.0, v.AsWeeks())
 	ass.Equal(t, 0.0, v.AsMonths())
 	ass.Equal(t, 0.0, v.AsYears())
-	ass.Equal(t, 0, v.GetMilliseconds())
-	ass.Equal(t, 0, v.GetSeconds())
-	ass.Equal(t, 0, v.GetMinutes())
-	ass.Equal(t, 0, v.GetHours())
-	ass.Equal(t, 0, v.GetDays())
-	ass.Equal(t, 0, v.GetWeeks())
-	ass.Equal(t, 0, v.GetMonths())
-	ass.Equal(t, 0, v.GetYears())
+	ass.Equal(t, zero, v.GetMilliseconds())
+	ass.Equal(t, zero, v.GetSeconds())
+	ass.Equal(t, zero, v.GetMinutes())
+	ass.Equal(t, zero, v.GetHours())
+	ass.Equal(t, zero, v.GetDays())
+	ass.Equal(t, zero, v.GetWeeks())
+	ass.Equal(t, zero, v.GetMonths())
+	ass.Equal(t, zero, v.GetYears())
 }
 
 func TestStringDurations(t *tes.T) {
@@ -2369,8 +2371,7 @@ func TestDurations(t *tes.T) {
 	var v = fra.Duration(60000)
 	ass.Equal(t, "~PT1M", v.AsString())
 	ass.Equal(t, 60000, v.AsInteger())
-	ass.False(t, v.IsNegative())
-	ass.Equal(t, 60000, v.AsIntrinsic())
+	ass.Equal(t, uint(60000), v.AsIntrinsic())
 	ass.Equal(t, 60000.0, v.AsMilliseconds())
 	ass.Equal(t, 60.0, v.AsSeconds())
 	ass.Equal(t, 1.0, v.AsMinutes())
@@ -2379,14 +2380,14 @@ func TestDurations(t *tes.T) {
 	ass.Equal(t, 9.92063492063492e-05, v.AsWeeks())
 	ass.Equal(t, 2.2815891724904232e-05, v.AsMonths())
 	ass.Equal(t, 1.9013243104086858e-06, v.AsYears())
-	ass.Equal(t, 0, v.GetMilliseconds())
-	ass.Equal(t, 0, v.GetSeconds())
-	ass.Equal(t, 1, v.GetMinutes())
-	ass.Equal(t, 0, v.GetHours())
-	ass.Equal(t, 0, v.GetDays())
-	ass.Equal(t, 0, v.GetWeeks())
-	ass.Equal(t, 0, v.GetMonths())
-	ass.Equal(t, 0, v.GetYears())
+	ass.Equal(t, zero, v.GetMilliseconds())
+	ass.Equal(t, zero, v.GetSeconds())
+	ass.Equal(t, one, v.GetMinutes())
+	ass.Equal(t, zero, v.GetHours())
+	ass.Equal(t, zero, v.GetDays())
+	ass.Equal(t, zero, v.GetWeeks())
+	ass.Equal(t, zero, v.GetMonths())
+	ass.Equal(t, zero, v.GetYears())
 }
 
 var GlyphClass = fra.GlyphClass()
@@ -2424,6 +2425,7 @@ var MomentClass = fra.MomentClass()
 
 func TestIntegerMoments(t *tes.T) {
 	var v = fra.Moment(1238589296789)
+	ass.False(t, v.IsNegative())
 	ass.Equal(t, 1238589296789, v.AsIntrinsic())
 	ass.Equal(t, 1238589296789, v.AsInteger())
 	ass.Equal(t, 1238589296789.0, v.AsMilliseconds())
@@ -2434,18 +2436,19 @@ func TestIntegerMoments(t *tes.T) {
 	ass.Equal(t, 2047.9320383416004, v.AsWeeks())
 	ass.Equal(t, 470.9919881193849, v.AsMonths())
 	ass.Equal(t, 39.24933234328208, v.AsYears())
-	ass.Equal(t, 789, v.GetMilliseconds())
-	ass.Equal(t, 56, v.GetSeconds())
-	ass.Equal(t, 34, v.GetMinutes())
-	ass.Equal(t, 12, v.GetHours())
-	ass.Equal(t, 1, v.GetDays())
-	ass.Equal(t, 14, v.GetWeeks())
-	ass.Equal(t, 4, v.GetMonths())
-	ass.Equal(t, 2009, v.GetYears())
+	ass.Equal(t, uint(789), v.GetMilliseconds())
+	ass.Equal(t, uint(56), v.GetSeconds())
+	ass.Equal(t, uint(34), v.GetMinutes())
+	ass.Equal(t, uint(12), v.GetHours())
+	ass.Equal(t, uint(1), v.GetDays())
+	ass.Equal(t, uint(14), v.GetWeeks())
+	ass.Equal(t, uint(4), v.GetMonths())
+	ass.Equal(t, uint(2009), v.GetYears())
 }
 
 func TestStringMoments(t *tes.T) {
 	var v = fra.MomentFromString("<-1-02-03T04:05:06.700>")
+	ass.True(t, v.IsNegative())
 	ass.Equal(t, "<-1-02-03T04:05:06.700>", v.AsString())
 }
 
@@ -3106,7 +3109,7 @@ func TestBinary(t *tes.T) {
 	ass.Equal(t, byte(0xf8), v.GetValue(-1))
 	ass.Equal(t, v.AsArray(), fra.Binary(v.AsArray()).AsArray())
 	ass.Equal(t, b2, fra.BinaryFromSequence(v.GetValues(1, 3)).AsString())
-	ass.Equal(t, 1, int(v.GetIndex(0x69)))
+	ass.Equal(t, uint(1), v.GetIndex(0x69))
 }
 
 func TestBinaryLibrary(t *tes.T) {
@@ -3393,16 +3396,16 @@ func TestIntervalConstructors(t *tes.T) {
 		fra.Inclusive,
 	)
 	ass.Equal(t, 2419200000, int(durations.GetSize()))
-	ass.Equal(t, "(~P0W..~P4W]", fmt.Sprintf("%v", durations))
+	ass.Equal(t, "(..~P4W]", fmt.Sprintf("%v", durations))
 
 	durations = fra.Interval[fra.DurationLike](
-		fra.Inclusive,
-		fra.DurationFromString("~P5D"),
-		fra.DurationClass().Undefined(),
 		fra.Exclusive,
+		fra.DurationFromString("~P1D"),
+		fra.DurationFromString("~P5D"),
+		fra.Inclusive,
 	)
-	ass.Equal(t, -432000001, int(durations.GetSize()))
-	ass.Equal(t, "[~P5D..)", fmt.Sprintf("%v", durations))
+	ass.Equal(t, 345600000, int(durations.GetSize()))
+	ass.Equal(t, "(~P1D..~P5D]", fmt.Sprintf("%v", durations))
 
 	var moments = fra.Interval[fra.MomentLike](
 		fra.Exclusive,
@@ -3414,6 +3417,19 @@ func TestIntervalConstructors(t *tes.T) {
 	ass.Equal(
 		t,
 		"(<2001-02-03T04:05:06>..<2001-02-03T04:05:07>)",
+		fmt.Sprintf("%v", moments),
+	)
+
+	moments = fra.Interval[fra.MomentLike](
+		fra.Exclusive,
+		fra.Moment(mat.MinInt64),
+		fra.Moment(mat.MaxInt64),
+		fra.Exclusive,
+	)
+	ass.Equal(t, uint(0xfffffffffffffffe), moments.GetSize())
+	ass.Equal(
+		t,
+		"(..)",
 		fmt.Sprintf("%v", moments),
 	)
 }

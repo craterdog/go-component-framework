@@ -172,14 +172,13 @@ type DurationClassLike interface {
 	) DurationLike
 
 	// Constant Methods
-	Undefined() DurationLike
-	MillisecondsPerSecond() int
-	MillisecondsPerMinute() int
-	MillisecondsPerHour() int
-	MillisecondsPerDay() int
-	MillisecondsPerWeek() int
-	MillisecondsPerMonth() int
-	MillisecondsPerYear() int
+	MillisecondsPerSecond() uint
+	MillisecondsPerMinute() uint
+	MillisecondsPerHour() uint
+	MillisecondsPerDay() uint
+	MillisecondsPerWeek() uint
+	MillisecondsPerMonth() uint
+	MillisecondsPerYear() uint
 	DaysPerMonth() float64
 	DaysPerYear() float64
 	WeeksPerMonth() float64
@@ -412,6 +411,9 @@ type ResourceClassLike interface {
 	ResourceFromUri(
 		url *uri.URL,
 	) ResourceLike
+
+	// Constant Methods
+	Undefined() ResourceLike
 }
 
 /*
@@ -427,6 +429,9 @@ type SymbolClassLike interface {
 	SymbolFromString(
 		source string,
 	) SymbolLike
+
+	// Constant Methods
+	Undefined() SymbolLike
 }
 
 // INSTANCE DECLARATIONS
@@ -476,13 +481,12 @@ instance of a duration-like class.
 type DurationLike interface {
 	// Principal Methods
 	GetClass() DurationClassLike
-	AsIntrinsic() int
+	AsIntrinsic() uint
 	AsString() string
 
 	// Aspect Interfaces
 	Discrete
 	Factored
-	Polarized
 	Temporal
 }
 
@@ -515,6 +519,7 @@ type MomentLike interface {
 	// Aspect Interfaces
 	Discrete
 	Factored
+	Polarized
 	Temporal
 }
 
@@ -636,24 +641,14 @@ Factored is an aspect interface that defines a set of method signatures
 that must be supported by each instance of a factored class.
 */
 type Factored interface {
-	GetMilliseconds() int
-	GetSeconds() int
-	GetMinutes() int
-	GetHours() int
-	GetDays() int
-	GetWeeks() int
-	GetMonths() int
-	GetYears() int
-}
-
-/*
-Numeric is an aspect interface that defines a set of method signatures
-that must be supported by each instance of a numeric class.
-*/
-type Numeric interface {
-	uint | uint8 | uint16 | uint32 | uint64 |
-		int | int8 | int16 | int32 | int64 |
-		float32 | float64
+	GetMilliseconds() uint
+	GetSeconds() uint
+	GetMinutes() uint
+	GetHours() uint
+	GetDays() uint
+	GetWeeks() uint
+	GetMonths() uint
+	GetYears() uint
 }
 
 /*

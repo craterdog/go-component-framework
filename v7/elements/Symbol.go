@@ -50,6 +50,10 @@ func (c *symbolClass_) SymbolFromString(
 
 // Constant Methods
 
+func (c *symbolClass_) Undefined() SymbolLike {
+	return c.undefined_
+}
+
 // Function Methods
 
 // INSTANCE INTERFACE
@@ -102,7 +106,8 @@ type symbol_ string
 
 type symbolClass_ struct {
 	// Declare the class constants.
-	matcher_ *reg.Regexp
+	matcher_   *reg.Regexp
+	undefined_ SymbolLike
 }
 
 // Class Reference
@@ -113,5 +118,6 @@ func symbolClass() *symbolClass_ {
 
 var symbolClassReference_ = &symbolClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^\\$(" + identifier_ + ")"),
+	matcher_:   reg.MustCompile("^\\$(" + identifier_ + ")"),
+	undefined_: symbol_("$"),
 }

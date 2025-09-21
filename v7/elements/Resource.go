@@ -57,6 +57,10 @@ func (c *resourceClass_) ResourceFromUri(
 
 // Constant Methods
 
+func (c *resourceClass_) Undefined() ResourceLike {
+	return c.undefined_
+}
+
 // Function Methods
 
 // INSTANCE INTERFACE
@@ -147,7 +151,8 @@ type resource_ string
 
 type resourceClass_ struct {
 	// Declare the class constants.
-	matcher_ *reg.Regexp
+	matcher_   *reg.Regexp
+	undefined_ ResourceLike
 }
 
 // Class Reference
@@ -162,4 +167,5 @@ var resourceClassReference_ = &resourceClass_{
 		"^<((" + scheme_ + "):(?://(" + authority_ + "))?(" + path_ +
 			")(?:\\?(" + query_ + "))?(?:#(" + fragment_ + "))?)>",
 	),
+	undefined_: resource_("<>"),
 }

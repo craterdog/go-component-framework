@@ -157,7 +157,7 @@ func (v version_) AsIntrinsic() []uint {
 		var ordinal, _ = stc.ParseUint(level, 10, 64)
 		ordinals[index] = uint(ordinal)
 	}
-	return []uint(ordinals)
+	return ordinals
 }
 
 func (v version_) AsString() string {

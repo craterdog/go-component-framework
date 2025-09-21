@@ -68,9 +68,8 @@ func (v *interval_[V]) GetValue(
 	index int,
 ) V {
 	var size = v.effectiveSize()
-	var goIndex = uti.RelativeToCardinal(index, size)
-	var integer = v.effectiveMinimum() + goIndex
-	return v.valueOf(integer)
+	var offset = v.effectiveMinimum() + uti.RelativeToCardinal(index, size)
+	return v.valueOf(offset)
 }
 
 func (v *interval_[V]) GetValues(
@@ -202,8 +201,8 @@ func (v *interval_[V]) AsArray() []V {
 	}
 	var array = make([]V, size)
 	for index := 0; index < size; index++ {
-		var integer = v.effectiveMinimum() + index
-		var value = v.valueOf(integer)
+		var offset = v.effectiveMinimum() + index
+		var value = v.valueOf(offset)
 		array[index] = value
 	}
 	return array
@@ -255,8 +254,7 @@ func (v *interval_[V]) effectiveMinimum() int {
 }
 
 func (v *interval_[V]) effectiveSize() uint {
-	var size = uint(v.effectiveMaximum())
-	size = size - uint(v.effectiveMinimum()) + 1
+	var size = uint(v.effectiveMaximum() - v.effectiveMinimum() + 1)
 	return size
 }
 
@@ -308,9 +306,9 @@ func (v *interval_[V]) validateInterval() {
 	}
 }
 
-func (v *interval_[V]) valueOf(integer int) V {
+func (v *interval_[V]) valueOf(offset int) V {
 	// We cannot get access to the constructor we need without reflection.
-	var integerRef = ref.ValueOf(integer)
+	var offsetRef = ref.ValueOf(offset)
 	var resultRef ref.Value
 	var valueRef = ref.ValueOf(v.minimum_)
 	var method = valueRef.MethodByName("GetClass")
@@ -320,7 +318,7 @@ func (v *interval_[V]) valueOf(integer int) V {
 	for index := 0; index < count; index++ {
 		var name = typeRef.Method(index).Name
 		if sts.HasSuffix(name, "FromInteger") {
-			resultRef = classRef.MethodByName(name).Call([]ref.Value{integerRef})[0]
+			resultRef = classRef.MethodByName(name).Call([]ref.Value{offsetRef})[0]
 			break
 		}
 	}

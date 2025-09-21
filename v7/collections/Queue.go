@@ -41,7 +41,7 @@ func (c *queueClass_[V]) QueueWithCapacity(
 	if capacity < 1 {
 		capacity = 16 // This is the default capacity.
 	}
-	var available = make(chan bool, int(capacity))
+	var available = make(chan bool, capacity)
 	var listClass = ListClass[V]()
 	var values = listClass.List()
 	var instance = &queue_[V]{

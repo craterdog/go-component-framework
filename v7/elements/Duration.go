@@ -37,7 +37,7 @@ func (c *durationClass_) Duration(
 	if milliseconds < 0 {
 		milliseconds = -milliseconds
 	}
-	return duration_(milliseconds)
+	return duration_(uint(milliseconds))
 }
 
 func (c *durationClass_) DurationFromString(
@@ -56,35 +56,31 @@ func (c *durationClass_) DurationFromString(
 
 // Constant Methods
 
-func (c *durationClass_) Undefined() DurationLike {
-	return c.undefined_
-}
-
-func (c *durationClass_) MillisecondsPerSecond() int {
+func (c *durationClass_) MillisecondsPerSecond() uint {
 	return c.millisecondsPerSecond_
 }
 
-func (c *durationClass_) MillisecondsPerMinute() int {
+func (c *durationClass_) MillisecondsPerMinute() uint {
 	return c.millisecondsPerMinute_
 }
 
-func (c *durationClass_) MillisecondsPerHour() int {
+func (c *durationClass_) MillisecondsPerHour() uint {
 	return c.millisecondsPerHour_
 }
 
-func (c *durationClass_) MillisecondsPerDay() int {
+func (c *durationClass_) MillisecondsPerDay() uint {
 	return c.millisecondsPerDay_
 }
 
-func (c *durationClass_) MillisecondsPerWeek() int {
+func (c *durationClass_) MillisecondsPerWeek() uint {
 	return c.millisecondsPerWeek_
 }
 
-func (c *durationClass_) MillisecondsPerMonth() int {
+func (c *durationClass_) MillisecondsPerMonth() uint {
 	return c.millisecondsPerMonth_
 }
 
-func (c *durationClass_) MillisecondsPerYear() int {
+func (c *durationClass_) MillisecondsPerYear() uint {
 	return c.millisecondsPerYear_
 }
 
@@ -110,8 +106,8 @@ func (v duration_) GetClass() DurationClassLike {
 	return durationClass()
 }
 
-func (v duration_) AsIntrinsic() int {
-	return int(v)
+func (v duration_) AsIntrinsic() uint {
+	return uint(v)
 }
 
 // Attribute Methods
@@ -120,13 +116,9 @@ func (v duration_) AsIntrinsic() int {
 
 func (v duration_) AsString() string {
 	var builder sts.Builder
-	builder.WriteString("~")
-	if v.IsNegative() {
-		builder.WriteString("-")
-	}
-	builder.WriteString("P")
+	builder.WriteString("~P")
 	var float = mat.Abs(v.AsWeeks())
-	var weeks = int(float)
+	var weeks = uint(float)
 	if float64(weeks) == float {
 		// It is an exact number of weeks.
 		builder.WriteString(stc.FormatInt(int64(weeks), 10))
@@ -181,7 +173,7 @@ func (v duration_) AsInteger() int {
 }
 
 func (v duration_) IsDefined() bool {
-	return v >= 0
+	return v > 0 && v < mat.MaxUint64
 }
 
 func (v duration_) IsMinimum() bool {
@@ -194,12 +186,6 @@ func (v duration_) IsZero() bool {
 
 func (v duration_) IsMaximum() bool {
 	return v == mat.MaxInt64
-}
-
-// Polarized Methods
-
-func (v duration_) IsNegative() bool {
-	return v < 0
 }
 
 // Temporal Methods
@@ -238,18 +224,18 @@ func (v duration_) AsYears() float64 {
 
 // Factored Methods
 
-func (v duration_) GetMilliseconds() int {
+func (v duration_) GetMilliseconds() uint {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int(v))
+	var milliseconds = v.AsIntrinsic()
 
 	// Strip off everything but the milliseconds.
 	milliseconds = milliseconds % durationClass().millisecondsPerSecond_
 	return milliseconds
 }
 
-func (v duration_) GetSeconds() int {
+func (v duration_) GetSeconds() uint {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int(v))
+	var milliseconds = v.AsIntrinsic()
 
 	// Strip off the years.
 	milliseconds = milliseconds - (v.GetYears() * durationClass().millisecondsPerYear_)
@@ -271,9 +257,9 @@ func (v duration_) GetSeconds() int {
 	return seconds
 }
 
-func (v duration_) GetMinutes() int {
+func (v duration_) GetMinutes() uint {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int(v))
+	var milliseconds = v.AsIntrinsic()
 
 	// Strip off the years.
 	milliseconds = milliseconds - (v.GetYears() * durationClass().millisecondsPerYear_)
@@ -292,9 +278,9 @@ func (v duration_) GetMinutes() int {
 	return minutes
 }
 
-func (v duration_) GetHours() int {
+func (v duration_) GetHours() uint {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int(v))
+	var milliseconds = v.AsIntrinsic()
 
 	// Strip off the years.
 	milliseconds = milliseconds - (v.GetYears() * durationClass().millisecondsPerYear_)
@@ -310,9 +296,9 @@ func (v duration_) GetHours() int {
 	return hours
 }
 
-func (v duration_) GetDays() int {
+func (v duration_) GetDays() uint {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int(v))
+	var milliseconds = v.AsIntrinsic()
 
 	// Strip off the years.
 	milliseconds = milliseconds - (v.GetYears() * durationClass().millisecondsPerYear_)
@@ -325,9 +311,9 @@ func (v duration_) GetDays() int {
 	return days
 }
 
-func (v duration_) GetWeeks() int {
+func (v duration_) GetWeeks() uint {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int(v))
+	var milliseconds = v.AsIntrinsic()
 
 	// Strip off the years.
 	milliseconds = milliseconds - (v.GetYears() * durationClass().millisecondsPerYear_)
@@ -337,9 +323,9 @@ func (v duration_) GetWeeks() int {
 	return weeks
 }
 
-func (v duration_) GetMonths() int {
+func (v duration_) GetMonths() uint {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int(v))
+	var milliseconds = v.AsIntrinsic()
 
 	// Strip off the years.
 	milliseconds = milliseconds - (v.GetYears() * durationClass().millisecondsPerYear_)
@@ -349,9 +335,9 @@ func (v duration_) GetMonths() int {
 	return months
 }
 
-func (v duration_) GetYears() int {
+func (v duration_) GetYears() uint {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int(v))
+	var milliseconds = v.AsIntrinsic()
 
 	// Convert to years.
 	var years = milliseconds / durationClass().millisecondsPerYear_
@@ -366,13 +352,13 @@ func (v duration_) String() string {
 
 // Private Methods
 
-func (c *durationClass_) durationFromMatches(matches []string) int {
+func (c *durationClass_) durationFromMatches(matches []string) uint {
 	var milliseconds = 0.0
 	if len(matches[1]) > 0 {
 		// The duration is in weeks.
 		var float, _ = stc.ParseFloat(matches[1], 64)
 		milliseconds += float * float64(c.millisecondsPerWeek_)
-		return int(milliseconds)
+		return uint(milliseconds)
 	}
 	if len(matches[2]) > 0 {
 		// The duration has a years component.
@@ -404,14 +390,7 @@ func (c *durationClass_) durationFromMatches(matches []string) int {
 		var float, _ = stc.ParseFloat(matches[7], 64)
 		milliseconds += float * float64(c.millisecondsPerSecond_)
 	}
-	return int(milliseconds)
-}
-
-func (c *durationClass_) magnitude(value int) int {
-	if value < 0 {
-		return -value
-	}
-	return value
+	return uint(milliseconds)
 }
 
 // NOTE:
@@ -434,21 +413,20 @@ const (
 
 // Instance Structure
 
-type duration_ int
+type duration_ uint
 
 // Class Structure
 
 type durationClass_ struct {
 	// Declare the class constants.
 	matcher_               *reg.Regexp
-	undefined_             DurationLike
-	millisecondsPerSecond_ int
-	millisecondsPerMinute_ int
-	millisecondsPerHour_   int
-	millisecondsPerDay_    int
-	millisecondsPerWeek_   int
-	millisecondsPerMonth_  int
-	millisecondsPerYear_   int
+	millisecondsPerSecond_ uint
+	millisecondsPerMinute_ uint
+	millisecondsPerHour_   uint
+	millisecondsPerDay_    uint
+	millisecondsPerWeek_   uint
+	millisecondsPerMonth_  uint
+	millisecondsPerYear_   uint
 	daysPerMonth_          float64
 	daysPerYear_           float64
 	weeksPerMonth_         float64
@@ -467,7 +445,6 @@ var durationClassReference_ = &durationClass_{
 			")?(?:" + days_ + ")?(?:T(?:" + hours_ + ")?(?:" + minutes_ +
 			")?(?:" + seconds_ + ")?)?))",
 	),
-	undefined_: duration_(-1),
 
 	// These are locked to the Earth's daily revolutions.
 	millisecondsPerSecond_: 1000,

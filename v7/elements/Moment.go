@@ -146,7 +146,7 @@ func (v moment_) AsInteger() int {
 }
 
 func (v moment_) IsDefined() bool {
-	return true
+	return v > mat.MinInt64 && v < mat.MaxInt64
 }
 
 func (v moment_) IsMinimum() bool {
@@ -159,6 +159,12 @@ func (v moment_) IsZero() bool {
 
 func (v moment_) IsMaximum() bool {
 	return v == mat.MaxInt64
+}
+
+// Polarized Methods
+
+func (v moment_) IsNegative() bool {
+	return v < 0
 }
 
 // Temporal Methods
@@ -197,52 +203,52 @@ func (v moment_) AsYears() float64 {
 
 // Factored Methods
 
-func (v moment_) GetMilliseconds() int {
+func (v moment_) GetMilliseconds() uint {
 	var time = v.asTime()
 	var milliseconds = time.Nanosecond() / 1e6
-	return int(milliseconds)
+	return uint(milliseconds)
 }
 
-func (v moment_) GetSeconds() int {
+func (v moment_) GetSeconds() uint {
 	var time = v.asTime()
 	var seconds = time.Second()
-	return int(seconds)
+	return uint(seconds)
 }
 
-func (v moment_) GetMinutes() int {
+func (v moment_) GetMinutes() uint {
 	var time = v.asTime()
 	var minutes = time.Minute()
-	return int(minutes)
+	return uint(minutes)
 }
 
-func (v moment_) GetHours() int {
+func (v moment_) GetHours() uint {
 	var time = v.asTime()
 	var hours = time.Hour()
-	return int(hours)
+	return uint(hours)
 }
 
-func (v moment_) GetDays() int {
+func (v moment_) GetDays() uint {
 	var time = v.asTime()
 	var days = time.Day()
-	return int(days)
+	return uint(days)
 }
 
-func (v moment_) GetWeeks() int {
+func (v moment_) GetWeeks() uint {
 	var time = v.asTime()
 	var _, weeks = time.ISOWeek()
-	return int(weeks)
+	return uint(weeks)
 }
 
-func (v moment_) GetMonths() int {
+func (v moment_) GetMonths() uint {
 	var time = v.asTime()
 	var months = time.Month()
-	return int(months)
+	return uint(months)
 }
 
-func (v moment_) GetYears() int {
+func (v moment_) GetYears() uint {
 	var time = v.asTime()
 	var years = time.Year()
-	return int(years)
+	return uint(years)
 }
 
 // PROTECTED INTERFACE
@@ -253,7 +259,7 @@ func (v moment_) String() string {
 
 // Private Methods
 
-func (c *momentClass_) formatOrdinal(ordinal int, digits int) string {
+func (c *momentClass_) formatOrdinal(ordinal uint, digits int) string {
 	return fmt.Sprintf("%0"+stc.Itoa(digits)+"d", ordinal)
 }
 
