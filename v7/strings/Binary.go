@@ -267,7 +267,7 @@ func (v binary_) IsEmpty() bool {
 }
 
 func (v binary_) GetSize() uint {
-	return uint(len(v.AsIntrinsic()))
+	return uti.ArraySize(v.AsIntrinsic())
 }
 
 func (v binary_) AsArray() []byte {
@@ -284,7 +284,7 @@ func (v binary_) GetValue(
 	index int,
 ) byte {
 	var bytes = v.AsIntrinsic()
-	var size = uint(len(bytes))
+	var size = uti.ArraySize(bytes)
 	var goIndex = uti.RelativeToCardinal(index, size)
 	return bytes[goIndex]
 }
@@ -294,7 +294,7 @@ func (v binary_) GetValues(
 	last int,
 ) Sequential[byte] {
 	var bytes = v.AsIntrinsic()
-	var size = uint(len(bytes))
+	var size = uti.ArraySize(bytes)
 	var goFirst = uti.RelativeToCardinal(first, size)
 	var goLast = uti.RelativeToCardinal(last, size)
 	return binaryClass().Binary(bytes[goFirst : goLast+1])
@@ -302,8 +302,8 @@ func (v binary_) GetValues(
 
 func (v binary_) GetIndex(
 	value byte,
-) uint {
-	var index uint
+) int {
+	var index int
 	var iterator = v.GetIterator()
 	for iterator.HasNext() {
 		index++

@@ -34,7 +34,7 @@ func TagClass() TagClassLike {
 func (c *tagClass_) Tag(
 	bytes []byte,
 ) TagLike {
-	c.validateSize(uint(len(bytes)))
+	c.validateSize(uti.ArraySize(bytes))
 	var encoder = age.EncoderClass().Encoder()
 	var encoded = encoder.Base32Encode(bytes)
 	return tag_("#" + encoded)
@@ -53,7 +53,7 @@ func (c *tagClass_) TagFromSequence(
 	sequence Sequential[byte],
 ) TagLike {
 	var bytes = sequence.AsArray()
-	c.validateSize(uint(len(bytes)))
+	c.validateSize(uti.ArraySize(bytes))
 	return c.Tag(bytes)
 }
 
@@ -160,7 +160,7 @@ func (v tag_) IsEmpty() bool {
 }
 
 func (v tag_) GetSize() uint {
-	return uint(len(v.AsIntrinsic()))
+	return uti.ArraySize(v.AsIntrinsic())
 }
 
 func (v tag_) AsArray() []byte {
@@ -177,7 +177,7 @@ func (v tag_) GetValue(
 	index int,
 ) byte {
 	var bytes = v.AsIntrinsic()
-	var size = uint(len(bytes))
+	var size = uti.ArraySize(bytes)
 	var goIndex = uti.RelativeToCardinal(index, size)
 	return bytes[goIndex]
 }
@@ -187,7 +187,7 @@ func (v tag_) GetValues(
 	last int,
 ) Sequential[byte] {
 	var bytes = v.AsIntrinsic()
-	var size = uint(len(bytes))
+	var size = uti.ArraySize(bytes)
 	var goFirst = uti.RelativeToCardinal(first, size)
 	var goLast = uti.RelativeToCardinal(last, size)
 	return tagClass().Tag(bytes[goFirst : goLast+1])
@@ -195,8 +195,8 @@ func (v tag_) GetValues(
 
 func (v tag_) GetIndex(
 	value byte,
-) uint {
-	var index uint
+) int {
+	var index int
 	var iterator = v.GetIterator()
 	for iterator.HasNext() {
 		index++

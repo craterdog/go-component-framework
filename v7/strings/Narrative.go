@@ -163,7 +163,7 @@ func (v narrative_) IsEmpty() bool {
 }
 
 func (v narrative_) GetSize() uint {
-	return uint(len(v.AsIntrinsic()))
+	return uti.ArraySize(v.AsIntrinsic())
 }
 
 func (v narrative_) AsArray() []Line {
@@ -180,7 +180,7 @@ func (v narrative_) GetValue(
 	index int,
 ) Line {
 	var lines = v.AsIntrinsic()
-	var size = uint(len(lines))
+	var size = uti.ArraySize(lines)
 	var goIndex = uti.RelativeToCardinal(index, size)
 	return lines[goIndex]
 }
@@ -190,7 +190,7 @@ func (v narrative_) GetValues(
 	last int,
 ) Sequential[Line] {
 	var lines = v.AsIntrinsic()
-	var size = uint(len(lines))
+	var size = uti.ArraySize(lines)
 	var goFirst = uti.RelativeToCardinal(first, size)
 	var goLast = uti.RelativeToCardinal(last, size)
 	return narrativeClass().Narrative(lines[goFirst : goLast+1])
@@ -198,8 +198,8 @@ func (v narrative_) GetValues(
 
 func (v narrative_) GetIndex(
 	value Line,
-) uint {
-	var index uint
+) int {
+	var index int
 	var iterator = v.GetIterator()
 	for iterator.HasNext() {
 		index++

@@ -423,7 +423,7 @@ type Accessible[V any] interface {
 	) Sequential[V]
 	GetIndex(
 		value V,
-	) uint
+	) int
 }
 
 /*

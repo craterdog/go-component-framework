@@ -104,7 +104,7 @@ func (c *versionClass_) GetNextVersion(
 ) VersionLike {
 	// Adjust the size of the ordinals as needed.
 	var ordinals = current.AsArray()
-	var size = uint(len(ordinals))
+	var size = uti.ArraySize(ordinals)
 	switch {
 	case level == 0:
 		level = size // Normalize the level to the current size.
@@ -226,7 +226,7 @@ func (v version_) IsEmpty() bool {
 }
 
 func (v version_) GetSize() uint {
-	return uint(len(v.AsIntrinsic()))
+	return uti.ArraySize(v.AsIntrinsic())
 }
 
 func (v version_) AsArray() []uint {
@@ -243,7 +243,7 @@ func (v version_) GetValue(
 	index int,
 ) uint {
 	var ordinals = v.AsIntrinsic()
-	var size = uint(len(ordinals))
+	var size = uti.ArraySize(ordinals)
 	var goIndex = uti.RelativeToCardinal(index, size)
 	return ordinals[goIndex]
 }
@@ -253,7 +253,7 @@ func (v version_) GetValues(
 	last int,
 ) Sequential[uint] {
 	var ordinals = v.AsIntrinsic()
-	var size = uint(len(ordinals))
+	var size = uti.ArraySize(ordinals)
 	var goFirst = uti.RelativeToCardinal(first, size)
 	var goLast = uti.RelativeToCardinal(last, size)
 	return versionClass().Version(ordinals[goFirst : goLast+1])
@@ -261,8 +261,8 @@ func (v version_) GetValues(
 
 func (v version_) GetIndex(
 	value uint,
-) uint {
-	var index uint
+) int {
+	var index int
 	var iterator = v.GetIterator()
 	for iterator.HasNext() {
 		index++

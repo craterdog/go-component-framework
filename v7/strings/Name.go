@@ -164,7 +164,7 @@ func (v name_) IsEmpty() bool {
 }
 
 func (v name_) GetSize() uint {
-	return uint(len(v.AsIntrinsic()))
+	return uti.ArraySize(v.AsIntrinsic())
 }
 
 func (v name_) AsArray() []Identifier {
@@ -181,7 +181,7 @@ func (v name_) GetValue(
 	index int,
 ) Identifier {
 	var identifiers = v.AsIntrinsic()
-	var size = uint(len(identifiers))
+	var size = uti.ArraySize(identifiers)
 	var goIndex = uti.RelativeToCardinal(index, size)
 	return identifiers[goIndex]
 }
@@ -191,7 +191,7 @@ func (v name_) GetValues(
 	last int,
 ) Sequential[Identifier] {
 	var identifiers = v.AsIntrinsic()
-	var size = uint(len(identifiers))
+	var size = uti.ArraySize(identifiers)
 	var goFirst = uti.RelativeToCardinal(first, size)
 	var goLast = uti.RelativeToCardinal(last, size)
 	return nameClass().Name(identifiers[goFirst : goLast+1])
@@ -199,8 +199,8 @@ func (v name_) GetValues(
 
 func (v name_) GetIndex(
 	value Identifier,
-) uint {
-	var index uint
+) int {
+	var index int
 	var iterator = v.GetIterator()
 	for iterator.HasNext() {
 		index++

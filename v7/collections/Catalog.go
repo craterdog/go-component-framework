@@ -201,7 +201,7 @@ func (v *catalog_[K, V]) RemoveValue(
 	var association, exists = v.keys_[key]
 	if exists {
 		var index = v.associations_.GetIndex(association)
-		v.associations_.RemoveValue(int(index))
+		v.associations_.RemoveValue(index)
 		old = association.GetValue()
 		delete(v.keys_, key)
 	}

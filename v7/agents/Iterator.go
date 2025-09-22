@@ -36,7 +36,7 @@ func (c *iteratorClass_[V]) Iterator(
 	}
 	var instance = &iterator_[V]{
 		// Initialize the instance attributes.
-		size_:   uint(len(array)),
+		size_:   uti.ArraySize(array),
 		values_: array,
 	}
 	return instance

@@ -182,7 +182,7 @@ func (v pattern_) IsEmpty() bool {
 }
 
 func (v pattern_) GetSize() uint {
-	return uint(len(v.AsIntrinsic()))
+	return uti.ArraySize(v.AsIntrinsic())
 }
 
 func (v pattern_) AsArray() []Character {
@@ -199,7 +199,7 @@ func (v pattern_) GetValue(
 	index int,
 ) Character {
 	var characters = v.AsIntrinsic()
-	var size = uint(len(characters))
+	var size = uti.ArraySize(characters)
 	var goIndex = uti.RelativeToCardinal(index, size)
 	return characters[goIndex]
 }
@@ -209,7 +209,7 @@ func (v pattern_) GetValues(
 	last int,
 ) Sequential[Character] {
 	var characters = v.AsIntrinsic()
-	var size = uint(len(characters))
+	var size = uti.ArraySize(characters)
 	var goFirst = uti.RelativeToCardinal(first, size)
 	var goLast = uti.RelativeToCardinal(last, size)
 	return patternClass().Pattern(characters[goFirst : goLast+1])
@@ -217,8 +217,8 @@ func (v pattern_) GetValues(
 
 func (v pattern_) GetIndex(
 	value Character,
-) uint {
-	var index uint
+) int {
+	var index int
 	var iterator = v.GetIterator()
 	for iterator.HasNext() {
 		index++

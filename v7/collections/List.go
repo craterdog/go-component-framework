@@ -102,8 +102,8 @@ func (v *list_[V]) GetValues(
 
 func (v *list_[V]) GetIndex(
 	value V,
-) uint {
-	var index uint
+) int {
+	var index int
 	var collatorClass = age.CollatorClass[V]()
 	var compare = collatorClass.Collator().CompareValues
 	var iterator = v.GetIterator()
@@ -144,8 +144,8 @@ func (v *list_[V]) InsertValues(
 ) {
 	// Create a new larger array.
 	var newValues = values.AsArray()
-	var delta = uint(len(newValues))
-	var size = uint(len(v.array_)) + delta
+	var delta = uti.ArraySize(newValues)
+	var size = uti.ArraySize(v.array_) + delta
 	var array = make([]V, size)
 
 	// Copy the values into the new array.
@@ -284,7 +284,7 @@ func (v *list_[V]) IsEmpty() bool {
 }
 
 func (v *list_[V]) GetSize() uint {
-	return uint(len(v.array_))
+	return uti.ArraySize(v.array_)
 }
 
 func (v *list_[V]) AsArray() []V {

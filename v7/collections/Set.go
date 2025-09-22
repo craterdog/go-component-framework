@@ -157,7 +157,7 @@ func (v *set_[V]) GetValues(
 
 func (v *set_[V]) GetIndex(
 	value V,
-) uint {
+) int {
 	var index, found = v.findIndex(value)
 	if !found {
 		return 0
@@ -173,7 +173,7 @@ func (v *set_[V]) AddValue(
 	var slot, found = v.findIndex(value)
 	if !found {
 		// The value is not already a member, so add it.
-		v.values_.InsertValue(slot, value)
+		v.values_.InsertValue(uint(slot), value)
 	}
 }
 
@@ -193,7 +193,7 @@ func (v *set_[V]) RemoveValue(
 	var index, found = v.findIndex(value)
 	if found {
 		// The value is a member, so remove it.
-		v.values_.RemoveValue(int(index))
+		v.values_.RemoveValue(index)
 	}
 }
 
@@ -286,15 +286,15 @@ func (v *set_[V]) String() string {
 //   - found: A boolean stating whether or not the value was found.
 //
 // The algorithm performs a true O[log(n)] worst case search.
-func (v *set_[V]) findIndex(value V) (index uint, found bool) {
+func (v *set_[V]) findIndex(value V) (index int, found bool) {
 	// We use iteration instead of recursion for better performance.
 	//    start        first      middle       last          end
 	//    |-------------||----------||----------||-------------|
 	//                  |<-- size -------------->|
 	//
-	var first uint = 1     // Start at the beginning.
-	var last = v.GetSize() // End at the end.
-	var size = last        // Initially all values are candidates.
+	var first = 1               // Start at the beginning.
+	var last = int(v.GetSize()) // End at the end.
+	var size = last             // Initially all values are candidates.
 	for size > 0 {
 		var middle = first + size/2 // Rounds down to the nearest integer.
 		var candidate = v.GetValue(int(middle))

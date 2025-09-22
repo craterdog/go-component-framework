@@ -88,8 +88,8 @@ func (v *interval_[V]) GetValues(
 
 func (v *interval_[V]) GetIndex(
 	value V,
-) uint {
-	var index uint = 1
+) int {
+	var index = 1
 	var iterator = v.GetIterator()
 	for iterator.HasNext() {
 		var candidate = iterator.GetNext()
