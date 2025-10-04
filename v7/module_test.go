@@ -43,7 +43,7 @@ func TestModuleFunctions(t *tes.T) {
 	fra.QueueWithCapacity[string](8)
 	var queue = fra.QueueFromArray[string](list.AsArray())
 	fra.QueueFromSequence[string](queue)
-	var group = new(syn.WaitGroup)
+	var group fra.Synchronized = new(syn.WaitGroup)
 	defer group.Wait()
 	var queues = fra.QueueClass[string]().Fork(group, queue, 2)
 	fra.QueueClass[string]().Split(group, queue, 2)
@@ -1759,7 +1759,7 @@ func TestQueueConstructors(t *tes.T) {
 
 func TestQueueWithConcurrency(t *tes.T) {
 	// Create a wait group for synchronization.
-	var group = new(syn.WaitGroup)
+	var group fra.Synchronized = new(syn.WaitGroup)
 	defer group.Wait()
 
 	// Create a new queue with a specific capacity.
@@ -1775,9 +1775,7 @@ func TestQueueWithConcurrency(t *tes.T) {
 	ass.True(t, queue.GetSize() == 9)
 
 	// Remove values from the queue in the background.
-	group.Add(1)
-	go func() {
-		defer group.Done()
+	group.Go(func() {
 		var value int
 		var ok = true
 		for i := 1; ok; i++ {
@@ -1787,7 +1785,7 @@ func TestQueueWithConcurrency(t *tes.T) {
 			}
 		}
 		queue.RemoveAll()
-	}()
+	})
 
 	// Add some more values to the queue.
 	for i := 10; i < 101; i++ {
@@ -1798,7 +1796,7 @@ func TestQueueWithConcurrency(t *tes.T) {
 
 func TestQueueWithFork(t *tes.T) {
 	// Create a wait group for synchronization.
-	var group = new(syn.WaitGroup)
+	var group fra.Synchronized = new(syn.WaitGroup)
 	defer group.Wait()
 
 	// Create a new queue with a fan out of two.
@@ -1806,22 +1804,19 @@ func TestQueueWithFork(t *tes.T) {
 	var outputs = fra.QueueClass[int]().Fork(group, input, 2)
 
 	// Remove values from the output queues in the background.
-	var readOutput = func(output fra.QueueLike[int], name string) {
-		defer group.Done()
-		var value int
-		var ok = true
-		for i := 1; ok; i++ {
-			value, ok = output.RemoveFirst()
-			if ok {
-				ass.Equal(t, i, value)
-			}
-		}
-	}
-	group.Add(2)
 	var iterator = outputs.GetIterator()
 	for iterator.HasNext() {
 		var output = iterator.GetNext()
-		go readOutput(output, "output")
+		group.Go(func() {
+			var value int
+			var ok = true
+			for i := 1; ok; i++ {
+				value, ok = output.RemoveFirst()
+				if ok {
+					ass.Equal(t, i, value)
+				}
+			}
+		})
 	}
 
 	// Add values to the input queue.
@@ -1833,7 +1828,7 @@ func TestQueueWithFork(t *tes.T) {
 
 func TestQueueWithInvalidFanOut(t *tes.T) {
 	// Create a wait group for synchronization.
-	var group = new(syn.WaitGroup)
+	var group fra.Synchronized = new(syn.WaitGroup)
 	defer group.Wait()
 
 	// Create a new queue with an invalid fan out.
@@ -1850,7 +1845,7 @@ func TestQueueWithInvalidFanOut(t *tes.T) {
 
 func TestQueueWithSplitAndJoin(t *tes.T) {
 	// Create a wait group for synchronization.
-	var group = new(syn.WaitGroup)
+	var group fra.Synchronized = new(syn.WaitGroup)
 	defer group.Wait()
 
 	// Create a new queue with a split of five outputs and a join back to one.
@@ -1859,9 +1854,7 @@ func TestQueueWithSplitAndJoin(t *tes.T) {
 	var output = fra.QueueClass[int]().Join(group, split)
 
 	// Remove values from the output queue in the background.
-	group.Add(1)
-	go func() {
-		defer group.Done()
+	group.Go(func() {
 		var value int
 		var ok = true
 		for i := 1; ok; i++ {
@@ -1870,7 +1863,7 @@ func TestQueueWithSplitAndJoin(t *tes.T) {
 				ass.Equal(t, i, value)
 			}
 		}
-	}()
+	})
 
 	// Add values to the input queue.
 	for i := 1; i < 21; i++ {
@@ -1881,7 +1874,7 @@ func TestQueueWithSplitAndJoin(t *tes.T) {
 
 func TestQueueWithInvalidSplit(t *tes.T) {
 	// Create a wait group for synchronization.
-	var group = new(syn.WaitGroup)
+	var group fra.Synchronized = new(syn.WaitGroup)
 	defer group.Wait()
 
 	// Create a new queue with an invalid fan out.
@@ -1898,7 +1891,7 @@ func TestQueueWithInvalidSplit(t *tes.T) {
 
 func TestQueueWithInvalidJoin(t *tes.T) {
 	// Create a wait group for synchronization.
-	var group = new(syn.WaitGroup)
+	var group fra.Synchronized = new(syn.WaitGroup)
 	defer group.Wait()
 
 	// Create a new queue with an invalid fan out.
@@ -1911,7 +1904,6 @@ func TestQueueWithInvalidJoin(t *tes.T) {
 		}
 	}()
 	fra.QueueClass[int]().Join(group, inputs) // Should panic here.
-	defer group.Done()
 }
 
 func TestSetConstructors(t *tes.T) {
