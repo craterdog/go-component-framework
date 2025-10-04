@@ -101,11 +101,7 @@ func (c *queueClass_[V]) Fork(
 	}
 
 	// Connect up the input queue to the output queues in a separate go-routine.
-	group.Add(1)
-	go func() {
-		// Make sure the wait group is decremented on termination.
-		defer group.Done()
-
+	group.Go(func() {
 		// Write each value read from the input queue to each output queue.
 		var iterator = outputs.GetIterator()
 		for {
@@ -129,7 +125,7 @@ func (c *queueClass_[V]) Fork(
 			var output = iterator.GetNext()
 			output.CloseChannel()
 		}
-	}()
+	})
 
 	return outputs
 }
@@ -154,11 +150,7 @@ func (c *queueClass_[V]) Split(
 	}
 
 	// Connect up the input queue to the output queues.
-	group.Add(1)
-	go func() {
-		// Make sure the wait group is decremented on termination.
-		defer group.Done()
-
+	group.Go(func() {
 		// Take turns reading from the input queue and writing to each output queue.
 		var iterator = outputs.GetIterator()
 		for {
@@ -182,7 +174,7 @@ func (c *queueClass_[V]) Split(
 			var output = iterator.GetNext()
 			output.CloseChannel()
 		}
-	}()
+	})
 
 	return outputs
 }
@@ -202,11 +194,7 @@ func (c *queueClass_[V]) Join(
 	var output = c.QueueWithCapacity(capacity)
 
 	// Connect up the input queues to the output queue.
-	group.Add(1)
-	go func() {
-		// Make sure the wait group is decremented on termination.
-		defer group.Done()
-
+	group.Go(func() {
 		// Take turns reading from each input queue and writing to the output queue.
 		iterator.ToStart()
 		for {
@@ -223,7 +211,7 @@ func (c *queueClass_[V]) Join(
 
 		// Close the output queue.
 		output.CloseChannel()
-	}()
+	})
 
 	return output
 }

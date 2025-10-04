@@ -256,8 +256,8 @@ func TestQueueExampleCode(t *tes.T) {
 	fmt.Println("QUEUE EXAMPLE:")
 
 	// Create a wait group for synchronization.
-	var wg = new(syn.WaitGroup)
-	defer wg.Wait()
+	var group fra.Synchronized = new(syn.WaitGroup)
+	defer group.Wait()
 
 	// Create a new queue with a specific capacity.
 	var queue = fra.QueueWithCapacity[int](12)
@@ -274,9 +274,7 @@ func TestQueueExampleCode(t *tes.T) {
 	fmt.Println()
 
 	// Remove values from the queue in the background.
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	group.Go(func() {
 		var value int
 		var ok = true
 		for i := 1; ok; i++ {
@@ -287,7 +285,7 @@ func TestQueueExampleCode(t *tes.T) {
 		}
 		fmt.Println("The closed queue:", queue)
 		fmt.Println()
-	}()
+	})
 
 	// Add some more values to the queue.
 	for i := 10; i < 31; i++ {

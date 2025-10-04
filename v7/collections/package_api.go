@@ -521,11 +521,10 @@ Synchronized is an aspect interface that declares a set of method signatures
 that must be supported by each instance of a synchronized concrete class.
 */
 type Synchronized interface {
-	Add(
-		delta int,
+	Go(
+		f func(),
 	)
 	Wait()
-	Done()
 }
 
 /*
