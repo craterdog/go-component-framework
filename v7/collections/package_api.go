@@ -522,7 +522,7 @@ that must be supported by each instance of a synchronized concrete class.
 */
 type Synchronized interface {
 	Go(
-		f func(),
+		function func(),
 	)
 	Wait()
 }
